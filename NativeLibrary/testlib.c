@@ -116,7 +116,7 @@ MYAPI void print_line(const char* str)
     printf("Mapped NtCreateFile to 0x%p\n", native);
 }
 
-MYAPI int NativeTestUnicodeString(UNICODE_STRING *str)
+MYAPI void NativeTestUnicodeString(UNICODE_STRING *str)
 {
     //WCHAR buffer[512];
     printf("String @ %p\n", str);
@@ -124,7 +124,32 @@ MYAPI int NativeTestUnicodeString(UNICODE_STRING *str)
     printf("MaximumLength = %d\n", str->MaximumLength);
     printf("Buffer @ %p\n", str->Buffer);
     //memcpy(buffer, str->Buffer, str->Length);
-    //printf("String is %wZ\n", &str);
+    printf("String is %wZ\n", str);
 
+    return;
 }
+
+MYAPI void NativeTestIoStatusBlock(IO_STATUS_BLOCK* iosb)
+{
+    const int STATUS_BUFFER_OVERFLOW = (int)0x80000005;
+    printf("IoStatusBlock at 0x%p\n", iosb);
+    printf("\tStatus = %d (0x%x)\n", iosb->Status, iosb->Status);
+    printf("\tInformation = %d (0x%x)\n", (int)iosb->Information, (unsigned)iosb->Information);
+    iosb->Status = STATUS_BUFFER_OVERFLOW;
+    iosb->Information = 0x10000;
+
+    return;
+}
+
+MYAPI void NativeTestObjectAttributes(OBJECT_ATTRIBUTES* ObjectAttributes)
+{
+    printf("Object Attributes @ 0x%p\n", ObjectAttributes);
+    printf("\t                  Length: %lu\n", ObjectAttributes->Length);
+    printf("\t           RootDirectory: 0x%p\n", ObjectAttributes->RootDirectory);
+    printf("\t              ObjectName: %wZ\n", ObjectAttributes->ObjectName);
+    printf("\t              Attributes: %lu\n", ObjectAttributes->Attributes);
+    printf("\t      SecurityDescriptor: 0x%p\n", ObjectAttributes->SecurityDescriptor);
+    printf("\tSecurityQualityOfService: 0x%p\n", ObjectAttributes->SecurityQualityOfService);
+}
+
 
