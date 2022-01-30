@@ -3,3 +3,5 @@ CSharpToNativeTest/bin/
 CSharpToNativeTest/obj/
 NativeLibrary/x64/
 x64/
+obj/
+bin/

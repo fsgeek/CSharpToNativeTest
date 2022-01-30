@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 
+using NativeSupportLibrary;
+
 namespace CSharpToNativeTest
 {
     class Program
@@ -11,7 +13,7 @@ namespace CSharpToNativeTest
         static void Main(string[] args)
         {
             string test_string = "\\??\\C:";
-            NativeLibrary.print_line(test_string);
+            NativeSupportLibrary.NativeLibrary.print_line(test_string);
 
             UNICODE_STRING unicodeString = new UNICODE_STRING();
             IntPtr buffer = Marshal.StringToHGlobalUni(test_string);
@@ -26,7 +28,7 @@ namespace CSharpToNativeTest
 
             unsafe
             {
-                NativeLibrary.NativeTestUnicodeString(&unicodeString);
+                NativeSupportLibrary.NativeLibrary.NativeTestUnicodeString(&unicodeString);
             }
 
             IO_STATUS_BLOCK iosb;
@@ -36,7 +38,7 @@ namespace CSharpToNativeTest
 
             unsafe
             {
-                NativeLibrary.NativeTestIoStatusBlock(ref iosb);
+                NativeSupportLibrary.NativeLibrary.NativeTestIoStatusBlock(ref iosb);
             }
 
             Console.WriteLine($"Iosb.Status = {iosb.Status} ({iosb.Status:X})");
@@ -52,7 +54,7 @@ namespace CSharpToNativeTest
                 objattr.SecurityDescriptor = IntPtr.Zero;
                 objattr.SecurityQualityOfService = IntPtr.Zero;
 
-                NativeLibrary.NativeTestObjectAttributes(ref objattr);
+                NativeSupportLibrary.NativeLibrary.NativeTestObjectAttributes(ref objattr);
             }
         }
     }
