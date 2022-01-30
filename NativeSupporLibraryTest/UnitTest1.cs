@@ -27,26 +27,19 @@ namespace NativeSupporLibraryTest
     public class DataTypeTests
     {
         [TestMethod]
-        public void TestUNICODE_STRING()
+        public void TestUNICODE_STRING_CREATE()
         {
-            string test_string = "\\??\\C:";
-            NativeSupportLibrary.NativeLibrary.print_line(test_string);
+            UNICODE_STRING test_string = new UNICODE_STRING("foo");
+            UNICODE_STRING test_string2;
+            UNICODE_STRING cDrive = "\\??\\C:";
 
-            UNICODE_STRING unicodeString = new UNICODE_STRING();
-            System.IntPtr buffer = Marshal.StringToHGlobalUni(test_string);
-            // IntPtr refPtr = Marshal.AllocHGlobal(8);
+            test_string2 = ""; // check for zero length string case
 
-            // Marshal.WriteInt64(refPtr, (long)buffer);
-            unicodeString.Length = (ushort)(test_string.Length * sizeof(char));
-            unicodeString.MaximumLength = unicodeString.Length;
-            unicodeString.Buffer = buffer;
-            IntPtr ustr = Marshal.AllocHGlobal(Marshal.SizeOf(unicodeString));
-            Marshal.StructureToPtr(unicodeString, ustr, true);
+            // Should not be zero
+            Assert.AreNotEqual((IntPtr)test_string, IntPtr.Zero);
+            // Assert.AreEqual((IntPtr)test_string2, IntPtr.Zero);
 
-            unsafe
-            {
-                NativeSupportLibrary.NativeLibrary.NativeTestUnicodeString(&unicodeString);
-            }
+            NativeSupportLibrary.NativeLibrary.NativeTestUnicodeString(cDrive);
 
         }
 

@@ -69,12 +69,86 @@ namespace NativeSupportLibrary
         public const ulong FILE_GENERIC_EXECUTE = STANDARD_RIGHTS_EXECUTE | FILE_READ_ATTRIBUTES | FILE_EXECUTE | SYNCHRONIZE;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 0)]
-    public struct UNICODE_STRING
+    public class UNICODE_STRING
     {
-        public ushort Length = 0;
-        public ushort MaximumLength = 0;
-        public IntPtr Buffer = IntPtr.Zero;
+        [StructLayout(LayoutKind.Sequential, Pack = 0)]
+        public struct _UNICODE_STRING
+        {
+            public ushort Length = 0;
+            public ushort MaximumLength = 0;
+            public IntPtr Buffer = IntPtr.Zero;
+        }
+
+        private _UNICODE_STRING unicode_string;
+        private IntPtr native_str = IntPtr.Zero;
+
+        // private IntPtr _Buffer;
+        // private IntPtr _
+
+        /* 
+         *             UNICODE_STRING unicodeString = new UNICODE_STRING();
+        IntPtr buffer = Marshal.StringToHGlobalUni(test_string);
+        // IntPtr refPtr = Marshal.AllocHGlobal(8);
+
+        // Marshal.WriteInt64(refPtr, (long)buffer);
+        unicodeString.Length = (ushort)(test_string.Length * sizeof(char));
+        unicodeString.MaximumLength = unicodeString.Length;
+        unicodeString.Buffer = buffer;
+        IntPtr ustr = Marshal.AllocHGlobal(Marshal.SizeOf(unicodeString));
+        Marshal.StructureToPtr(unicodeString, ustr, true);
+
+         */
+
+        public static implicit operator IntPtr(UNICODE_STRING ustr)
+        {
+            return ustr.native_str;
+        }
+
+        public static implicit operator UNICODE_STRING(string str)
+        {
+            return new UNICODE_STRING(str);
+        }
+
+        public UNICODE_STRING(string str)
+        {
+            if ((str != null) && (str.Length > 0))
+            {
+                // This is a non-zero length string
+                unicode_string.Length = (ushort)(str.Length * sizeof(char));
+                unicode_string.MaximumLength = unicode_string.Length;
+                unicode_string.Buffer = Marshal.StringToHGlobalUni(str);
+            }
+            else
+            {
+                // The string is zero length, so no need to allocate space
+                // for the string.
+                unicode_string.Length = 0;
+                unicode_string.MaximumLength= 0;
+                unicode_string.Buffer = IntPtr.Zero;
+            }
+
+            // in either case, we allocate space for the string structure.
+            native_str = Marshal.AllocHGlobal(Marshal.SizeOf(unicode_string));
+            Marshal.StructureToPtr(unicode_string, native_str, true);
+
+        }
+
+        ~UNICODE_STRING()
+        {
+            if (native_str != IntPtr.Zero)
+            {
+                Marshal.FreeHGlobal(native_str);
+                native_str = IntPtr.Zero;
+            }
+
+            if (unicode_string.Buffer != IntPtr.Zero)
+            {
+                Marshal.FreeHGlobal(unicode_string.Buffer);
+                unicode_string.Length = 0;
+                unicode_string.MaximumLength = 0;
+                unicode_string.Buffer = IntPtr.Zero;
+            }
+        }
     }
 
     public class OBJECT_PROPERTIES
@@ -97,7 +171,7 @@ namespace NativeSupportLibrary
     {
         public Int32 Length = 0;
         public IntPtr RootDirectory = IntPtr.Zero;
-        public UNICODE_STRING *ObjectName;
+        public IntPtr ObjectName;
         public UInt32 Attributes; // see OBJECT_PROPERTIES
         public IntPtr SecurityDescriptor;
         public IntPtr SecurityQualityOfService;

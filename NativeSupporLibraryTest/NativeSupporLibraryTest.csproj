@@ -20,4 +20,8 @@
     <ProjectReference Include="..\NativeSupportLibrary\NativeSupportLibrary.csproj" />
   </ItemGroup>
 
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="copy ..\x64\Debug\NativeLibrary.dll bin\Debug\net6.0" />
+  </Target>
+
 </Project>

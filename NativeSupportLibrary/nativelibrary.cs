@@ -14,7 +14,7 @@ namespace NativeSupportLibrary
         public static extern void print_line(string line);
 
         [DllImport("NativeLibrary.dll", ExactSpelling = true, SetLastError = true)]
-        public unsafe static extern void NativeTestUnicodeString(UNICODE_STRING *uStr);
+        public unsafe static extern void NativeTestUnicodeString(IntPtr UnicodeString);
 
         [DllImport("NativeLibrary.dll", ExactSpelling = true, SetLastError = true)]
         public unsafe static extern void NativeTestIoStatusBlock(ref IO_STATUS_BLOCK iosb);

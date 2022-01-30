@@ -15,6 +15,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NativeSupportLibrary", "NativeSupportLibrary\NativeSupportLibrary.csproj", "{779CBB8B-55B1-43AD-AB73-F0DB42271839}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NativeSupporLibraryTest", "NativeSupporLibraryTest\NativeSupporLibraryTest.csproj", "{581404C0-464C-45FB-8F91-F666E1F0C5C7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{93CCE398-FE8E-4A54-AE2B-3AE7C01FB970} = {93CCE398-FE8E-4A54-AE2B-3AE7C01FB970}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
