@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="copy ..\x64\Debug\NativeLibrary.dll bin\Debug\net6.0" />
+    <Exec Command="copy ..\x64\Debug\NativeLibrary.dll bin\Debug\net6.0-windows" />
   </Target>
 
 </Project>

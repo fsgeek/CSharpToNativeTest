@@ -20,6 +20,9 @@ namespace NativeSupportLibrary
         public unsafe static extern void NativeTestIoStatusBlock(ref IO_STATUS_BLOCK iosb);
 
         [DllImport("NativeLibrary.dll", ExactSpelling = true, SetLastError = true)]
+        public unsafe static extern void NativeTestLargeInteger(IntPtr LargeInteger);
+
+        [DllImport("NativeLibrary.dll", ExactSpelling = true, SetLastError = true)]
         public unsafe static extern void NativeTestObjectAttributes(ref OBJECT_ATTRIBUTES ObjectAttributes);
 
         // These are native APIs that are supported by the library.

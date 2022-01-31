@@ -7,12 +7,133 @@ using System.Runtime.InteropServices;
 
 namespace NativeSupportLibrary
 {
-    [StructLayout(LayoutKind.Explicit)]
-    struct LARGE_INTEGER
+    public class LARGE_INTEGER
     {
-        [FieldOffset(0)] UInt64 QuadPart;
-        [FieldOffset(0)] UInt32 LowPart;
-        [FieldOffset(4)] UInt32 HighPart;
+        [StructLayout(LayoutKind.Explicit)]
+        private struct _LARGE_INTEGER
+        {
+            [FieldOffset(0)] public Int64 QuadPart = 0;
+            [FieldOffset(0)] public UInt32 LowPart;
+            [FieldOffset(4)] public Int32 HighPart;
+        }
+
+        private _LARGE_INTEGER large_integer;
+        IntPtr buffer = IntPtr.Zero;
+
+        public Int64 QuadPart
+        {
+            get 
+            {
+                large_integer = Marshal.PtrToStructure<_LARGE_INTEGER>(buffer);
+                return large_integer.QuadPart;
+            }
+            set
+            {
+                large_integer.QuadPart = value;
+                Marshal.StructureToPtr(large_integer, buffer, true);
+            }
+        }
+
+        public Int32 HighPart
+        {
+            get
+            {
+                large_integer = Marshal.PtrToStructure<_LARGE_INTEGER>(buffer);
+                return large_integer.HighPart;
+            }
+
+            set { 
+                large_integer.HighPart = value;
+                Marshal.StructureToPtr(large_integer, buffer, true);
+            }
+        }
+
+        public UInt32 LowPart
+        {
+            get
+            {
+                large_integer = Marshal.PtrToStructure<_LARGE_INTEGER>(buffer);
+                return large_integer.LowPart;
+            }
+
+
+            set
+            {
+                large_integer.LowPart = value; ;
+                Marshal.StructureToPtr(large_integer, buffer, true);
+            }
+        }
+
+
+        public LARGE_INTEGER(Int64 value)
+        {
+            large_integer = new _LARGE_INTEGER();
+            large_integer.QuadPart = value;
+            unsafe
+            {
+                buffer = Marshal.AllocHGlobal(sizeof(_LARGE_INTEGER));
+            }
+            Marshal.StructureToPtr(large_integer, buffer, true);
+        }
+
+        public LARGE_INTEGER(UInt32 value)
+        {
+            large_integer = new _LARGE_INTEGER();
+            large_integer.HighPart = 0;
+            large_integer.LowPart = value;
+            unsafe
+            {
+                buffer = Marshal.AllocHGlobal(sizeof(_LARGE_INTEGER));
+            }
+            Marshal.StructureToPtr(large_integer, buffer, true);
+        }
+
+        public LARGE_INTEGER(Int32 HighPart, UInt32 LowPart)
+        {
+            large_integer = new _LARGE_INTEGER();
+            large_integer.HighPart = HighPart;
+            large_integer.LowPart = LowPart;
+            unsafe
+            {
+                buffer = Marshal.AllocHGlobal(sizeof(_LARGE_INTEGER));
+            }
+            Marshal.StructureToPtr(large_integer, buffer, true);
+        }
+
+        public LARGE_INTEGER()
+        {
+            large_integer = new _LARGE_INTEGER();
+            unsafe
+            {
+                buffer = Marshal.AllocHGlobal(sizeof(_LARGE_INTEGER));
+            }
+            Marshal.StructureToPtr(large_integer, buffer, true);
+        }
+
+        public static implicit operator Int64(LARGE_INTEGER value)
+        {
+            return value.QuadPart;
+        }
+
+        public static implicit operator UInt32(LARGE_INTEGER value)
+        {
+            return value.LowPart;
+        }
+
+        public static implicit operator LARGE_INTEGER(Int64 value)
+        {
+            return new LARGE_INTEGER(value);
+        }
+
+        public static implicit operator LARGE_INTEGER(UInt32 value)
+        {
+            return new LARGE_INTEGER(value);
+        }
+
+        public static implicit operator IntPtr(LARGE_INTEGER value)
+        {
+            return value.buffer;
+        }
     }
 
     public class ACCESS_MASK
@@ -123,7 +244,7 @@ namespace NativeSupportLibrary
                 // The string is zero length, so no need to allocate space
                 // for the string.
                 unicode_string.Length = 0;
-                unicode_string.MaximumLength= 0;
+                unicode_string.MaximumLength = 0;
                 unicode_string.Buffer = IntPtr.Zero;
             }
 
@@ -177,11 +298,95 @@ namespace NativeSupportLibrary
         public IntPtr SecurityQualityOfService;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct IO_STATUS_BLOCK
+    public class IO_STATUS_BLOCK
     {
-        public uint Status;
-        public ulong Information;
-    }
+        [StructLayout(LayoutKind.Explicit, Pack = 1)]
+        private unsafe struct _IO_STATUS_BLOCK
+        {
+            [FieldOffset(0)] public Int32 Status;
+            [FieldOffset(0)] public UIntPtr Pointer = UIntPtr.Zero;
+            [FieldOffset(8)] public UInt64 Information = 0;
+        }
 
+        private _IO_STATUS_BLOCK nativeStatusBlock;
+        private IntPtr statusBlock = IntPtr.Zero;
+
+        public NativeSupportLibrary.NtStatusCodes Status
+        {
+            get
+            {
+                Marshal.PtrToStructure(statusBlock, nativeStatusBlock);
+                return (NtStatusCodes) nativeStatusBlock.Status;
+            }
+
+            set
+            {
+                nativeStatusBlock.Status = (Int32) value;
+                Marshal.StructureToPtr(nativeStatusBlock, statusBlock, true);
+            }
+        }
+          
+        public UInt64 Information
+        {
+            get
+            {
+                Marshal.PtrToStructure(statusBlock, nativeStatusBlock);
+                return nativeStatusBlock.Information;
+            }
+
+            set
+            {
+                nativeStatusBlock.Information = value;
+                Marshal.StructureToPtr(nativeStatusBlock, statusBlock, true);
+            }
+        }
+
+        public IO_STATUS_BLOCK(NativeSupportLibrary.NtStatusCodes Status, UInt32 Information)
+        {
+            unsafe
+            {
+                this.statusBlock = Marshal.AllocHGlobal(sizeof(_IO_STATUS_BLOCK));
+            }
+            nativeStatusBlock = new _IO_STATUS_BLOCK();
+            nativeStatusBlock.Status = (Int32) Status;
+            nativeStatusBlock.Information = Information;
+            Marshal.StructureToPtr(nativeStatusBlock, statusBlock, true);
+        }
+
+        public IO_STATUS_BLOCK(NativeSupportLibrary.NtStatusCodes Status, UInt64 InformationPtr)
+        {
+            unsafe
+            {
+                this.statusBlock = Marshal.AllocHGlobal(sizeof(_IO_STATUS_BLOCK));
+            }
+            nativeStatusBlock = new _IO_STATUS_BLOCK();
+            nativeStatusBlock.Status = (Int32)Status;
+            nativeStatusBlock.Information = Information;
+            Marshal.StructureToPtr(nativeStatusBlock, statusBlock, true);
+        }
+
+        private IO_STATUS_BLOCK(IntPtr Buffer)
+        {
+            unsafe
+            {
+                statusBlock = Marshal.AllocHGlobal(sizeof(_IO_STATUS_BLOCK));
+            }
+            nativeStatusBlock = new _IO_STATUS_BLOCK();
+            Marshal.PtrToStructure(Buffer, statusBlock);
+            nativeStatusBlock.Status = (Int32)Status;
+            nativeStatusBlock.Information = Information;
+            Marshal.StructureToPtr(nativeStatusBlock, statusBlock, true);
+        }
+
+        public static implicit operator IntPtr(IO_STATUS_BLOCK iosb)
+        {
+            return iosb.statusBlock;
+        }
+
+        public static implicit operator IO_STATUS_BLOCK(IntPtr buffer)
+        {
+            return new IO_STATUS_BLOCK(buffer);
+        }
+
+    }
 }

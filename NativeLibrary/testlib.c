@@ -152,4 +152,16 @@ MYAPI void NativeTestObjectAttributes(OBJECT_ATTRIBUTES* ObjectAttributes)
     printf("\tSecurityQualityOfService: 0x%p\n", ObjectAttributes->SecurityQualityOfService);
 }
 
+MYAPI void NativeTestLargeInteger(LARGE_INTEGER* LargeInteger)
+{
+    printf("Large Integer @ 0x%p\n", LargeInteger);
+    printf("\t     QuadPart: %llu\n", LargeInteger->QuadPart);
+    printf("\t      LowPart: 0x%x (%u)\n", LargeInteger->LowPart, LargeInteger->LowPart);
+    printf("\t     HighPart: 0x%x (%d)\n", LargeInteger->HighPart, LargeInteger->HighPart);
+
+    if (0 == LargeInteger->QuadPart) {
+        LargeInteger->LowPart = 1;
+        LargeInteger->HighPart = 3;
+    }
+}
 
