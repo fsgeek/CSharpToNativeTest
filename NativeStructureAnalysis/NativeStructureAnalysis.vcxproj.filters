@@ -15,22 +15,8 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="testlib.c">
+    <ClCompile Include="NativeStructureAnalysis.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NtCreateFile.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="NtFsControlFile.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="NtDeviceIoControlFile.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="native-internal.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

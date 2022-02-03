@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <ApplicationManifest>C:\Users\TonyMason\source\repos\CSharpToNativeTest\MountManagerTest\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NativeCalls\NativeCalls.csproj" />
+    <ProjectReference Include="..\NativeLibrary\NativeLibrary.vcxproj" />
+    <ProjectReference Include="..\NativeSupporLibraryTest\NativeSupporLibraryTest.csproj" />
+  </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="copy ..\x64\Debug\NativeLibrary.dll bin\Debug\net6.0" />
+  </Target>
+
+</Project>

@@ -3,6 +3,7 @@ using NativeSupportLibrary;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
 
 namespace NativeSupporLibraryTest
 {
@@ -64,16 +65,21 @@ namespace NativeSupporLibraryTest
         [TestMethod]
         public void TestIO_STATUS_BLOCK()
         {
-            IO_STATUS_BLOCK iosb = new IO_STATUS_BLOCK(NativeSupportLibrary.NtStatusCodes.STATUS_RETRY, (UInt64)1);
+            IO_STATUS_BLOCK iosb = new IO_STATUS_BLOCK(NativeSupportLibrary.NtStatusCode.STATUS_RETRY, (UInt64)1);
             
             NativeSupportLibrary.NativeLibrary.NativeTestIoStatusBlock(ref iosb);
-            Assert.AreEqual(iosb.Status, (int)NtStatusCodes.STATUS_BUFFER_OVERFLOW);
+            Assert.AreEqual(iosb.Status, (int)NtStatusCode.STATUS_BUFFER_OVERFLOW);
             Assert.AreEqual(iosb.Information, (UInt32)0x10000);
         }
 
         [TestMethod]
         public void TestOBJECT_ATTRIBUTES()
         {
+            UNICODE_STRING c_drive = new UNICODE_STRING("\\??\\C:");
+            SafeFileHandle handle = new SafeFileHandle(IntPtr.Zero, true);
+            OBJECT_ATTRIBUTES objattr = new OBJECT_ATTRIBUTES(handle, c_drive);
+
+            NativeSupportLibrary.NativeLibrary.NativeTestObjectAttributes(objattr);
         }
 
     }

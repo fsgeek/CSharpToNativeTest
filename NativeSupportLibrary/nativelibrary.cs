@@ -23,15 +23,15 @@ namespace NativeSupportLibrary
         public unsafe static extern void NativeTestLargeInteger(IntPtr LargeInteger);
 
         [DllImport("NativeLibrary.dll", ExactSpelling = true, SetLastError = true)]
-        public unsafe static extern void NativeTestObjectAttributes(ref OBJECT_ATTRIBUTES ObjectAttributes);
+        public unsafe static extern void NativeTestObjectAttributes(IntPtr ObjectAttributes);
 
         // These are native APIs that are supported by the library.
-        [DllImport("ntdll.dll", ExactSpelling = true, SetLastError = true)]
+        [DllImport("NativeLibrary.dll", ExactSpelling = true, SetLastError = true)]
         public static extern int NtCreateFile(
                 ref IntPtr handle,
                 UInt32 access,
-                ref OBJECT_ATTRIBUTES objectAttributes,
-                ref IO_STATUS_BLOCK ioStatus,
+                IntPtr objectAttributes,
+                IntPtr ioStatus,
                 IntPtr allocSize,
                 UInt32 fileAttributes,
                 UInt32 share,
@@ -39,6 +39,32 @@ namespace NativeSupportLibrary
                 UInt32 createOptions,
                 IntPtr eaBuffer,
                 UInt32 eaLength);
-    }
 
+        [DllImport("NativeLibrary.dll", ExactSpelling = true, SetLastError = true)]
+        public static extern int NtFsControlFile(
+            IntPtr Handle,
+            IntPtr Event,
+            IntPtr ApcRoutine,
+            IntPtr ApcContext,
+            IntPtr IoStatusBlock,
+            UInt32 FsControlCode,
+            IntPtr InputBuffer,
+            UInt32 InputBufferLength,
+            IntPtr OutputBuffer,
+            UInt32 OutputBufferLength);
+
+        [DllImport("NativeLibrary.dll", ExactSpelling = true, SetLastError = true)]
+        public static extern int NtDeviceIoControlFile(
+            IntPtr Handle,
+            IntPtr Event,
+            IntPtr ApcRoutine,
+            IntPtr ApcContext,
+            IntPtr IoStatusBlock,
+            UInt32 FsControlCode,
+            IntPtr InputBuffer,
+            UInt32 InputBufferLength,
+            IntPtr OutputBuffer,
+            UInt32 OutputBufferLength);
+
+    }
 }

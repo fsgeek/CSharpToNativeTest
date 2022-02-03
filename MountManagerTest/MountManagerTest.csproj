@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MountManagerLibrary\MountManagerLibrary.csproj" />
+    <ProjectReference Include="..\NativeCalls\NativeCalls.csproj" />
+    <ProjectReference Include="..\NativeSupportLibrary\NativeSupportLibrary.csproj" />
+  </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="copy ..\x64\Debug\NativeLibrary.dll bin\Debug\net6.0" />
+  </Target>
+
+</Project>

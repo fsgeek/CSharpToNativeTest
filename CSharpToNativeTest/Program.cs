@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
 
 using NativeSupportLibrary;
 
@@ -61,6 +62,18 @@ namespace CSharpToNativeTest
             Console.WriteLine($"Before calling large integer native test: {testli.QuadPart}");
             NativeSupportLibrary.NativeLibrary.NativeTestLargeInteger(testli);
             Console.WriteLine($"After calling large integer native test: {testli.QuadPart}, {testli.HighPart}, {testli.LowPart}");
+
+
+            UNICODE_STRING c_drive = new UNICODE_STRING("\\??\\C:");
+            SafeFileHandle handle = new SafeFileHandle(IntPtr.Zero, true);
+            OBJECT_ATTRIBUTES objattr = new OBJECT_ATTRIBUTES(handle, c_drive);
+            // NtStatusCodes status = NTCreateFile()
+
+
+            Console.WriteLine("Before calling object attribute test");
+            NativeSupportLibrary.NativeLibrary.NativeTestObjectAttributes(objattr);
+            Console.WriteLine("After calling object attribute test");
+
 
             Console.WriteLine("Program complete");
         }
