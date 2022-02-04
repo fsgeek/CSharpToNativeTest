@@ -44,9 +44,9 @@ namespace MountManagerLibrary
 
         public readonly UInt32 IOCTL_MOUNTDEV_QUERY_DEVICE_NAME = Ioctl.CTL_CODE(MOUNTDEVCONTROLTYPE, 2, Ioctl.METHOD_BUFFERED, Ioctl.FILE_ANY_ACCESS);
 
-#endregion constants
+        #endregion constants
 
-#region structures
+        #region structures
 
         [StructLayout(LayoutKind.Explicit, Pack = 0)]
         private struct _MOUNTMGR_CREATE_POINT_INPUT
@@ -58,24 +58,48 @@ namespace MountManagerLibrary
             // Note that the balance of the buffer contains the name(s)
         }
 
-        [StructLayout(LayoutKind.Explicit, Pack = 0)]
-        private struct _MOUNTMGR_MOUNT_POINT
-        {
-            [FieldOffset(0)] UInt32 SymbolicLinkNameOffset;
-            [FieldOffset(4)] UInt16 SymbolicLinkNameLength;
-            [FieldOffset(8)] UInt32 UniqueIdOffset;
-            [FieldOffset(12)] UInt16 UniqueIdLength;
-            [FieldOffset(16)] UInt32 DeviceNameOffset;
-            [FieldOffset(20)] UInt16 DeviceNameLength;
-            // Note that the balance of the buffer contains the name(s)
+        private class MOUNTMGR_MOUNT_POINT {
+            [StructLayout(LayoutKind.Explicit, Pack = 0)]
+            private struct _MOUNTMGR_MOUNT_POINT
+            {
+                [FieldOffset(0)] public UInt32 SymbolicLinkNameOffset;
+                [FieldOffset(4)] public UInt16 SymbolicLinkNameLength;
+                [FieldOffset(8)] public UInt32 UniqueIdOffset;
+                [FieldOffset(12)] public UInt16 UniqueIdLength;
+                [FieldOffset(16)] public UInt32 DeviceNameOffset;
+                [FieldOffset(20)] public UInt16 DeviceNameLength;
+                // Note that the balance of the buffer contains the name(s)
+            }
+
+            public readonly string SymbolicLink;
+            public readonly int SymbolicLinkLength;
+            public readonly string UniqueId;
+            public readonly int UniqueIdLength;
+            public readonly string DeviceName;
+            public readonly int DeviceNameLength;
+
+            public MOUNTMGR_MOUNT_POINT(IntPtr Buffer, ref int MountpointOffset)
+            {
+                _MOUNTMGR_MOUNT_POINT mountpoint = Marshal.PtrToStructure<_MOUNTMGR_MOUNT_POINT>(Buffer + MountpointOffset);
+
+                SymbolicLink = Marshal.PtrToStringUni(Buffer + (int) mountpoint.SymbolicLinkNameOffset, mountpoint.SymbolicLinkNameLength / sizeof(char));
+                SymbolicLinkLength = mountpoint.SymbolicLinkNameLength;
+                UniqueId = Marshal.PtrToStringUni(Buffer + (int) mountpoint.UniqueIdOffset, mountpoint.UniqueIdLength);
+                UniqueIdLength = mountpoint.UniqueIdLength;
+                byte[] buffer = new byte[UniqueIdLength];
+                Marshal.Copy(Buffer + (int)mountpoint.UniqueIdOffset, buffer, 0, mountpoint.UniqueIdLength);
+                UniqueId = Convert.ToHexString(buffer);
+                DeviceName = Marshal.PtrToStringUni(Buffer + (int) mountpoint.DeviceNameOffset, mountpoint.DeviceNameLength / sizeof(char));
+                DeviceNameLength = mountpoint.DeviceNameLength;
+                MountpointOffset += Marshal.SizeOf(mountpoint);
+            }
         }
 
         [StructLayout(LayoutKind.Explicit, Pack = 0)]
-        private struct _MOUNTMGR_MOUNT_POINTS
+        private unsafe struct _MOUNTMGR_MOUNT_POINTS
         {
-            [FieldOffset(0)] UInt32 Size;
-            [FieldOffset(4)] UInt32 NumberOfMountPoints;
-            // Note that the balance of the buffer contains mount point(s)
+            [FieldOffset(0)] public UInt32 Size;
+            [FieldOffset(4)] public UInt32 NumberOfMountPoints;
         }
 
         // This is used for multiple (identical) data structures
@@ -219,31 +243,89 @@ namespace MountManagerLibrary
         #endregion private data
 
         #region private methods
+
+        List<MOUNTMGR_MOUNT_POINT> ActiveMountPoints = new List<MOUNTMGR_MOUNT_POINT>();
+        Dictionary<string, MOUNTMGR_MOUNT_POINT> SymbolicLinks = new Dictionary<string, MOUNTMGR_MOUNT_POINT>();
+        Dictionary<string, MOUNTMGR_MOUNT_POINT> UniqueIDs = new Dictionary<string, MOUNTMGR_MOUNT_POINT>();
+        Dictionary<string, MOUNTMGR_MOUNT_POINT> NamedDevices = new Dictionary<string, MOUNTMGR_MOUNT_POINT>(); 
+
+
+
         private void LoadMountManagerData()
         {
             NtStatusCode status;
             IO_STATUS_BLOCK statusBlock = new IO_STATUS_BLOCK();
-            byte[] buffer = new byte[1024 * 1024];
+            uint bufferSize = 1024 * 1024; // 1MB
+            IntPtr buffer = Marshal.AllocHGlobal((int)bufferSize); // 1MB
 
             if (MountManagerHandle.IsInvalid)
             {
                 throw new IOException("Mount Manager handle is invalid, cannot load mount manager data");
             }
 
+            // Oddly, the mount manager is most unhappy without an input buffer, even though
+            // it is happy with an empty input buffer... go figure.
             status = NtDeviceIoControlFile(
                 MountManagerHandle,
                 new EVENT(),
                 new APC(),
                 ref statusBlock,
                 IOCTL_MOUNTMGR_QUERY_POINTS,
-                ref buffer, // input buffer
-                ref buffer // output buffer
-                );
+                buffer,
+                bufferSize,
+                buffer,
+                bufferSize);
 
             if (!NtStatus.NT_SUCCESS(status)) 
             {
                 throw new IOException($"NtDeviceIoControlFile failed, status {status} ({status:X}) = {NtStatusToString.StatusToString(status)}");
             }
+
+            // So NOW I have a blob of data.
+            ulong returnSize = statusBlock.Information;
+            Console.WriteLine($"Mount manager returned {returnSize} bytes ({returnSize:X}");
+            _MOUNTMGR_MOUNT_POINTS mountpoints = new _MOUNTMGR_MOUNT_POINTS();
+            mountpoints = Marshal.PtrToStructure<_MOUNTMGR_MOUNT_POINTS>(buffer);
+            Console.WriteLine($"Mount manager has:\n\tSize: {mountpoints.Size}\n\tMountpoints:{mountpoints.NumberOfMountPoints}");
+            int offset = Marshal.SizeOf(mountpoints);
+            for (int index = 0; index < mountpoints.NumberOfMountPoints; index++) 
+            { 
+                MOUNTMGR_MOUNT_POINT mountpoint = new MOUNTMGR_MOUNT_POINT(buffer, ref offset);
+
+                Console.WriteLine($"Mount point @ offset {offset} ({offset:X}):", offset, offset);
+                Console.WriteLine($"\tSymbolic Link ({mountpoint.SymbolicLinkLength}): {mountpoint.SymbolicLink}");
+                Console.WriteLine($"\t     UniqueId ({mountpoint.UniqueIdLength}): {mountpoint.UniqueId}");
+                Console.WriteLine($"\t   DeviceName ({mountpoint.DeviceNameLength}): {mountpoint.DeviceName}");
+
+
+                List<MOUNTMGR_MOUNT_POINT> ActiveMountPoints = new List<MOUNTMGR_MOUNT_POINT>();
+
+                Dictionary<string, List<MOUNTMGR_MOUNT_POINT>> SymbolicLinks = new Dictionary<string, List<MOUNTMGR_MOUNT_POINT>>();
+                Dictionary<string, MOUNTMGR_MOUNT_POINT> UniqueIDs = new Dictionary<string, MOUNTMGR_MOUNT_POINT>();
+                Dictionary<string, List<MOUNTMGR_MOUNT_POINT>> NamedDevices = new Dictionary<string, List<MOUNTMGR_MOUNT_POINT>>();
+
+                ActiveMountPoints.Add(mountpoint);
+
+                if (!SymbolicLinks.ContainsKey(mountpoint.SymbolicLink))
+                {
+                    SymbolicLinks.Add(mountpoint.SymbolicLink, new List<MOUNTMGR_MOUNT_POINT>());
+                }
+                SymbolicLinks[mountpoint.SymbolicLink].Add(mountpoint);
+
+                if (UniqueIDs.ContainsKey(mountpoint.UniqueId))
+                {
+                    throw new Exception($"Unique ID isn't so unique {mountpoint.UniqueId}");
+                }
+
+                if (!NamedDevices.ContainsKey(mountpoint.DeviceName))
+                {
+                    NamedDevices.Add(mountpoint.DeviceName, new List<MOUNTMGR_MOUNT_POINT>());
+                }
+
+            }
+            Marshal.FreeHGlobal(buffer);
+            buffer = IntPtr.Zero;
+
         }
         #endregion private methods
 

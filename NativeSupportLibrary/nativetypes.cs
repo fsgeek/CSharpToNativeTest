@@ -1041,14 +1041,14 @@ namespace NativeSupportLibrary
         {
             get
             {
-                Marshal.PtrToStructure(buffer, nativeStatusBlock);
+                nativeStatusBlock = Marshal.PtrToStructure<_IO_STATUS_BLOCK>(buffer);
                 return (NtStatusCode)nativeStatusBlock.Status;
             }
 
             set
             {
                 nativeStatusBlock.Status = (Int32)value;
-                Marshal.StructureToPtr(nativeStatusBlock, buffer, true);
+                Marshal.StructureToPtr<_IO_STATUS_BLOCK>(nativeStatusBlock, buffer, true);
             }
         }
 
@@ -1056,14 +1056,14 @@ namespace NativeSupportLibrary
         {
             get
             {
-                Marshal.PtrToStructure(buffer, nativeStatusBlock);
+                nativeStatusBlock = Marshal.PtrToStructure<_IO_STATUS_BLOCK>(buffer);
                 return nativeStatusBlock.Information;
             }
 
             set
             {
                 nativeStatusBlock.Information = value;
-                Marshal.StructureToPtr(nativeStatusBlock, buffer, true);
+                Marshal.StructureToPtr<_IO_STATUS_BLOCK>(nativeStatusBlock, buffer, true);
             }
         }
 
