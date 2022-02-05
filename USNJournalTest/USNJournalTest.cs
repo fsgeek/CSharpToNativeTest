@@ -31,6 +31,22 @@ namespace CSharpToNativeTest
 
             Console.WriteLine($"IntPtr p is now {p:X}");
 
+            /*
+             * This is what fsutil shows for the USN journal information
+             * 
+             *  PS C:\Users\TonyMason\source\repos\CSharpToNativeTest\MountManagerTest\bin\Debug\net6.0> fsutil usn queryJournal c:
+                Usn Journal ID   : 0x01d6a0c52c1b9016
+                First Usn        : 0x0000000c02800000
+                Next Usn         : 0x0000000c04d18550
+                Lowest Valid Usn : 0x0000000000000000
+                Max Usn          : 0x00000fffffff0000
+                Maximum Size     : 0x0000000002000000 (32.0 MB)
+                Allocation Delta : 0x0000000000800000 ( 8.0 MB)
+                Minimum record version supported : 2
+                Maximum record version supported : 4
+                Write range tracking: Disabled
+            */
+
             // Prior work has been focused on static data sets.  To make this a useful system service we need to support dynamic data collection, which
             // gives rise to the systems problem that are at the heart of my research.
         }

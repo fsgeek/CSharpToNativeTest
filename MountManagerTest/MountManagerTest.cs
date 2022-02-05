@@ -11,6 +11,18 @@ namespace MountManagerTest
         {
             MountManager mountMgr = new MountManager();
 
+            Console.WriteLine("List of drives with drive letters:");
+            foreach (string drive in mountMgr.GetDrivesWithLetters())
+            {
+                Console.WriteLine("\t" + drive);
+            }
+
+            Console.WriteLine("List of all drives:");
+            foreach (string drive in mountMgr.GetAllDrives())
+            {
+                Console.WriteLine($"\t{drive}");
+            }
+
             Console.WriteLine("Test Done");
         }
     }

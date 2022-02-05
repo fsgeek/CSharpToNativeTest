@@ -1,5 +1,6 @@
 ﻿using NativeSupportLibrary;
 using System.Runtime.InteropServices;
+using MountManagerLibrary;
 
 namespace USNJournal
 {
@@ -495,56 +496,52 @@ namespace USNJournal
     public class USN_JOURNAL_DATA
     {
         /*
-    typedef struct {
+        typedef struct {
 
-    ULONGLONG UsnJournalID;
-    USN FirstUsn;
-    USN NextUsn;
-    USN LowestValidUsn;
-    USN MaxUsn;
-    ULONGLONG MaximumSize;
-    ULONGLONG AllocationDelta;
+            ULONGLONG UsnJournalID;
+            USN FirstUsn;
+            USN NextUsn;
+            USN LowestValidUsn;
+            USN MaxUsn;
+            ULONGLONG MaximumSize;
+            ULONGLONG AllocationDelta;
 
-    } USN_JOURNAL_DATA_V0, *PUSN_JOURNAL_DATA_V0;
+        } USN_JOURNAL_DATA_V0, *PUSN_JOURNAL_DATA_V0;
 
-    typedef struct {
+        typedef struct {
+            ULONGLONG UsnJournalID;
+            USN FirstUsn;
+            USN NextUsn;
+            USN LowestValidUsn;
+            USN MaxUsn;
+            ULONGLONG MaximumSize;
+            ULONGLONG AllocationDelta;
+            USHORT MinSupportedMajorVersion;
+            USHORT MaxSupportedMajorVersion;
+        } USN_JOURNAL_DATA_V1, *PUSN_JOURNAL_DATA_V1;
 
-    ULONGLONG UsnJournalID;
-    USN FirstUsn;
-    USN NextUsn;
-    USN LowestValidUsn;
-    USN MaxUsn;
-    ULONGLONG MaximumSize;
-    ULONGLONG AllocationDelta;
-    USHORT MinSupportedMajorVersion;
-    USHORT MaxSupportedMajorVersion;
-
-    } USN_JOURNAL_DATA_V1, *PUSN_JOURNAL_DATA_V1;
-
-    typedef struct {
-
-    ULONGLONG UsnJournalID;
-    USN FirstUsn;
-    USN NextUsn;
-    USN LowestValidUsn;
-    USN MaxUsn;
-    ULONGLONG MaximumSize;
-    ULONGLONG AllocationDelta;
-    USHORT MinSupportedMajorVersion;
-    USHORT MaxSupportedMajorVersion;
-    ULONG Flags;
-    ULONGLONG RangeTrackChunkSize;
-    LONGLONG RangeTrackFileSizeThreshold;
-
-    } USN_JOURNAL_DATA_V2, *PUSN_JOURNAL_DATA_V2;
+        typedef struct {
+            ULONGLONG UsnJournalID;
+            USN FirstUsn;
+            USN NextUsn;
+            USN LowestValidUsn;
+            USN MaxUsn;
+            ULONGLONG MaximumSize;
+            ULONGLONG AllocationDelta;
+            USHORT MinSupportedMajorVersion;
+            USHORT MaxSupportedMajorVersion;
+            ULONG Flags;
+            ULONGLONG RangeTrackChunkSize;
+            LONGLONG RangeTrackFileSizeThreshold;
+        } USN_JOURNAL_DATA_V2, *PUSN_JOURNAL_DATA_V2;
 
 
-    #if (NTDDI_VERSION >= NTDDI_WIN8)
-    typedef USN_JOURNAL_DATA_V1 USN_JOURNAL_DATA, *PUSN_JOURNAL_DATA;
-    #else
-    typedef USN_JOURNAL_DATA_V0 USN_JOURNAL_DATA, *PUSN_JOURNAL_DATA;
-    #endif
-        */
+        #if (NTDDI_VERSION >= NTDDI_WIN8)
+        typedef USN_JOURNAL_DATA_V1 USN_JOURNAL_DATA, *PUSN_JOURNAL_DATA;
+        #else
+        typedef USN_JOURNAL_DATA_V0 USN_JOURNAL_DATA, *PUSN_JOURNAL_DATA;
+        #endif
+            */
     }
 
     public class DELETE_USN_JOURNAL_DATA
@@ -570,5 +567,37 @@ namespace USNJournal
 
         #endif
         */
+    }
+
+    public class USN_JOURNAL
+    {
+        private string DeviceName;
+        SafeHandle DeviceHandle;
+
+        public USN_JOURNAL(string Drive)
+        {
+            /*
+            UNICODE_STRING c_drive = new UNICODE_STRING(MOUNTMGR_DEVICE_NAME_STRING);
+            OBJECT_ATTRIBUTES objattr = new OBJECT_ATTRIBUTES(MountManagerHandle, c_drive);
+            ACCESS_MASK mask = (UInt32)ACCESS_MASK.GENERIC_READ;
+            IO_STATUS_BLOCK statusBlock = new IO_STATUS_BLOCK();
+            FILE_ATTRIBUTES fileAttr = 0;
+            SHARE_ACCESS shareAccess = SHARE_ACCESS.FILE_SHARE_READ | SHARE_ACCESS.FILE_SHARE_WRITE;
+            CREATE_DISPOSITION disposition = CREATE_DISPOSITION.FILE_OPEN;
+            CREATE_OPTIONS options = 0;
+            EXTENDED_ATTRIBUTE ea = new EXTENDED_ATTRIBUTE();
+
+            NtStatusCode status = NtCreateFile(ref MountManagerHandle, mask, objattr, ref statusBlock, 0, fileAttr, shareAccess, disposition, options, ea);
+
+            if (!NtStatus.NT_SUCCESS(status))
+            {
+                throw new IOException($"NtCreateFile failed, status {status} ({status:X}) = {NtStatusToString.StatusToString(status)}");
+            }
+
+            LoadMountManagerData();
+            */
+        }
+
+
     }
 }

@@ -35,7 +35,7 @@ NtFsControlFile(
 
     if (NULL == native) {
         native = (NtFsControlFile_t)GetNativeRoutine("NtFsControlFile");
-        printf("Mapped NtFsControlFile to 0x%p\n", native);
+        // printf("Mapped NtFsControlFile to 0x%p\n", native);
     }
     assert(NULL != native);
 

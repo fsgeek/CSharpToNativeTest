@@ -159,7 +159,7 @@ namespace MountManagerLibrary
         {
             var array = s.ToCharArray();
 
-            return array.Length == 28 &&
+            return array.Length == 14 &&
                     array[0] == '\\' &&
                     array[1] == 'D' &&
                     array[2] == 'o' &&
@@ -181,7 +181,7 @@ namespace MountManagerLibrary
         public bool MOUNTMGR_IS_VOLUME_NAME(string s)
         {
             var array = s.ToCharArray();
-            return (array.Length == 96 || (array.Length == 98 && array[48] == '\\')) &&
+            return (array.Length == 48 || (array.Length == 49 && array[48] == '\\')) &&
                      array[0] == '\\' &&
                      (array[1] == '?' || array[1] == '\\') &&
                      array[2] == '?' &&
@@ -205,7 +205,7 @@ namespace MountManagerLibrary
             var array = s.ToCharArray();
 
             return MOUNTMGR_IS_VOLUME_NAME(s) &&
-                array.Length == 96 &&
+                array.Length == 48 &&
                 array[1] == '\\';
         }
 
@@ -214,7 +214,7 @@ namespace MountManagerLibrary
             var array = s.ToCharArray();
 
             return MOUNTMGR_IS_VOLUME_NAME(s) &&
-                array.Length == 98 &&
+                array.Length == 48 &&
                 array[1] == '\\';
 
         }
@@ -224,7 +224,7 @@ namespace MountManagerLibrary
             var array = s.ToCharArray();
 
             return MOUNTMGR_IS_VOLUME_NAME(s) &&
-                array.Length == 96 &&
+                array.Length == 48 &&
                 array[1] == '?';
 
         }
@@ -234,7 +234,7 @@ namespace MountManagerLibrary
             var array = s.ToCharArray();
 
             return MOUNTMGR_IS_VOLUME_NAME(s) &&
-                array.Length == 98 &&
+                array.Length == 49 &&
                 array[1] == '?';
         }
 
@@ -245,10 +245,51 @@ namespace MountManagerLibrary
         #region private methods
 
         List<MOUNTMGR_MOUNT_POINT> ActiveMountPoints = new List<MOUNTMGR_MOUNT_POINT>();
-        Dictionary<string, MOUNTMGR_MOUNT_POINT> SymbolicLinks = new Dictionary<string, MOUNTMGR_MOUNT_POINT>();
+        Dictionary<string, List<MOUNTMGR_MOUNT_POINT>> SymbolicLinks = new Dictionary<string, List<MOUNTMGR_MOUNT_POINT>>();
         Dictionary<string, MOUNTMGR_MOUNT_POINT> UniqueIDs = new Dictionary<string, MOUNTMGR_MOUNT_POINT>();
-        Dictionary<string, MOUNTMGR_MOUNT_POINT> NamedDevices = new Dictionary<string, MOUNTMGR_MOUNT_POINT>(); 
+        Dictionary<string, List<MOUNTMGR_MOUNT_POINT>> NamedDevices = new Dictionary<string, List<MOUNTMGR_MOUNT_POINT>>();
 
+        public List<string> GetDrivesWithLetters()
+        {
+            List<string> drives = new List<string>();
+
+            foreach (MOUNTMGR_MOUNT_POINT candidate in ActiveMountPoints)
+            {
+                if (MOUNTMGR_IS_DRIVE_LETTER(candidate.SymbolicLink))
+                {
+                    drives.Add(candidate.SymbolicLink);
+                }
+            }
+
+            return drives;
+        }
+
+        public List<string>GetAllDrives()
+        {
+            List<string> drives = new List<string>();
+
+            foreach (string candidate in NamedDevices.Keys)
+            {
+                string name = null;
+
+                foreach (MOUNTMGR_MOUNT_POINT mp in NamedDevices[candidate])
+                {
+                    if (null == name)
+                    {
+                        name = mp.DeviceName;
+                    }
+                    if (MOUNTMGR_IS_DRIVE_LETTER(mp.SymbolicLink))
+                    {
+                        name = mp.SymbolicLink;
+                    }
+                    if (!drives.Contains(name)) { 
+                        drives.Add(name); 
+                    }
+                }
+            }
+
+            return drives;
+        }
 
 
         private void LoadMountManagerData()
@@ -283,26 +324,23 @@ namespace MountManagerLibrary
 
             // So NOW I have a blob of data.
             ulong returnSize = statusBlock.Information;
-            Console.WriteLine($"Mount manager returned {returnSize} bytes ({returnSize:X}");
             _MOUNTMGR_MOUNT_POINTS mountpoints = new _MOUNTMGR_MOUNT_POINTS();
             mountpoints = Marshal.PtrToStructure<_MOUNTMGR_MOUNT_POINTS>(buffer);
-            Console.WriteLine($"Mount manager has:\n\tSize: {mountpoints.Size}\n\tMountpoints:{mountpoints.NumberOfMountPoints}");
             int offset = Marshal.SizeOf(mountpoints);
+
+            ActiveMountPoints = new List<MOUNTMGR_MOUNT_POINT>();
+            SymbolicLinks = new Dictionary<string, List<MOUNTMGR_MOUNT_POINT>>();
+            UniqueIDs = new Dictionary<string, MOUNTMGR_MOUNT_POINT>();
+            NamedDevices = new Dictionary<string, List<MOUNTMGR_MOUNT_POINT>>();
+
             for (int index = 0; index < mountpoints.NumberOfMountPoints; index++) 
             { 
                 MOUNTMGR_MOUNT_POINT mountpoint = new MOUNTMGR_MOUNT_POINT(buffer, ref offset);
 
-                Console.WriteLine($"Mount point @ offset {offset} ({offset:X}):", offset, offset);
-                Console.WriteLine($"\tSymbolic Link ({mountpoint.SymbolicLinkLength}): {mountpoint.SymbolicLink}");
-                Console.WriteLine($"\t     UniqueId ({mountpoint.UniqueIdLength}): {mountpoint.UniqueId}");
-                Console.WriteLine($"\t   DeviceName ({mountpoint.DeviceNameLength}): {mountpoint.DeviceName}");
-
-
-                List<MOUNTMGR_MOUNT_POINT> ActiveMountPoints = new List<MOUNTMGR_MOUNT_POINT>();
-
-                Dictionary<string, List<MOUNTMGR_MOUNT_POINT>> SymbolicLinks = new Dictionary<string, List<MOUNTMGR_MOUNT_POINT>>();
-                Dictionary<string, MOUNTMGR_MOUNT_POINT> UniqueIDs = new Dictionary<string, MOUNTMGR_MOUNT_POINT>();
-                Dictionary<string, List<MOUNTMGR_MOUNT_POINT>> NamedDevices = new Dictionary<string, List<MOUNTMGR_MOUNT_POINT>>();
+                // Console.WriteLine($"Mount point @ offset {offset} ({offset:X}):", offset, offset);
+                // Console.WriteLine($"\tSymbolic Link ({mountpoint.SymbolicLinkLength}): {mountpoint.SymbolicLink}");
+                // Console.WriteLine($"\t     UniqueId ({mountpoint.UniqueIdLength}): {mountpoint.UniqueId}");
+                // Console.WriteLine($"\t   DeviceName ({mountpoint.DeviceNameLength}): {mountpoint.DeviceName}");
 
                 ActiveMountPoints.Add(mountpoint);
 
@@ -321,10 +359,13 @@ namespace MountManagerLibrary
                 {
                     NamedDevices.Add(mountpoint.DeviceName, new List<MOUNTMGR_MOUNT_POINT>());
                 }
+                NamedDevices[mountpoint.DeviceName].Add(mountpoint);
 
             }
             Marshal.FreeHGlobal(buffer);
             buffer = IntPtr.Zero;
+
+            //  Console.WriteLine($"LoadMountManagerData: There are {ActiveMountPoints.Count} mount points active, {SymbolicLinks.Count} symlinks, {UniqueIDs.Count} Unique IDs and {NamedDevices.Count} Named Devices");
 
         }
         #endregion private methods

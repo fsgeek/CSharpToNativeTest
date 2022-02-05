@@ -8,6 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MountManagerLibrary\MountManagerLibrary.csproj" />
+    <ProjectReference Include="..\NativeLibrary\NativeLibrary.vcxproj" />
     <ProjectReference Include="..\NativeSupportLibrary\NativeSupportLibrary.csproj" />
   </ItemGroup>
 

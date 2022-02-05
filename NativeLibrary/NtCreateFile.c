@@ -36,7 +36,7 @@ NtCreateFile(
 
     if (NULL == native) {
         native = (NtCreateFile_t)GetNativeRoutine("NtCreateFile");
-        printf("Mapped NtCreateFile to 0x%p\n", native);
+        // printf("Mapped NtCreateFile to 0x%p\n", native);
     }
     assert(NULL != native);
 

@@ -35,7 +35,7 @@ NtDeviceIoControlFile(
 
     if (NULL == native) {
         native = (NtDeviceIoControlFile_t)GetNativeRoutine("NtDeviceIoControlFile");
-        printf("Mapped NtDeviceIoControlFile to 0x%p\n", native);
+        // printf("Mapped NtDeviceIoControlFile to 0x%p\n", native);
     }
     assert(NULL != native);
 
