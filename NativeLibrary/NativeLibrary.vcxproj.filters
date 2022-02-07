@@ -27,6 +27,9 @@
     <ClCompile Include="NtDeviceIoControlFile.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="NtQueryVolumeInformationFile.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="native-internal.h">

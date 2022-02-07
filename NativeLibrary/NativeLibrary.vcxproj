@@ -22,6 +22,7 @@
     <ClCompile Include="NtCreateFile.c" />
     <ClCompile Include="NtDeviceIoControlFile.c" />
     <ClCompile Include="NtFsControlFile.c" />
+    <ClCompile Include="NtQueryVolumeInformationFile.c" />
     <ClCompile Include="testlib.c" />
   </ItemGroup>
   <ItemGroup>

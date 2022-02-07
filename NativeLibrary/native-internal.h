@@ -54,3 +54,23 @@ inline static void* GetNativeRoutine(_In_ PCSTR RoutineName)
     return (void*)GetProcAddress(ntdll, RoutineName);
 
 }
+
+
+// from ntifs.h
+typedef enum _FSINFOCLASS {
+    FileFsVolumeInformation,
+    FileFsLabelInformation,
+    FileFsSizeInformation,
+    FileFsDeviceInformation,
+    FileFsAttributeInformation,
+    FileFsControlInformation,
+    FileFsFullSizeInformation,
+    FileFsObjectIdInformation,
+    FileFsDriverPathInformation,
+    FileFsVolumeFlagsInformation,
+    FileFsSectorSizeInformation,
+    FileFsDataCopyInformation,
+    FileFsMetadataSizeInformation,
+    FileFsFullSizeInformationEx,
+    FileFsMaximumInformation
+} FS_INFORMATION_CLASS, * PFS_INFORMATION_CLASS;
