@@ -1,6 +1,7 @@
 ﻿using NativeCalls;
 using NativeSupportLibrary;
 using Microsoft.Win32.SafeHandles;
+using USNJournal;
 
 namespace CSharpToNativeTest
 {
@@ -27,9 +28,13 @@ namespace CSharpToNativeTest
 
             // Console.WriteLine("Hello, World!");
 
-            IntPtr p = IntPtr.Zero + 1;
+            List<USN_JOURNAL.USN_JOURNAL_DRIVE_DATA>UsnDrives = USN_JOURNAL.GetUsnJournalDrives();
 
-            Console.WriteLine($"IntPtr p is now {p:X}");
+            foreach (USN_JOURNAL.USN_JOURNAL_DRIVE_DATA data in UsnDrives) 
+            {
+                Console.WriteLine($"Drive data.Drive has a USN journal");
+            }
+
 
             /*
              * This is what fsutil shows for the USN journal information

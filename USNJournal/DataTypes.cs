@@ -1,7 +1,21 @@
 ﻿using NativeSupportLibrary;
+using static NativeCalls.SystemCalls;
 using System.Runtime.InteropServices;
 using MountManagerLibrary;
+using Microsoft.Win32.SafeHandles;
 
+
+
+//
+// See: https://www.genericgamedev.com/general/converting-between-structs-and-byte-arrays/
+//
+// This argues for building a generic model of serialization that is based upon a template class.
+// While the binary reader/writer model is slightly faster as the author points out, it means
+// writing a lot more code.
+//
+// I'm not going back to re-do this.  I do think it is wise to consider using the serializable type model
+// moving forward
+//
 namespace USNJournal
 {
     public class ControlCodes
@@ -495,6 +509,70 @@ namespace USNJournal
     //
     public class USN_JOURNAL_DATA
     {
+        [StructLayout(LayoutKind.Explicit, Pack = 0)]
+
+        private struct _USN_JOURNAL_DATA
+        {
+            [FieldOffset(0)] public UInt64 UsnJournalID;
+            [FieldOffset(8)] public Int64 FirstUsn;
+            [FieldOffset(16)] public Int64 NextUsn;
+            [FieldOffset(24)] public Int64 LowestValidUsn;
+            [FieldOffset(32)] public Int64 MaxUsn;
+            [FieldOffset(40)] public UInt64 MaximumSize;
+            [FieldOffset(48)] public UInt64 AllocationDelta;
+            [FieldOffset(56)] public UInt16 MinSupportedMajorVersion; // V1 starts here
+            [FieldOffset(58)] public UInt16 MaxSupportedMajorVersion;
+            [FieldOffset(60)] public UInt32 Flags; // V2 starts here
+            [FieldOffset(64)] public UInt64 RangeTrackChunkSize;
+            [FieldOffset(72)] public Int64 RangeTrackFileSizeThreshold;
+
+            public static _USN_JOURNAL_DATA FromArray(byte[] bytes)
+            {
+                var reader = new BinaryReader(new MemoryStream(bytes));
+
+                var s = default(_USN_JOURNAL_DATA);
+
+                if (Marshal.SizeOf(s) > bytes.Length)
+                {
+                    throw new ArgumentException("Deserializing buffer smaller than our structure (old version?)");
+                }
+
+                s.UsnJournalID = reader.ReadUInt64();
+                s.FirstUsn = reader.ReadInt64();
+                s.NextUsn = reader.ReadInt64();
+                s.LowestValidUsn = reader.ReadInt64();
+                s.MaxUsn = reader.ReadInt64();
+                s.MaximumSize = reader.ReadUInt64();
+                s.AllocationDelta = reader.ReadUInt64();
+                s.MinSupportedMajorVersion = reader.ReadUInt16();
+                s.MaxSupportedMajorVersion = reader.ReadUInt16();
+                s.Flags = reader.ReadUInt32();
+                s.RangeTrackChunkSize = reader.ReadUInt64();
+                s.RangeTrackFileSizeThreshold = reader.ReadInt64();
+
+                return s;
+            }
+        }
+
+        _USN_JOURNAL_DATA _journalData;
+
+        public UInt64 UsnJournalID { get { return _journalData.UsnJournalID; } }
+        public Int64 FirstUsn { get { return _journalData.FirstUsn; } }
+        public Int64 NextUsn { get { return _journalData.NextUsn; } }
+        public Int64 LowestValidUsn { get { return _journalData.LowestValidUsn; } }
+        public Int64 MaxUsn { get { return _journalData.MaxUsn; } }
+        public UInt64 MaximumSize {  get { return _journalData.MaximumSize; } }
+        public UInt64 AllocationDelta { get { return _journalData.AllocationDelta; } }
+        public UInt16 MinSupportedMajorVersion { get { return _journalData.MinSupportedMajorVersion; } } // V1 starts here
+        public UInt16 MaxSupportedMajorVersion { get { return _journalData.MaxSupportedMajorVersion; } }
+        public UInt32 Flags { get { return _journalData.Flags; } } // V2 starts here
+        public UInt64 RangeTrackChunkSize { get { return _journalData.RangeTrackChunkSize; } }
+        public Int64 RangeTrackFileSizeThreshold { get { return _journalData.RangeTrackFileSizeThreshold; } }
+
+        public USN_JOURNAL_DATA(byte[] Buffer)
+        {
+            _journalData = _USN_JOURNAL_DATA.FromArray(Buffer);
+        }
         /*
         typedef struct {
 
@@ -571,8 +649,8 @@ namespace USNJournal
 
     public class USN_JOURNAL
     {
-        private string DeviceName;
-        SafeHandle DeviceHandle;
+        private string DeviceName = new string("");
+        SafeFileHandle DeviceHandle = new SafeFileHandle(IntPtr.Zero, true);
 
         public USN_JOURNAL(string Drive)
         {
@@ -598,6 +676,114 @@ namespace USNJournal
             */
         }
 
+        //
+        // This is used to return information about drives on the system that support the USN journal and whether or not the USN journal is enabled
+        // on the given drive.
+        public struct USN_JOURNAL_DRIVE_DATA
+        {
+            public string Drive;
+            public bool Enabled;
+        }
 
+        public static List<USN_JOURNAL_DRIVE_DATA> GetUsnJournalDrives()
+        {
+            List<USN_JOURNAL_DRIVE_DATA> usnDrives = new List<USN_JOURNAL_DRIVE_DATA>();
+            MountManager mountManager = new MountManager();
+
+            List<string> drives = mountManager.GetAllDrives();
+
+            foreach (string drive in drives)
+            {
+                // open the drive, check if it supports the USN journal, and if it does
+                // determine if it is enabled.
+                SafeFileHandle driveHandle = new SafeFileHandle(IntPtr.Zero, true);
+                UNICODE_STRING c_drive = new UNICODE_STRING(drive);
+                OBJECT_ATTRIBUTES objattr = new OBJECT_ATTRIBUTES(new SafeFileHandle(IntPtr.Zero, true), c_drive);
+                ACCESS_MASK mask = (UInt32)ACCESS_MASK.GENERIC_READ;
+                IO_STATUS_BLOCK statusBlock = new IO_STATUS_BLOCK();
+                FILE_ATTRIBUTES fileAttr = 0;
+                SHARE_ACCESS shareAccess = SHARE_ACCESS.FILE_SHARE_READ | SHARE_ACCESS.FILE_SHARE_WRITE;
+                CREATE_DISPOSITION disposition = CREATE_DISPOSITION.FILE_OPEN;
+                CREATE_OPTIONS options = 0;
+                EXTENDED_ATTRIBUTE ea = new EXTENDED_ATTRIBUTE();
+
+                NtStatusCode status = NtCreateFile(ref driveHandle, mask, objattr, ref statusBlock, 0, fileAttr, shareAccess, disposition, options, ea);
+
+                if (!NtStatus.NT_SUCCESS(status))
+                {
+                    throw new IOException($"NtCreateFile failed, status {status} ({status:X}) = {NtStatusToString.StatusToString(status)}");
+                }
+
+                // Check file system characteristics
+                FILE_FS_ATTRIBUTE_INFORMATION fsAttrInfo = new FILE_FS_ATTRIBUTE_INFORMATION();
+                byte[] buffer = new byte[4096];
+
+                status = NtQueryVolumeInformationFile(driveHandle, ref statusBlock, ref fsAttrInfo);
+
+                if (!NtStatus.NT_SUCCESS(status))
+                {
+                    throw new IOException($"NtQueryVolumeInformationFile failed, status {status} ({status:X}) = {NtStatusToString.StatusToString(status)}");
+                }
+
+                Console.WriteLine($"Check Drive {drive} for USN support:");
+                if (0 != (FILE_SYSTEM_ATTRIBUTE_FLAGS.FILE_SUPPORTS_USN_JOURNAL & fsAttrInfo.FileSystemAttributes))
+                {
+                    USN_JOURNAL_DRIVE_DATA usnDrive = new USN_JOURNAL_DRIVE_DATA();
+                    ControlCodes controlCodes = new ControlCodes();
+
+                    usnDrive.Drive = drive;
+                    byte[] usnBuffer = new byte[1024 * 1024];
+                    // Check to see if it is actually enabled for this drive.
+                    status = NtFsControlFile(driveHandle, ref statusBlock, controlCodes.FSCTL_QUERY_USN_JOURNAL, ref usnBuffer);
+
+                    Console.WriteLine($"NtFsControlFile: status = 0x{statusBlock.Status:X} ({statusBlock.Status}), Information = {statusBlock.Information:X} ({(UInt64)statusBlock.Information})");
+
+                    if (!NtStatus.NT_SUCCESS(statusBlock.Status))
+                    {
+                        continue; // not of interest
+                    }
+
+                    if (!NtStatus.NT_SUCCESS(status))
+                    {
+                        throw new IOException($"NtFsControlFile failed, status {status} ({status:X}) = {NtStatusToString.StatusToString(status)}");
+                    }
+
+                    USN_JOURNAL_DATA journalData = new USN_JOURNAL_DATA(usnBuffer);
+
+                    /*
+                     *         public UInt64 UsnJournalID { get { return _journalData.UsnJournalID; } }
+        public Int64 FirstUsn { get { return _journalData.FirstUsn; } }
+        public Int64 NextUsn { get { return _journalData.NextUsn; } }
+        public Int64 LowestValidUsn { get { return _journalData.LowestValidUsn; } }
+        public Int64 MaxUsn { get { return _journalData.MaxUsn; } }
+        public UInt64 MaximumSize {  get { return _journalData.MaximumSize; } }
+        public UInt64 AllocationDelta { get { return _journalData.AllocationDelta; } }
+        public UInt16 MinSupportedMajorVersion { get { return _journalData.MinSupportedMajorVersion; } } // V1 starts here
+        public UInt16 MaxSupportedMajorVersion { get { return _journalData.MaxSupportedMajorVersion; } }
+        public UInt32 Flags { get { return _journalData.Flags; } } // V2 starts here
+        public UInt64 RangeTrackChunkSize { get { return _journalData.RangeTrackChunkSize; } }
+        public Int64 RangeTrackFileSizeThreshold { get { return _journalData.RangeTrackFileSizeThreshold; } }
+
+                     */
+                    Console.WriteLine($"USN Journal Data:");
+                    Console.WriteLine($"\t                UsnJournalID: {journalData.UsnJournalID}");
+                    Console.WriteLine($"\t                    FirstUsn: {journalData.FirstUsn}");
+                    Console.WriteLine($"\t                     NextUsn: {journalData.NextUsn}");
+                    Console.WriteLine($"\t              LowestValidUsn: {journalData.LowestValidUsn}");
+                    Console.WriteLine($"\t                      MaxUsn: {journalData.MaxUsn}");
+                    Console.WriteLine($"\t                 MaximumSize: {journalData.MaximumSize}");
+                    Console.WriteLine($"\t             AllocationDelta: {journalData.AllocationDelta}");
+                    Console.WriteLine($"\t    MinSupportedMajorVersion: {journalData.MinSupportedMajorVersion}");
+                    Console.WriteLine($"\t    MaxSupportedMajorVersion: {journalData.MaxSupportedMajorVersion}");
+                    Console.WriteLine($"\t                       Flags: {journalData.Flags}");
+                    Console.WriteLine($"\t         RangeTrackChunkSize: {journalData.RangeTrackChunkSize}");
+                    Console.WriteLine($"\t RangeTrackFileSizeThreshold: {journalData.RangeTrackFileSizeThreshold}");
+
+                }
+
+            }
+
+            return usnDrives;
+        }
     }
 }
