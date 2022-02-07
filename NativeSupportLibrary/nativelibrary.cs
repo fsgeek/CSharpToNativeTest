@@ -66,5 +66,13 @@ namespace NativeSupportLibrary
             IntPtr OutputBuffer,
             UInt32 OutputBufferLength);
 
+        [DllImport("NativeLibrary.dll", ExactSpelling = true, SetLastError = true)]
+        public static extern int NtQueryVolumeInformationFile(
+            IntPtr Handle,
+            IntPtr IoStatusBlock,
+            IntPtr FsInformation,
+            UInt32 Length,
+            UInt32 FsInformationClass);
+
     }
 }
