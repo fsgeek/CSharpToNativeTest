@@ -62,7 +62,10 @@ namespace NativeCalls
                 else
             if (NtStatusCode.STATUS_BUFFER_OVERFLOW == IoStatusBlock.Status)
                 {
-                    Marshal.Copy(outbuffer, OutputBuffer, 0, (int)outbufferLength);
+                    if (null != OutputBuffer)
+                    {
+                        Marshal.Copy(outbuffer, OutputBuffer, 0, (int)outbufferLength);
+                    }
                 }
 
             }
@@ -102,5 +105,27 @@ namespace NativeCalls
             return NtFsControlFile(Handle, new EVENT(), new APC(), ref IoStatusBlock, FsControlCode, ref Buffer, ref Buffer);
         }
 
+        public static NtStatusCode NtFsControlFile(
+            SafeFileHandle Handle,
+            ref IO_STATUS_BLOCK IoStatusBlock,
+            UInt32 FsControlCode,
+            IntPtr InputBuffer,
+            UInt32 InputBufferLength,
+            IntPtr OutputBuffer,
+            UInt32 OutputBufferLength)
+        {
+            return (NtStatusCode)NativeSupportLibrary.NativeLibrary.NtFsControlFile(
+                Handle.DangerousGetHandle(),
+                IntPtr.Zero,  // No Event support at present
+                IntPtr.Zero,  // No APC support at present
+                IntPtr.Zero,  // No APC support (context)
+                IoStatusBlock,
+                FsControlCode,
+                InputBuffer,
+                InputBufferLength,
+                OutputBuffer,
+                OutputBufferLength);
+
+        }
     }
 }

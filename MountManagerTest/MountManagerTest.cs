@@ -2,6 +2,7 @@
 using NativeSupportLibrary;
 using Microsoft.Win32.SafeHandles;
 using MountManagerLibrary;
+using Serilog;
 
 namespace MountManagerTest
 {
@@ -10,6 +11,8 @@ namespace MountManagerTest
         static void Main(string[] args)
         {
             MountManager mountMgr = new MountManager();
+            Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
+            Log.Information("Start Test");
 
             Console.WriteLine("List of drives with drive letters:");
             foreach (string drive in mountMgr.GetDrivesWithLetters())
@@ -23,7 +26,8 @@ namespace MountManagerTest
                 Console.WriteLine($"\t{drive}");
             }
 
-            Console.WriteLine("Test Done");
+            Log.Information("Test Done");
+            Log.CloseAndFlush();
         }
     }
 }

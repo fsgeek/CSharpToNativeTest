@@ -109,30 +109,30 @@ namespace NativeSupportLibrary
 
     public class FILE_ATTRIBUTES
     {
-        public const UInt32 FILE_ATTRIBUTE_READONLY = 0x00000001;
-        public const UInt32 FILE_ATTRIBUTE_HIDDEN = 0x00000002;
-        public const UInt32 FILE_ATTRIBUTE_SYSTEM = 0x00000004;
-        public const UInt32 FILE_ATTRIBUTE_DIRECTORY = 0x00000010;
-        public const UInt32 FILE_ATTRIBUTE_ARCHIVE = 0x00000020;
-        public const UInt32 FILE_ATTRIBUTE_DEVICE = 0x00000040;
-        public const UInt32 FILE_ATTRIBUTE_NORMAL = 0x00000080;
-        public const UInt32 FILE_ATTRIBUTE_TEMPORARY = 0x00000100;
-        public const UInt32 FILE_ATTRIBUTE_SPARSE_FILE = 0x00000200;
-        public const UInt32 FILE_ATTRIBUTE_REPARSE_POINT = 0x00000400;
-        public const UInt32 FILE_ATTRIBUTE_COMPRESSED = 0x00000800;
-        public const UInt32 FILE_ATTRIBUTE_OFFLINE = 0x00001000;
-        public const UInt32 FILE_ATTRIBUTE_NOT_CONTENT_INDEXED = 0x00002000;
-        public const UInt32 FILE_ATTRIBUTE_ENCRYPTED = 0x00004000;
-        public const UInt32 FILE_ATTRIBUTE_INTEGRITY_STREAM = 0x00008000;
-        public const UInt32 FILE_ATTRIBUTE_VIRTUAL = 0x00010000;
-        public const UInt32 FILE_ATTRIBUTE_NO_SCRUB_DATA = 0x00020000;
-        public const UInt32 FILE_ATTRIBUTE_EA = 0x00040000;
-        public const UInt32 FILE_ATTRIBUTE_PINNED = 0x00080000;
-        public const UInt32 FILE_ATTRIBUTE_UNPINNED = 0x00100000;
-        public const UInt32 FILE_ATTRIBUTE_RECALL_ON_OPEN = 0x00040000;
-        public const UInt32 FILE_ATTRIBUTE_RECALL_ON_DATA_ACCESS = 0x00400000;
-        public const UInt32 FILE_ATTRIBUTE_STRICTLY_SEQUENTIAL = 0x20000000;
-        public const UInt32 FILE_ATTRIBUTE_VALID_SET_FLAGS = 0x001a31a7;
+        public const UInt32 READONLY = 0x00000001;
+        public const UInt32 HIDDEN = 0x00000002;
+        public const UInt32 SYSTEM = 0x00000004;
+        public const UInt32 DIRECTORY = 0x00000010;
+        public const UInt32 ARCHIVE = 0x00000020;
+        public const UInt32 DEVICE = 0x00000040;
+        public const UInt32 NORMAL = 0x00000080;
+        public const UInt32 TEMPORARY = 0x00000100;
+        public const UInt32 SPARSE_FILE = 0x00000200;
+        public const UInt32 REPARSE_POINT = 0x00000400;
+        public const UInt32 COMPRESSED = 0x00000800;
+        public const UInt32 OFFLINE = 0x00001000;
+        public const UInt32 NOT_CONTENT_INDEXED = 0x00002000;
+        public const UInt32 ENCRYPTED = 0x00004000;
+        public const UInt32 INTEGRITY_STREAM = 0x00008000;
+        public const UInt32 VIRTUAL = 0x00010000;
+        public const UInt32 NO_SCRUB_DATA = 0x00020000;
+        public const UInt32 EA = 0x00040000;
+        public const UInt32 PINNED = 0x00080000;
+        public const UInt32 UNPINNED = 0x00100000;
+        public const UInt32 RECALL_ON_OPEN = 0x00040000;
+        public const UInt32 RECALL_ON_DATA_ACCESS = 0x00400000;
+        public const UInt32 STRICTLY_SEQUENTIAL = 0x20000000;
+        public const UInt32 VALID_SET_FLAGS = 0x001a31a7;
 
         UInt32 _FileAttribute;
 
@@ -265,7 +265,7 @@ namespace NativeSupportLibrary
 
     public class EXTENDED_ATTRIBUTE
     {
-        private Dictionary<string, byte[]> EaEntries;
+        private Dictionary<string, byte[]> EaEntries = new Dictionary<string, byte[]>();
 
         // TODO: implement this for real
 
@@ -646,7 +646,7 @@ namespace NativeSupportLibrary
 
         public byte AceType => aceHeader.AceType;
         public byte AceFlags => aceHeader.AceFlags;
-        public Nullable<byte>[] AceData;
+        public Nullable<byte>[] AceData = new Nullable<byte>[16];
 
         public UInt16 Length
         {
@@ -825,10 +825,10 @@ namespace NativeSupportLibrary
         private _SECURITY_DESCRIPTOR native_security_descriptor;
 
         UInt16 Control => native_security_descriptor.Control;
-        SID Owner;
-        SID Group;
-        ACL Sacl;
-        ACL Dacl;
+        SID? Owner;
+        SID? Group;
+        ACL? Sacl;
+        ACL? Dacl;
 
         private void MarshalSid()
         {
@@ -840,10 +840,22 @@ namespace NativeSupportLibrary
                 }
             }
             native_security_descriptor.Revision = (byte)Revision;
-            native_security_descriptor.Owner = Owner;
-            native_security_descriptor.Group = Group;
-            native_security_descriptor.Sacl = Sacl;
-            native_security_descriptor.Dacl = Dacl;
+            if (null != Owner)
+            {
+                native_security_descriptor.Owner = Owner;
+            }
+            if (null != Group)
+            {
+                native_security_descriptor.Group = Group;
+            }
+            if (null != Sacl)
+            {
+                native_security_descriptor.Sacl = Sacl;
+            }
+            if (null != Dacl)
+            {
+                native_security_descriptor.Dacl = Dacl;
+            }
 
 
         }
@@ -928,15 +940,15 @@ namespace NativeSupportLibrary
         private _OBJECT_ATTRIBUTES nativeObjectAttributes;
         private IntPtr buffer = IntPtr.Zero;
 
-        private SafeHandle _RootDirectory;
+        private SafeHandle _RootDirectory = new SafeFileHandle(IntPtr.Zero, true);
         public SafeHandle RootDirectory
         {
             get { return _RootDirectory; }
             set { _RootDirectory = value; version++; }
         }
 
-        private UNICODE_STRING _ObjectName;
-        public UNICODE_STRING ObjectName
+        private UNICODE_STRING? _ObjectName;
+        public UNICODE_STRING? ObjectName
         {
             get { return _ObjectName; }
             set { _ObjectName = value; version++; }
@@ -949,14 +961,15 @@ namespace NativeSupportLibrary
             set { _Attributes = value; version++; }
         }
 
-        private SECURITY_DESCRIPTOR _SecurityDescriptor;
-        public SECURITY_DESCRIPTOR SecurityDescriptor
+        private SECURITY_DESCRIPTOR? _SecurityDescriptor;
+        public SECURITY_DESCRIPTOR? SecurityDescriptor
         {
             get { return _SecurityDescriptor; }
             set { _SecurityDescriptor = value; version++; }
         }
-        private SECURITY_QUALITY_OF_SERVICE _SecurityQualityOfService;
-        public SECURITY_QUALITY_OF_SERVICE SecurityQualityOfService
+
+        private SECURITY_QUALITY_OF_SERVICE? _SecurityQualityOfService;
+        public SECURITY_QUALITY_OF_SERVICE? SecurityQualityOfService
         {
             get { return _SecurityQualityOfService; }
             set { _SecurityQualityOfService = value; version++; }
@@ -984,7 +997,10 @@ namespace NativeSupportLibrary
                     nativeObjectAttributes.Length = (UInt32)sizeof(_OBJECT_ATTRIBUTES);
                 }
                 nativeObjectAttributes.RootDirectory = RootDirectory.DangerousGetHandle();
-                nativeObjectAttributes.ObjectName = ObjectName;
+                if (null != ObjectName)
+                {
+                    nativeObjectAttributes.ObjectName = ObjectName;
+                }
                 if (null != SecurityDescriptor)
                 {
                     throw new NotImplementedException("Have not implemented security descriptor support");

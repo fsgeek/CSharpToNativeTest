@@ -3,7 +3,7 @@ using NativeSupportLibrary;
 using Microsoft.Win32.SafeHandles;
 using static NativeCalls.SystemCalls;
 using System.Runtime.InteropServices;
-
+using Serilog;
 
 namespace MountManagerLibrary
 {
@@ -270,7 +270,7 @@ namespace MountManagerLibrary
 
             foreach (string candidate in NamedDevices.Keys)
             {
-                string name = null;
+                string? name = null;
 
                 foreach (MOUNTMGR_MOUNT_POINT mp in NamedDevices[candidate])
                 {
@@ -337,10 +337,10 @@ namespace MountManagerLibrary
             { 
                 MOUNTMGR_MOUNT_POINT mountpoint = new MOUNTMGR_MOUNT_POINT(buffer, ref offset);
 
-                // Console.WriteLine($"Mount point @ offset {offset} ({offset:X}):", offset, offset);
-                // Console.WriteLine($"\tSymbolic Link ({mountpoint.SymbolicLinkLength}): {mountpoint.SymbolicLink}");
-                // Console.WriteLine($"\t     UniqueId ({mountpoint.UniqueIdLength}): {mountpoint.UniqueId}");
-                // Console.WriteLine($"\t   DeviceName ({mountpoint.DeviceNameLength}): {mountpoint.DeviceName}");
+                // Log.Debug($"Mount point @ offset {offset} ({offset:X}):", offset, offset);
+                // Log.Debug($"\tSymbolic Link ({mountpoint.SymbolicLinkLength}): {mountpoint.SymbolicLink}");
+                // Log.Debug($"\t     UniqueId ({mountpoint.UniqueIdLength}): {mountpoint.UniqueId}");
+                // Log.Debug($"\t   DeviceName ({mountpoint.DeviceNameLength}): {mountpoint.DeviceName}");
 
                 ActiveMountPoints.Add(mountpoint);
 
@@ -365,7 +365,7 @@ namespace MountManagerLibrary
             Marshal.FreeHGlobal(buffer);
             buffer = IntPtr.Zero;
 
-            //  Console.WriteLine($"LoadMountManagerData: There are {ActiveMountPoints.Count} mount points active, {SymbolicLinks.Count} symlinks, {UniqueIDs.Count} Unique IDs and {NamedDevices.Count} Named Devices");
+            //  Log.Debug($"LoadMountManagerData: There are {ActiveMountPoints.Count} mount points active, {SymbolicLinks.Count} symlinks, {UniqueIDs.Count} Unique IDs and {NamedDevices.Count} Named Devices");
 
         }
         #endregion private methods
@@ -377,7 +377,7 @@ namespace MountManagerLibrary
             OBJECT_ATTRIBUTES objattr = new OBJECT_ATTRIBUTES(MountManagerHandle, c_drive);
             ACCESS_MASK mask = (UInt32)ACCESS_MASK.GENERIC_READ;
             IO_STATUS_BLOCK statusBlock = new IO_STATUS_BLOCK();
-            FILE_ATTRIBUTES fileAttr = 0;
+            FILE_ATTRIBUTES fileAttr = FILE_ATTRIBUTES.NORMAL;
             SHARE_ACCESS shareAccess = SHARE_ACCESS.FILE_SHARE_READ | SHARE_ACCESS.FILE_SHARE_WRITE;
             CREATE_DISPOSITION disposition = CREATE_DISPOSITION.FILE_OPEN;
             CREATE_OPTIONS options = 0;

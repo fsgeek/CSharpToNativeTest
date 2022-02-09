@@ -33,8 +33,8 @@ namespace NativeSupportLibrary
     #region enums
     public enum NtStatusCode
     {
-        STATUS_WAIT_0 = unchecked((int)0x00000000),
         STATUS_SUCCESS = unchecked((int)0x00000000),
+        STATUS_WAIT_0 = unchecked((int)0x00000000),
         STATUS_WAIT_1 = unchecked((int)0x00000001),
         STATUS_WAIT_2 = unchecked((int)0x00000002),
         STATUS_WAIT_3 = unchecked((int)0x00000003),

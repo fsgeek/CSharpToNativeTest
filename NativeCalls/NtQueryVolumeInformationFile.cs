@@ -238,11 +238,34 @@ namespace NativeCalls
 
             }
         }
-        public struct FILE_FS_ATTRIBUTE_INFORMATION
+        public class FILE_FS_ATTRIBUTE_INFORMATION
         {
             public UInt32 FileSystemAttributes;
             public Int32 MaximumComponentNameLength;
             public string FileSystemName;
+
+            public static FILE_FS_ATTRIBUTE_INFORMATION GetFsAttributeInformation(SafeFileHandle Handle)
+            {
+                // Check file system characteristics
+                FILE_FS_ATTRIBUTE_INFORMATION fsAttrInfo = new FILE_FS_ATTRIBUTE_INFORMATION();
+                IO_STATUS_BLOCK statusBlock = new IO_STATUS_BLOCK();
+                NtStatusCode status = NtQueryVolumeInformationFile(Handle, ref statusBlock, ref fsAttrInfo);
+
+                if (!NtStatus.NT_SUCCESS(status))
+                {
+                    throw new IOException($"NtQueryVolumeInformationFile failed, status {status} ({status:X}) = {NtStatusToString.StatusToString(status)}");
+                }
+
+                return fsAttrInfo;
+
+            }
+
+            private FILE_FS_ATTRIBUTE_INFORMATION()
+            {
+                FileSystemAttributes = 0;
+                MaximumComponentNameLength = 0;
+                FileSystemName = "Unknown";
+            }
         }
 
         [StructLayout(LayoutKind.Explicit, Pack = 0)]

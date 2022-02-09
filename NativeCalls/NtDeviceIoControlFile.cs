@@ -75,7 +75,7 @@ namespace NativeCalls
             IntPtr OutputBuffer,
             UInt32 OutputBufferLength)
         {
-            NtStatusCode status;
+            // NtStatusCode status;
 
             return (NtStatusCode)NativeSupportLibrary.NativeLibrary.NtDeviceIoControlFile(
                 Handle.DangerousGetHandle(),

@@ -27,9 +27,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "USNJournalTest", "USNJourna
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "USNJournalLibrary", "USNJournal\USNJournalLibrary.csproj", "{004F2A48-E919-49FB-876D-BB046BA940CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MountManagerLibrary", "MountManagerLibrary\MountManagerLibrary.csproj", "{3841386C-CDEC-45DB-A1F9-B1F08DDADB75}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MountManagerLibrary", "MountManagerLibrary\MountManagerLibrary.csproj", "{3841386C-CDEC-45DB-A1F9-B1F08DDADB75}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MountManagerTest", "MountManagerTest\MountManagerTest.csproj", "{702F7E81-C279-485F-A0DB-95CF22E5B23C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MountManagerTest", "MountManagerTest\MountManagerTest.csproj", "{702F7E81-C279-485F-A0DB-95CF22E5B23C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

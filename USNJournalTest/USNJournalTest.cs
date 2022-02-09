@@ -2,6 +2,7 @@
 using NativeSupportLibrary;
 using Microsoft.Win32.SafeHandles;
 using USNJournal;
+using Serilog;
 
 namespace CSharpToNativeTest
 {
@@ -9,6 +10,15 @@ namespace CSharpToNativeTest
     {
         static void Main(string[] args)
         {
+            Log.Logger = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Console(restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Verbose).CreateLogger();
+            Log.Information("Start Test");
+            Log.Verbose("Verbose enabled");
+            Log.Debug("Debug enabled");
+            Log.Information("Information enabled");
+            Log.Warning("Warning enabled");
+            Log.Error("Error enabled");
+            Log.Fatal("Fatal enabled");
+
             UNICODE_STRING c_drive = new UNICODE_STRING("\\??\\C:");
             SafeFileHandle handle = new SafeFileHandle(IntPtr.Zero,true);
             OBJECT_ATTRIBUTES objattr = new OBJECT_ATTRIBUTES(handle, c_drive);
@@ -26,15 +36,21 @@ namespace CSharpToNativeTest
                 Console.WriteLine("NtCreateFile failed, status {0} ({0:X}) = {1}", status, NtStatusToString.StatusToString(status));
             }
 
-            // Console.WriteLine("Hello, World!");
-
-            List<USN_JOURNAL.USN_JOURNAL_DRIVE_DATA>UsnDrives = USN_JOURNAL.GetUsnJournalDrives();
-
-            foreach (USN_JOURNAL.USN_JOURNAL_DRIVE_DATA data in UsnDrives) 
+            Console.WriteLine("Drives supporting USN journals:");
+            List<string> UsnCapableDrives = USN_JOURNAL.GetUsnCapableDrives();
+            foreach (string drive in UsnCapableDrives)
             {
-                Console.WriteLine($"Drive data.Drive has a USN journal");
+                Console.WriteLine($"\t{drive}");
             }
 
+            Console.WriteLine("Drives with active USN journals:");
+            List<USN_JOURNAL_DRIVE_DATA>UsnDrives = USN_JOURNAL.GetActiveUsnJournalDrives();
+            foreach (USN_JOURNAL_DRIVE_DATA data in UsnDrives) 
+            {
+                Console.WriteLine($"\t{data.Drive}");
+                USN_JOURNAL usnJournal = new USN_JOURNAL(data.Drive);
+                uint count = usnJournal.UpdateUsnRecords();
+            }
 
             /*
              * This is what fsutil shows for the USN journal information
@@ -54,6 +70,8 @@ namespace CSharpToNativeTest
 
             // Prior work has been focused on static data sets.  To make this a useful system service we need to support dynamic data collection, which
             // gives rise to the systems problem that are at the heart of my research.
+            Log.Information("Test Done");
+            Log.CloseAndFlush();
         }
     }
 }

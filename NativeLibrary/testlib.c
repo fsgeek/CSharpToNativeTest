@@ -60,3 +60,9 @@ MYAPI void NativeTestLargeInteger(LARGE_INTEGER* LargeInteger)
     }
 }
 
+MYAPI void NativeTestUsnJournal(UNICODE_STRING drive)
+{
+
+}
+
+
