@@ -3,14 +3,68 @@ using NativeSupportLibrary;
 using Microsoft.Win32.SafeHandles;
 using USNJournal;
 using Serilog;
+using CommandLine;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace CSharpToNativeTest
 {
     class Program
     {
+        public class Options
+        {
+            [Option(Default = (int)Serilog.Events.LogEventLevel.Information, HelpText = "Log Level")]
+            public int LogLevel { get; set; }
+        }
+
+        static void RunOptions(Options opts)
+        {
+            int loglevel = 3;
+
+            if (null != opts)
+            {
+                if ((opts.LogLevel < (int)Serilog.Events.LogEventLevel.Verbose) || (opts.LogLevel > (int)Serilog.Events.LogEventLevel.Fatal))
+                {
+                    Console.WriteLine($"LogLevel must be between {(int)Serilog.Events.LogEventLevel.Fatal} (Fatal messages only) and {(int)Serilog.Events.LogEventLevel.Information} ()");
+                }
+                loglevel = opts.LogLevel;
+
+                switch (loglevel)
+                {
+                    case (int)Serilog.Events.LogEventLevel.Verbose:
+                        Log.Logger = new LoggerConfiguration().MinimumLevel.Verbose().WriteTo.Console().CreateLogger();
+                        break;
+                    case (int)Serilog.Events.LogEventLevel.Debug:
+                        Log.Logger = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Console().CreateLogger();
+                        break;
+                    case (int)Serilog.Events.LogEventLevel.Information:
+                        Log.Logger = new LoggerConfiguration().MinimumLevel.Information().WriteTo.Console().CreateLogger();
+                        break;
+                    case (int)Serilog.Events.LogEventLevel.Warning:
+                        Log.Logger = new LoggerConfiguration().MinimumLevel.Warning().WriteTo.Console().CreateLogger();
+                        break;
+                    case (int)Serilog.Events.LogEventLevel.Error:
+                        Log.Logger = new LoggerConfiguration().MinimumLevel.Error().WriteTo.Console().CreateLogger();
+                        break;
+                    default:
+                        Log.Logger = new LoggerConfiguration().MinimumLevel.Fatal().WriteTo.Console().CreateLogger();
+                        break;
+                }
+            }
+        }
+
+        static void HandleParseError(IEnumerable<Error> errs)
+        {
+            Console.WriteLine(errs);
+            throw new InvalidProgramException("Invalid command line option");
+        }
+
         static void Main(string[] args)
         {
-            Log.Logger = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Console(restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Verbose).CreateLogger();
+
+            Parser.Default.ParseArguments<Options>(args).WithParsed(RunOptions).WithNotParsed(HandleParseError);           
+
+//             Log.Logger = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Console(restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Verbose).CreateLogger();
             Log.Information("Start Test");
             Log.Verbose("Verbose enabled");
             Log.Debug("Debug enabled");
@@ -20,7 +74,7 @@ namespace CSharpToNativeTest
             Log.Fatal("Fatal enabled");
 
             UNICODE_STRING c_drive = new UNICODE_STRING("\\??\\C:");
-            SafeFileHandle handle = new SafeFileHandle(IntPtr.Zero,true);
+            SafeFileHandle handle = new SafeFileHandle(IntPtr.Zero, true);
             OBJECT_ATTRIBUTES objattr = new OBJECT_ATTRIBUTES(handle, c_drive);
             ACCESS_MASK mask = (UInt32)ACCESS_MASK.SYNCHRONIZE;
             IO_STATUS_BLOCK statusBlock = new IO_STATUS_BLOCK();
@@ -43,13 +97,32 @@ namespace CSharpToNativeTest
                 Console.WriteLine($"\t{drive}");
             }
 
+            // Let's connect to Mongo
+            MongoClient dbClient = new MongoClient("mongodb://Indaleko:Kwishut21@localhost:27017/?authSource=admin");
+
+            Console.WriteLine("Mongo Databases:");
+            using (IAsyncCursor<BsonDocument> cursor = dbClient.ListDatabases())
+            {
+                while (cursor.MoveNext())
+                {
+                    foreach (var doc in cursor.Current)
+                    {
+                        Console.WriteLine($"\t{doc["name"]}");
+                    }
+                }
+            }
+
             Console.WriteLine("Drives with active USN journals:");
-            List<USN_JOURNAL_DRIVE_DATA>UsnDrives = USN_JOURNAL.GetActiveUsnJournalDrives();
-            foreach (USN_JOURNAL_DRIVE_DATA data in UsnDrives) 
+            List<USN_JOURNAL_DRIVE_DATA> UsnDrives = USN_JOURNAL.GetActiveUsnJournalDrives();
+            foreach (USN_JOURNAL_DRIVE_DATA data in UsnDrives)
             {
                 Console.WriteLine($"\t{data.Drive}");
                 USN_JOURNAL usnJournal = new USN_JOURNAL(data.Drive);
                 uint count = usnJournal.UpdateUsnRecords();
+                Console.WriteLine($"\tRetrieved {count} records from {data.Drive}");
+                Thread.Sleep(5000);
+                count = usnJournal.UpdateUsnRecords();
+                Console.WriteLine($"\tRetrieved {count} more records from {data.Drive}");
             }
 
             /*

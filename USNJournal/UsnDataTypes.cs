@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Serilog;
 using System.Diagnostics;
+using USNJournal;
 
 
 //
@@ -363,83 +364,179 @@ namespace USNJournal
 
         #endregion constants
 
-        public static string? Reason(UInt32 Reason)
+        public static string? ReasonToString(UInt32 Reason)
         {
-            string reason = "Unknown";
-            switch (Reason)
+            bool first = true;
+            string reason = "";
+
+            if (0!= (Reason & USN_REASON_DATA_OVERWRITE))
             {
-                case USN_REASON_DATA_OVERWRITE:
-                    reason = "USN_REASON_DATA_OVERWRITE";
-                    break;
-                case USN_REASON_DATA_EXTEND:
-                    reason = "USN_REASON_DATA_EXTEND";
-                    break;
-                case USN_REASON_DATA_TRUNCATION:
-                    reason = "USN_REASON_DATA_TRUNCATION";
-                    break;
-                case USN_REASON_NAMED_DATA_OVERWRITE:
-                    reason = "USN_REASON_NAMED_DATA_OVERWRITE";
-                    break;
-                case USN_REASON_NAMED_DATA_EXTEND:
-                    reason = "USN_REASON_NAMED_DATA_EXTEND";
-                    break;
-                case USN_REASON_NAMED_DATA_TRUNCATION:
-                    reason = "USN_REASON_NAMED_DATA_TRUNCATION";
-                    break;
-                case USN_REASON_FILE_CREATE:
-                    reason = "USN_REASON_FILE_CREATE";
-                    break;
-                case USN_REASON_FILE_DELETE:
-                    reason = "USN_REASON_FILE_DELETE";
-                    break;
-                case USN_REASON_EA_CHANGE:
-                    reason = "USN_REASON_EA_CHANGE";
-                    break;
-                case USN_REASON_SECURITY_CHANGE:
-                    reason = "USN_REASON_SECURITY_CHANGE";
-                    break;
-                case USN_REASON_RENAME_OLD_NAME:
-                    reason = "USN_REASON_RENAME_OLD_NAME";
-                    break;
-                case USN_REASON_RENAME_NEW_NAME:
-                    reason = "USN_REASON_RENAME_NEW_NAME";
-                    break;
-                case USN_REASON_INDEXABLE_CHANGE:
-                    reason = "USN_REASON_INDEXABLE_CHANGE";
-                    break;
-                case USN_REASON_BASIC_INFO_CHANGE:
-                    reason = "USN_REASON_BASIC_INFO_CHANGE";
-                    break;
-                case USN_REASON_HARD_LINK_CHANGE:
-                    reason = "USN_REASON_HARD_LINK_CHANGE";
-                    break;
-                case USN_REASON_COMPRESSION_CHANGE:
-                    reason = "USN_REASON_COMPRESSION_CHANGE";
-                    break;
-                case USN_REASON_ENCRYPTION_CHANGE:
-                    reason = "USN_REASON_ENCRYPTION_CHANGE";
-                    break;
-                case USN_REASON_OBJECT_ID_CHANGE:
-                    reason = "USN_REASON_OBJECT_ID_CHANGE";
-                    break;
-                case USN_REASON_REPARSE_POINT_CHANGE:
-                    reason = "USN_REASON_REPARSE_POINT_CHANGE";
-                    break;
-                case USN_REASON_STREAM_CHANGE:
-                    reason = "USN_REASON_STREAM_CHANGE";
-                    break;
-                case USN_REASON_TRANSACTED_CHANGE:
-                    reason = "USN_REASON_TRANSACTED_CHANGE";
-                    break;
-                case USN_REASON_INTEGRITY_CHANGE:
-                    reason = "USN_REASON_INTEGRITY_CHANGE";
-                    break;
-                case USN_REASON_DESIRED_STORAGE_CLASS_CHANGE:
-                    reason = "USN_REASON_DESIRED_STORAGE_CLASS_CHANGE";
-                    break;
-                case USN_REASON_CLOSE:
-                    reason = "USN_REASON_CLOSE";
-                    break;
+                if (!first) { reason += "|"; }
+                reason+= "USN_REASON_DATA_OVERWRITE";
+                first = false;
+            }
+
+            if (0 != (Reason & USN_REASON_DATA_EXTEND))
+            {
+                if (!first) { reason += "|"; }
+                reason += "USN_REASON_DATA_EXTEND";
+                first = false;
+            }
+
+            if (0 != (Reason & USN_REASON_DATA_TRUNCATION))
+            {
+                if (!first) { reason += "|"; }
+                reason += "USN_REASON_DATA_TRUNCATION";
+                first = false;
+            }
+
+            if (0 != (Reason & USN_REASON_NAMED_DATA_OVERWRITE))
+            {
+                if (!first) { reason += "|"; }
+                reason += "USN_REASON_NAMED_DATA_OVERWRITE";
+                first = false;
+            }
+
+            if (0 != (Reason & USN_REASON_NAMED_DATA_EXTEND))
+            {
+                if (!first) { reason += "|"; }
+                reason += "USN_REASON_NAMED_DATA_EXTEND";
+                first = false;
+            }
+
+
+            if (0 != (Reason & USN_REASON_NAMED_DATA_TRUNCATION))
+            {
+                if (!first) { reason += "|"; }
+                reason += "USN_REASON_NAMED_DATA_TRUNCATION";
+                first = false;
+            }
+
+            if (0 != (Reason & USN_REASON_FILE_CREATE))
+            {
+                if (!first) { reason += "|"; }
+                reason += "USN_REASON_FILE_CREATE";
+                first = false;
+            }
+
+            if (0 != (Reason & USN_REASON_FILE_DELETE))
+            {
+                if (!first) { reason += "|"; }
+                reason += "USN_REASON_FILE_DELETE";
+                first = false;
+            }
+
+
+            if (0 != (Reason & USN_REASON_EA_CHANGE))
+            {
+                if (!first) { reason += "|"; }
+                reason += "USN_REASON_EA_CHANGE";
+                first = false;
+            }
+
+            if (0 != (Reason & USN_REASON_SECURITY_CHANGE))
+            {
+                if (!first) { reason += "|"; }
+                reason += "USN_REASON_SECURITY_CHANGE";
+                first = false;
+            }
+
+            if (0 != (Reason & USN_REASON_RENAME_OLD_NAME))
+            {
+                if (!first) { reason += "|"; }
+                reason += "USN_REASON_RENAME_OLD_NAME";
+                first = false;
+            }
+
+            if (0 != (Reason & USN_REASON_RENAME_NEW_NAME))
+            {
+                if (!first) { reason += "|"; }
+                reason += "USN_REASON_RENAME_NEW_NAME";
+                first = false;
+            }
+
+            if (0 != (Reason & USN_REASON_INDEXABLE_CHANGE))
+            {
+                if (!first) { reason += "|"; }
+                reason += "USN_REASON_INDEXABLE_CHANGE";
+                first = false;
+            }
+
+            if (0 != (Reason & USN_REASON_BASIC_INFO_CHANGE))
+            {
+                if (!first) { reason += "|"; }
+                reason += "USN_REASON_BASIC_INFO_CHANGE";
+                first = false;
+            }
+
+            if (0 != (Reason & USN_REASON_HARD_LINK_CHANGE))
+            {
+                if (!first) { reason += "|"; }
+                reason += "USN_REASON_HARD_LINK_CHANGE";
+                first = false;
+            }
+
+            if (0 != (Reason & USN_REASON_COMPRESSION_CHANGE))
+            {
+                if (!first) { reason += "|"; }
+                reason += "USN_REASON_COMPRESSION_CHANGE";
+                first = false;
+            }
+
+            if (0 != (Reason & USN_REASON_ENCRYPTION_CHANGE))
+            {
+                if (!first) { reason += "|"; }
+                reason += "USN_REASON_ENCRYPTION_CHANGE";
+                first = false;
+            }
+
+            if (0 != (Reason & USN_REASON_OBJECT_ID_CHANGE))
+            {
+                if (!first) { reason += "|"; }
+                reason += "USN_REASON_OBJECT_ID_CHANGE";
+                first = false;
+            }
+
+            if (0 != (Reason & USN_REASON_REPARSE_POINT_CHANGE))
+            {
+                if (!first) { reason += "|"; }
+                reason += "USN_REASON_REPARSE_POINT_CHANGE";
+                first = false;
+            }
+
+            if (0 != (Reason & USN_REASON_STREAM_CHANGE))
+            {
+                if (!first) { reason += "|"; }
+                reason += "USN_REASON_STREAM_CHANGE";
+                first = false;
+            }
+
+            if (0 != (Reason & USN_REASON_TRANSACTED_CHANGE))
+            {
+                if (!first) { reason += "|"; }
+                reason += "USN_REASON_TRANSACTED_CHANGE";
+                first = false;
+            }
+
+            if (0 != (Reason & USN_REASON_INTEGRITY_CHANGE))
+            {
+                if (!first) { reason += "|"; }
+                reason += "USN_REASON_INTEGRITY_CHANGE";
+                first = false;
+            }
+
+            if (0 != (Reason & USN_REASON_DESIRED_STORAGE_CLASS_CHANGE))
+            {
+                if (!first) { reason += "|"; }
+                reason += "USN_REASON_DESIRED_STORAGE_CLASS_CHANGE";
+                first = false;
+            }
+
+            if (0 != (Reason & USN_REASON_CLOSE))
+            {
+                if (!first) { reason += "|"; }
+                reason += "USN_REASON_CLOSE";
+                first = false;
             }
 
             return reason;
@@ -488,12 +585,55 @@ namespace USNJournal
         //      FSCTL_READ_FILE_USN_DATA
         //      FSCTL_ENUM_USN_DATA
         //
-        [StructLayout(LayoutKind.Explicit, Pack = 0)]
-        private unsafe struct _FILE_ID_128
+        public struct FILE_ID_128
         {
-            [FieldOffset(0)] fixed byte Identifier[16];
-            [FieldOffset(0)] UInt64 LowPart;
-            [FieldOffset(8)] UInt64 HighPart;
+            [StructLayout(LayoutKind.Explicit, Pack = 0)]
+            private unsafe struct _FILE_ID_128
+            {
+                [FieldOffset(0)] public fixed byte Data[16];
+                [FieldOffset(0)] public UInt64 LowPart;  // little endian
+                [FieldOffset(8)] public UInt64 HighPart;
+            }
+
+            private _FILE_ID_128 _fileId = new _FILE_ID_128();
+
+            public UInt64 LowPart { get { return _fileId.LowPart; } }
+            public UInt64 HighPart { get { return _fileId.HighPart; } }
+            public byte[] Data
+            {
+                get
+                {
+                    byte[] d = new byte[16];
+                    for (int i = 0; i < 16; i++)
+                    {
+                        unsafe
+                        {
+                            d[i] = _fileId.Data[i];
+                        }
+                    }
+                    return d;
+                }
+            }
+
+            public override string? ToString()
+            {
+                string? str = null;
+
+                str = $"{HighPart:X}:{LowPart:X}";
+                return str;
+            }
+
+            public static implicit operator FILE_ID_128(UInt64 SmallFid)
+            {
+                FILE_ID_128 fid = new FILE_ID_128();
+
+                fid._fileId = new _FILE_ID_128();
+                fid._fileId.LowPart = SmallFid;
+                fid._fileId.HighPart = 0;
+
+                return fid;
+            }
+
         }
 
         [StructLayout(LayoutKind.Explicit, Pack = 0)]
@@ -529,8 +669,8 @@ namespace USNJournal
             {
                 [FieldOffset(0)] public UInt64 FileReferenceNumber;
                 [FieldOffset(8)] public UInt64 ParentFileReferenceNumber;
-                [FieldOffset(16)] public UInt64 Usn;
-                [FieldOffset(24)] public UInt64 TimeStamp;
+                [FieldOffset(16)] public Int64 Usn;
+                [FieldOffset(24)] public Int64 TimeStamp;
                 [FieldOffset(32)] public UInt32 Reason;
                 [FieldOffset(36)] public UInt32 SourceInfo;
                 [FieldOffset(40)] public UInt32 SecurityId;
@@ -549,10 +689,10 @@ namespace USNJournal
             [StructLayout(LayoutKind.Explicit, Pack = 0)]
             private struct USN_RECORD_V3
             {
-                [FieldOffset(0)] public Guid FileReferenceNumber;
-                [FieldOffset(16)] public Guid ParentFileReferenceNumber;
-                [FieldOffset(32)] public UInt64 Usn;
-                [FieldOffset(40)] public UInt64 TimeStamp;
+                [FieldOffset(0)] public FILE_ID_128 FileReferenceNumber;
+                [FieldOffset(16)] public FILE_ID_128 ParentFileReferenceNumber;
+                [FieldOffset(32)] public Int64 Usn;
+                [FieldOffset(40)] public Int64 TimeStamp;
                 [FieldOffset(48)] public UInt32 Reason;
                 [FieldOffset(52)] public UInt32 SourceInfo;
                 [FieldOffset(56)] public UInt32 SecurityId;
@@ -565,10 +705,10 @@ namespace USNJournal
             [StructLayout(LayoutKind.Explicit, Pack = 0)]
             private struct USN_RECORD_V4
             {
-                [FieldOffset(0)] public Guid FileReferenceNumber;
-                [FieldOffset(16)] public Guid ParentFileReferenceNumber;
-                [FieldOffset(32)] public UInt64 Usn;
-                [FieldOffset(40)] public UInt64 TimeStamp;
+                [FieldOffset(0)] public FILE_ID_128 FileReferenceNumber;
+                [FieldOffset(16)] public FILE_ID_128 ParentFileReferenceNumber;
+                [FieldOffset(32)] public Int64 Usn;
+                [FieldOffset(40)] public Int64 TimeStamp;
                 [FieldOffset(48)] public UInt32 Reason;
                 [FieldOffset(52)] public UInt32 SourceInfo;
                 [FieldOffset(56)] public UInt16 RemainingExtents;
@@ -586,9 +726,46 @@ namespace USNJournal
             public UInt32 RecordLength { get { return commonHeader.RecordLength; } }
             public UInt16 MajorVersion { get { return commonHeader.MajorVersion; } }
             public UInt16 MinorVersion { get { return commonHeader.MinorVersion; } }
-            public Guid FileReferenceNumber;
-            public Guid ParentFileReferenceNumber;
-            public UInt64 Usn
+            public FILE_ID_128 FileReferenceNumber
+            {
+                get
+                {
+                    if (2 == MajorVersion)
+                    {
+
+                        return (FILE_ID_128)recordV2.FileReferenceNumber;
+                    }
+                    else if (3 == MajorVersion)
+                    {
+                        return recordV3.FileReferenceNumber;
+                    }
+                    else if (4 == MajorVersion)
+                    {
+                        return recordV4.FileReferenceNumber;
+                    }
+                    throw new InvalidDataException($"Invalid version number {MajorVersion}");
+                }
+            }
+            public FILE_ID_128 ParentFileReferenceNumber
+            {
+                get
+                {
+                    if (2 == MajorVersion)
+                    {
+                        return (FILE_ID_128)recordV2.ParentFileReferenceNumber;
+                    }
+                    else if (3 == MajorVersion)
+                    {
+                        return recordV3.ParentFileReferenceNumber;
+                    }
+                    else if (4 == MajorVersion)
+                    {
+                        return recordV4.ParentFileReferenceNumber;
+                    }
+                    throw new InvalidDataException($"Invalid version number {MajorVersion}");
+                }
+            }
+            public Int64 Usn
             {
                 get
                 {
@@ -608,7 +785,7 @@ namespace USNJournal
                 }
             }
 
-            public UInt64 TimeStamp
+            public Int64 TimeStamp
             {
                 get
                 {
@@ -738,55 +915,44 @@ namespace USNJournal
                 }
             }
 
-            private void UnpackV2(IntPtr Buffer, ref int Offset, int Length)
+            private void UnpackV2(IntPtr Buffer)
             {
-                int bufoff = Offset + Marshal.SizeOf(commonHeader);
-                recordV2 = Marshal.PtrToStructure<USN_RECORD_V2>(Buffer + bufoff);
-                _FileName = Marshal.PtrToStringUni(Buffer + recordV2.FileNameOffset, recordV2.FileNameLength);
-                Offset += (int)commonHeader.RecordLength;
-                if (Offset > Length)
-                {
-                    throw new InvalidDataException($"Offset ({Offset}) cannot be greater than length ({Length})!");
-                }
+                recordV2 = Marshal.PtrToStructure<USN_RECORD_V2>(Buffer);
+                _FileName = Marshal.PtrToStringUni(Buffer - Marshal.SizeOf(commonHeader) + recordV2.FileNameOffset, recordV2.FileNameLength / 2);
             }
 
-            private void UnpackV3(IntPtr Buffer, ref int Offset, int Length)
+            private void UnpackV3(IntPtr Buffer)
             {
-                int bufoff = Offset + Marshal.SizeOf(commonHeader);
-                recordV3 = Marshal.PtrToStructure<USN_RECORD_V3>(Buffer + bufoff);
-                _FileName = Marshal.PtrToStringUni(Buffer + recordV3.FileNameOffset, recordV3.FileNameLength);
-                Offset += (int)commonHeader.RecordLength;
-                if (Offset > Length)
-                {
-                    throw new InvalidDataException($"Offset ({Offset}) cannot be greater than length ({Length})!");
-                }
+                FILE_ID_128 fid= Marshal.PtrToStructure<FILE_ID_128>(Buffer);
+                FILE_ID_128 pfid = Marshal.PtrToStructure<FILE_ID_128>(Buffer + 16);
+                Log.Debug($"fid is {fid}");
+                Log.Debug($"pfid is {pfid}");
+                recordV3 = Marshal.PtrToStructure<USN_RECORD_V3>(Buffer);
+                _FileName = Marshal.PtrToStringUni(Buffer - Marshal.SizeOf(commonHeader) + recordV3.FileNameOffset, recordV3.FileNameLength / 2);
             }
 
-            private void UnpackV4(IntPtr Buffer, ref int Offset, int Length)
+            private void UnpackV4(IntPtr Buffer)
             {
-                int bufoff = Offset + Marshal.SizeOf(commonHeader);
-                recordV4 = Marshal.PtrToStructure<USN_RECORD_V4>(Buffer + bufoff);
+                recordV4 = Marshal.PtrToStructure<USN_RECORD_V4>(Buffer);
                 if (recordV4.RemainingExtents != 0)
                 {
                     throw new NotImplementedException($"Have not implemented extent continuation, remaining is {recordV4.RemainingExtents}, number is {recordV4.NumberOfExtents}");
                 }
-
-                bufoff = Offset + Marshal.SizeOf(recordV4);
-
+                /*
                 // I have to unpack the extend records
                 for (int index = 0; index < recordV4.NumberOfExtents; index++)
                 {
-                    _USN_RECORD_EXTENT extent = Marshal.PtrToStructure<_USN_RECORD_EXTENT>(Buffer + bufoff);
-                    bufoff += Marshal.SizeOf(extent);
+                    _USN_RECORD_EXTENT extent = Marshal.PtrToStructure<_USN_RECORD_EXTENT>(Buffer + Offset);
+                    Offset += Marshal.SizeOf(extent);
 
                     ExtentList.Add(extent);
                 }
 
-                Offset += (int)commonHeader.RecordLength;
                 if (Offset > Length)
                 {
                     throw new InvalidDataException($"Offset ({Offset}) cannot be greater than length ({Length})!");
                 }
+                */
             }
 
 
@@ -797,27 +963,81 @@ namespace USNJournal
             // by the buffer.
             public USN_RECORD_DATA(IntPtr Buffer, ref int Offset, int Length)
             {
-                this.commonHeader = Marshal.PtrToStructure<USN_RECORD_COMMON_HEADER>(Buffer + Offset);
+                commonHeader = Marshal.PtrToStructure<USN_RECORD_COMMON_HEADER>(Buffer + Offset);
+
+                Log.Debug($"USN Record Common Header:");
+                Log.Debug($"\tRecordLength:{commonHeader.RecordLength}");
+                Log.Debug($"\tMajorVersion:{commonHeader.MajorVersion}");
+                Log.Debug($"\tMinorVersion:{commonHeader.MinorVersion}");
+
+                Debug.Assert(Offset + commonHeader.RecordLength <= Length);
 
                 switch (commonHeader.MajorVersion)
                 {
                     default:
                         throw new InvalidDataException($"Invalid Major version {commonHeader.MajorVersion}");
                     case 2:
-                        UnpackV2(Buffer, ref Offset, Length);
-                        break;
+                        {
+                            UnpackV2(Buffer + Offset + Marshal.SizeOf(commonHeader));
+                            break;
+                        }
                     case 3:
-                        UnpackV3(Buffer, ref Offset, Length);
-                        break;
+                        {
+                            UnpackV3(Buffer + Offset + Marshal.SizeOf(commonHeader));
+                            break;
+                        }
                     case 4:
-                        UnpackV4(Buffer, ref Offset, Length);
+                        UnpackV4(Buffer + Offset + Marshal.SizeOf(commonHeader));
                         break;
 
                 }
 
+                Offset += (int) commonHeader.RecordLength;
+
             }
         }
 
+        public void DumpLog()
+        {
+            Log.Debug($"\t             RecordLength: {RecordLength}");
+            Log.Debug($"\t             MajorVersion: {MajorVersion}");
+            Log.Debug($"\t             MinorVersion: {MinorVersion}");
+            Log.Debug($"\t      FileReferenceNumber: {FileReferenceNumber}");
+            Log.Debug($"\tParentFileReferenceNumber: {ParentFileReferenceNumber}");
+            Log.Debug($"\t                      Usn: {Usn}");
+            Log.Debug($"\t                TimeStamp: {TimeStamp} ({DateTime.FromFileTimeUtc(TimeStamp)})");
+            Log.Debug($"\t                   Reason: {Reason:X} ({ReasonToString(Reason)})");
+            Log.Debug($"\t               SourceInfo: {SourceInfo}");
+            Log.Debug($"\t               SecurityId: {SecurityId}");
+            Log.Debug($"\t           FileAttributes: {FileAttributes}");
+            Log.Debug($"\t                 FileName: {FileName}");
+            Log.Debug($"\t                  Extents: ({Extents.Count})");
+            foreach (USN_RECORD_EXTENT ure in Extents)
+            {
+                Log.Debug($"\t\t Offset:{ure.Offset}");
+                Log.Debug($"\t\t Length: {ure.Length}");
+            }
+        }
+
+        public UInt32 RecordLength => data.RecordLength;
+        public UInt16 MajorVersion => data.MajorVersion;
+        public UInt16 MinorVersion => data.MinorVersion;
+        public FILE_ID_128 FileReferenceNumber => data.FileReferenceNumber;
+        public FILE_ID_128 ParentFileReferenceNumber => data.ParentFileReferenceNumber;
+        public Int64 Usn => data.Usn;
+
+        public Int64 TimeStamp => data.TimeStamp;
+
+        public UInt32 Reason => data.Reason;
+
+        public UInt32 SourceInfo => data.SourceInfo;
+
+        public UInt32 SecurityId => data.SecurityId;
+
+        public UInt32 FileAttributes => data.FileAttributes;
+
+        public string? FileName => data.FileName;
+        public List<USN_RECORD_EXTENT> Extents => data.Extents;
 
         private USN_RECORD_DATA data;
 
@@ -835,458 +1055,477 @@ namespace USNJournal
         }
     }
 
-}
 
-//
-//==================== FSCTL_QUERY_USN_JOURNAL ======================
-//
-//  Structure for FSCTL_QUERY_USN_JOURNAL
-//
-public class USN_JOURNAL_DATA
-{
-    [StructLayout(LayoutKind.Explicit, Pack = 0)]
-
-    private struct _USN_JOURNAL_DATA
+    //
+    //==================== FSCTL_QUERY_USN_JOURNAL ======================
+    //
+    //  Structure for FSCTL_QUERY_USN_JOURNAL
+    //
+    public class USN_JOURNAL_DATA
     {
-        [FieldOffset(0)] public UInt64 UsnJournalID;
-        [FieldOffset(8)] public Int64 FirstUsn;
-        [FieldOffset(16)] public Int64 NextUsn;
-        [FieldOffset(24)] public Int64 LowestValidUsn;
-        [FieldOffset(32)] public Int64 MaxUsn;
-        [FieldOffset(40)] public UInt64 MaximumSize;
-        [FieldOffset(48)] public UInt64 AllocationDelta;
-        [FieldOffset(56)] public UInt16 MinSupportedMajorVersion; // V1 starts here
-        [FieldOffset(58)] public UInt16 MaxSupportedMajorVersion;
-        [FieldOffset(60)] public UInt32 Flags; // V2 starts here
-        [FieldOffset(64)] public UInt64 RangeTrackChunkSize;
-        [FieldOffset(72)] public Int64 RangeTrackFileSizeThreshold;
+        [StructLayout(LayoutKind.Explicit, Pack = 0)]
 
-        public static _USN_JOURNAL_DATA FromArray(byte[] bytes)
+        private struct _USN_JOURNAL_DATA
         {
-            var reader = new BinaryReader(new MemoryStream(bytes));
+            [FieldOffset(0)] public UInt64 UsnJournalID;
+            [FieldOffset(8)] public Int64 FirstUsn;
+            [FieldOffset(16)] public Int64 NextUsn;
+            [FieldOffset(24)] public Int64 LowestValidUsn;
+            [FieldOffset(32)] public Int64 MaxUsn;
+            [FieldOffset(40)] public UInt64 MaximumSize;
+            [FieldOffset(48)] public UInt64 AllocationDelta;
+            [FieldOffset(56)] public UInt16 MinSupportedMajorVersion; // V1 starts here
+            [FieldOffset(58)] public UInt16 MaxSupportedMajorVersion;
+            [FieldOffset(60)] public UInt32 Flags; // V2 starts here
+            [FieldOffset(64)] public UInt64 RangeTrackChunkSize;
+            [FieldOffset(72)] public Int64 RangeTrackFileSizeThreshold;
 
-            var s = default(_USN_JOURNAL_DATA);
-
-            if (Marshal.SizeOf(s) > bytes.Length)
+            public static _USN_JOURNAL_DATA FromArray(byte[] bytes)
             {
-                throw new ArgumentException("Deserializing buffer smaller than our structure (old version?)");
+                var reader = new BinaryReader(new MemoryStream(bytes));
+
+                var s = default(_USN_JOURNAL_DATA);
+
+                if (Marshal.SizeOf(s) > bytes.Length)
+                {
+                    throw new ArgumentException("Deserializing buffer smaller than our structure (old version?)");
+                }
+
+                s.UsnJournalID = reader.ReadUInt64();
+                s.FirstUsn = reader.ReadInt64();
+                s.NextUsn = reader.ReadInt64();
+                s.LowestValidUsn = reader.ReadInt64();
+                s.MaxUsn = reader.ReadInt64();
+                s.MaximumSize = reader.ReadUInt64();
+                s.AllocationDelta = reader.ReadUInt64();
+                s.MinSupportedMajorVersion = reader.ReadUInt16();
+                s.MaxSupportedMajorVersion = reader.ReadUInt16();
+                s.Flags = reader.ReadUInt32();
+                s.RangeTrackChunkSize = reader.ReadUInt64();
+                s.RangeTrackFileSizeThreshold = reader.ReadInt64();
+
+                return s;
             }
 
-            s.UsnJournalID = reader.ReadUInt64();
-            s.FirstUsn = reader.ReadInt64();
-            s.NextUsn = reader.ReadInt64();
-            s.LowestValidUsn = reader.ReadInt64();
-            s.MaxUsn = reader.ReadInt64();
-            s.MaximumSize = reader.ReadUInt64();
-            s.AllocationDelta = reader.ReadUInt64();
-            s.MinSupportedMajorVersion = reader.ReadUInt16();
-            s.MaxSupportedMajorVersion = reader.ReadUInt16();
-            s.Flags = reader.ReadUInt32();
-            s.RangeTrackChunkSize = reader.ReadUInt64();
-            s.RangeTrackFileSizeThreshold = reader.ReadInt64();
+            public void DebugLog()
+            {
+                Log.Debug($"\t                UsnJournalID: {UsnJournalID}");
+                Log.Debug($"\t                    FirstUsn: {FirstUsn}");
+                Log.Debug($"\t                     NextUsn: {NextUsn}");
+                Log.Debug($"\t              LowestValidUsn: {LowestValidUsn}");
+                Log.Debug($"\t                      MaxUsn: {MaxUsn}");
+                Log.Debug($"\t                 MaximumSize: {MaximumSize}");
+                Log.Debug($"\t             AllocationDelta: {AllocationDelta}");
+                Log.Debug($"\t    MinSupportedMajorVersion: {MinSupportedMajorVersion}");
+                Log.Debug($"\t    MaxSupportedMajorVersion: {MaxSupportedMajorVersion}");
+                Log.Debug($"\t                       Flags: {Flags}");
+                Log.Debug($"\t         RangeTrackChunkSize: {RangeTrackChunkSize}");
+                Log.Debug($"\t RangeTrackFileSizeThreshold: {RangeTrackFileSizeThreshold}");
+            }
 
-            return s;
+        }
+
+        _USN_JOURNAL_DATA _journalData;
+
+        public UInt64 UsnJournalID { get { return _journalData.UsnJournalID; } }
+        public Int64 FirstUsn { get { return _journalData.FirstUsn; } }
+        public Int64 NextUsn { get { return _journalData.NextUsn; } }
+        public Int64 LowestValidUsn { get { return _journalData.LowestValidUsn; } }
+        public Int64 MaxUsn { get { return _journalData.MaxUsn; } }
+        public UInt64 MaximumSize { get { return _journalData.MaximumSize; } }
+        public UInt64 AllocationDelta { get { return _journalData.AllocationDelta; } }
+        public UInt16 MinSupportedMajorVersion { get { return _journalData.MinSupportedMajorVersion; } } // V1 starts here
+        public UInt16 MaxSupportedMajorVersion { get { return _journalData.MaxSupportedMajorVersion; } }
+        public UInt32 Flags { get { return _journalData.Flags; } } // V2 starts here
+        public UInt64 RangeTrackChunkSize { get { return _journalData.RangeTrackChunkSize; } }
+        public Int64 RangeTrackFileSizeThreshold { get { return _journalData.RangeTrackFileSizeThreshold; } }
+
+        public USN_JOURNAL_DATA(byte[] Buffer)
+        {
+            _journalData = _USN_JOURNAL_DATA.FromArray(Buffer);
+        }
+
+        public string GetJson()
+        {
+            return JsonSerializer.Serialize(this);
         }
 
         public void DebugLog()
         {
-            Log.Debug($"\t                UsnJournalID: {UsnJournalID}");
-            Log.Debug($"\t                    FirstUsn: {FirstUsn}");
-            Log.Debug($"\t                     NextUsn: {NextUsn}");
-            Log.Debug($"\t              LowestValidUsn: {LowestValidUsn}");
-            Log.Debug($"\t                      MaxUsn: {MaxUsn}");
-            Log.Debug($"\t                 MaximumSize: {MaximumSize}");
-            Log.Debug($"\t             AllocationDelta: {AllocationDelta}");
-            Log.Debug($"\t    MinSupportedMajorVersion: {MinSupportedMajorVersion}");
-            Log.Debug($"\t    MaxSupportedMajorVersion: {MaxSupportedMajorVersion}");
-            Log.Debug($"\t                       Flags: {Flags}");
-            Log.Debug($"\t         RangeTrackChunkSize: {RangeTrackChunkSize}");
-            Log.Debug($"\t RangeTrackFileSizeThreshold: {RangeTrackFileSizeThreshold}");
+            _journalData.DebugLog();
+        }
+
+        public static USN_JOURNAL_DATA? GetUsnJournalData(SafeFileHandle Handle, ref IO_STATUS_BLOCK statusBlock)
+        {
+            byte[] usnBuffer = new byte[1024 * 1024];
+
+            Debug.Assert(!Handle.IsInvalid);
+
+            // Check to see if it is actually enabled for this drive.
+            NtStatusCode status = NtFsControlFile(Handle, ref statusBlock, ControlCodes.Instance.FSCTL_QUERY_USN_JOURNAL, ref usnBuffer);
+
+            if (NtStatusCode.STATUS_JOURNAL_NOT_ACTIVE == status)
+            {
+                // Supported but not turned on
+                return null;
+            }
+
+            if (!NtStatus.NT_SUCCESS(status))
+            {
+                throw new IOException($"FSCTL_QUERY_USN_JOURNAL failed with unexpected error {status} ({status:X})");
+            }
+
+            if (!NtStatus.NT_SUCCESS(statusBlock.Status))
+            {
+                return null;
+            }
+            return new USN_JOURNAL_DATA(usnBuffer);
+
         }
 
     }
 
-    _USN_JOURNAL_DATA _journalData;
-
-    public UInt64 UsnJournalID { get { return _journalData.UsnJournalID; } }
-    public Int64 FirstUsn { get { return _journalData.FirstUsn; } }
-    public Int64 NextUsn { get { return _journalData.NextUsn; } }
-    public Int64 LowestValidUsn { get { return _journalData.LowestValidUsn; } }
-    public Int64 MaxUsn { get { return _journalData.MaxUsn; } }
-    public UInt64 MaximumSize { get { return _journalData.MaximumSize; } }
-    public UInt64 AllocationDelta { get { return _journalData.AllocationDelta; } }
-    public UInt16 MinSupportedMajorVersion { get { return _journalData.MinSupportedMajorVersion; } } // V1 starts here
-    public UInt16 MaxSupportedMajorVersion { get { return _journalData.MaxSupportedMajorVersion; } }
-    public UInt32 Flags { get { return _journalData.Flags; } } // V2 starts here
-    public UInt64 RangeTrackChunkSize { get { return _journalData.RangeTrackChunkSize; } }
-    public Int64 RangeTrackFileSizeThreshold { get { return _journalData.RangeTrackFileSizeThreshold; } }
-
-    public USN_JOURNAL_DATA(byte[] Buffer)
+    //
+    // This is used to return information about drives on the system that support the USN journal and whether or not the USN journal is enabled
+    // on the given drive.
+    public struct USN_JOURNAL_DRIVE_DATA
     {
-        _journalData = _USN_JOURNAL_DATA.FromArray(Buffer);
+        public string Drive;
+        public bool Enabled;
+        public USN_JOURNAL_DATA JournalData;
     }
 
-    public string GetJson()
+    internal class SYSTEM_USN_INFORMATION
     {
-        return JsonSerializer.Serialize(this);
-    }
+        private static readonly Lazy<SYSTEM_USN_INFORMATION> _SystemUsnInformation = new Lazy<SYSTEM_USN_INFORMATION>((() => new SYSTEM_USN_INFORMATION()));
 
-    public void DebugLog()
-    {
-        _journalData.DebugLog();
-    }
+        public static SYSTEM_USN_INFORMATION Data { get { return _SystemUsnInformation.Value; } }
 
-    public static USN_JOURNAL_DATA? GetUsnJournalData(SafeFileHandle Handle, ref IO_STATUS_BLOCK statusBlock)
-    {
-        byte[] usnBuffer = new byte[1024 * 1024];
+        private List<string> UsnCapableDrives = new List<string>();
 
-        Debug.Assert(!Handle.IsInvalid);
-
-        // Check to see if it is actually enabled for this drive.
-        NtStatusCode status = NtFsControlFile(Handle, ref statusBlock, ControlCodes.Instance.FSCTL_QUERY_USN_JOURNAL, ref usnBuffer);
-
-        if (NtStatusCode.STATUS_JOURNAL_NOT_ACTIVE == status)
+        public static List<string> GetUsnCapableDrives()
         {
-            // Supported but not turned on
+            return Data.Update().UsnCapableDrives;
+        }
+
+        private static List<string> FindUsnCapableDrives()
+        {
+            MountManager mountManager = new MountManager();
+
+            List<string> drives = mountManager.GetAllDrives();
+            List<string> usnCapableDrives = new List<string>();
+
+            foreach (string drive in drives)
+            {
+                // open the drive, check if it supports the USN journal, and if it does
+                // determine if it is enabled.
+                SafeFileHandle driveHandle = new SafeFileHandle(IntPtr.Zero, true);
+                UNICODE_STRING c_drive = new UNICODE_STRING(drive);
+                OBJECT_ATTRIBUTES objattr = new OBJECT_ATTRIBUTES(new SafeFileHandle(IntPtr.Zero, true), c_drive);
+                ACCESS_MASK mask = (UInt32)FILE_ACCESS_MASK.FILE_READ_ATTRIBUTES | FILE_ACCESS_MASK.FILE_WRITE_ATTRIBUTES | FILE_ACCESS_MASK.SYNCHRONIZE;
+                IO_STATUS_BLOCK statusBlock = new IO_STATUS_BLOCK();
+                FILE_ATTRIBUTES fileAttr = FILE_ATTRIBUTES.NORMAL;
+                SHARE_ACCESS shareAccess = SHARE_ACCESS.FILE_SHARE_READ | SHARE_ACCESS.FILE_SHARE_WRITE;
+                CREATE_DISPOSITION disposition = CREATE_DISPOSITION.FILE_OPEN;
+                CREATE_OPTIONS options = CREATE_OPTIONS.FILE_SYNCHRONOUS_IO_NONALERT | CREATE_OPTIONS.FILE_NON_DIRECTORY_FILE;
+                EXTENDED_ATTRIBUTE ea = new EXTENDED_ATTRIBUTE();
+
+                NtStatusCode status = NtCreateFile(ref driveHandle, mask, objattr, ref statusBlock, null, fileAttr, shareAccess, disposition, options, ea);
+
+                if (!NtStatus.NT_SUCCESS(status))
+                {
+                    throw new IOException($"NtCreateFile failed, status {status} ({status:X}) = {NtStatusToString.StatusToString(status)}");
+                }
+
+                // Check file system characteristics
+                FILE_FS_ATTRIBUTE_INFORMATION fsAttrInfo = FILE_FS_ATTRIBUTE_INFORMATION.GetFsAttributeInformation(driveHandle);
+
+                Log.Debug($"Check Drive {drive} for USN support:");
+                if (0 != (FILE_SYSTEM_ATTRIBUTE_FLAGS.FILE_SUPPORTS_USN_JOURNAL & fsAttrInfo.FileSystemAttributes))
+                {
+                    usnCapableDrives.Add(drive);
+                }
+            }
+
+            return usnCapableDrives;
+        }
+
+        private List<USN_JOURNAL_DRIVE_DATA> ActiveUsnJournalDrives = new List<USN_JOURNAL_DRIVE_DATA>();
+
+        public static List<USN_JOURNAL_DRIVE_DATA> GetActiveUsnJournalDrives()
+        {
+            return Data.Update().ActiveUsnJournalDrives;
+        }
+
+        private static List<USN_JOURNAL_DRIVE_DATA> FindActiveUsnJournalDrives()
+        {
+            List<USN_JOURNAL_DRIVE_DATA> usnDrives = new List<USN_JOURNAL_DRIVE_DATA>();
+            MountManager mountManager = new MountManager();
+
+            List<string> drives = FindUsnCapableDrives();
+
+            foreach (string drive in drives)
+            {
+                // open the drive, check if it supports the USN journal, and if it does
+                // determine if it is enabled.
+                SafeFileHandle driveHandle = new SafeFileHandle(IntPtr.Zero, true);
+                UNICODE_STRING c_drive = new UNICODE_STRING(drive);
+                OBJECT_ATTRIBUTES objattr = new OBJECT_ATTRIBUTES(new SafeFileHandle(IntPtr.Zero, true), c_drive);
+                FILE_ACCESS_MASK mask = FILE_ACCESS_MASK.FILE_READ_ATTRIBUTES | FILE_ACCESS_MASK.FILE_WRITE_ATTRIBUTES | FILE_ACCESS_MASK.SYNCHRONIZE;
+                IO_STATUS_BLOCK statusBlock = new IO_STATUS_BLOCK();
+                FILE_ATTRIBUTES fileAttr = FILE_ATTRIBUTES.NORMAL;
+                SHARE_ACCESS shareAccess = SHARE_ACCESS.FILE_SHARE_READ | SHARE_ACCESS.FILE_SHARE_WRITE;
+                CREATE_DISPOSITION disposition = CREATE_DISPOSITION.FILE_OPEN;
+                CREATE_OPTIONS options = CREATE_OPTIONS.FILE_SYNCHRONOUS_IO_NONALERT | CREATE_OPTIONS.FILE_NON_DIRECTORY_FILE;
+                EXTENDED_ATTRIBUTE ea = new EXTENDED_ATTRIBUTE();
+
+                NtStatusCode status = NtCreateFile(ref driveHandle, mask, objattr, ref statusBlock, null, fileAttr, shareAccess, disposition, options, ea);
+
+                if (!NtStatus.NT_SUCCESS(status))
+                {
+                    throw new IOException($"NtCreateFile failed, status {status} ({status:X}) = {NtStatusToString.StatusToString(status)}");
+                }
+
+                USN_JOURNAL_DRIVE_DATA usnDrive = new USN_JOURNAL_DRIVE_DATA();
+                ControlCodes controlCodes = ControlCodes.Instance;
+
+                usnDrive.Drive = drive;
+                USN_JOURNAL_DATA? journalData = USN_JOURNAL_DATA.GetUsnJournalData(driveHandle, ref statusBlock);
+
+                if ((null == journalData) || !NtStatus.NT_SUCCESS(statusBlock.Status))
+                {
+                    continue; // not of interest
+                }
+
+                Log.Debug($"USN Journal Data for drive {drive}:");
+                journalData.DebugLog();
+                Log.Debug("\nJson version:");
+                Log.Debug(journalData.GetJson());
+                Log.Debug("\n");
+
+                usnDrives.Add(usnDrive);
+
+            }
+
+            return usnDrives;
+        }
+
+        public static USN_JOURNAL_DATA? GetUsnJournalDataForDrive(string Drive)
+        {
+            Data.Update();
+            foreach (var drive in Data.ActiveUsnJournalDrives)
+            {
+                if (drive.Drive == Drive)
+                {
+                    // Same drive
+                    return drive.JournalData;
+                }
+            }
+
             return null;
         }
 
-        if (!NtStatus.NT_SUCCESS(status))
-        {
-            throw new IOException($"FSCTL_QUERY_USN_JOURNAL failed with unexpected error {status} ({status:X})");
-        }
+        private DateTime LastUpdate;
 
-        if (!NtStatus.NT_SUCCESS(statusBlock.Status))
+        private SYSTEM_USN_INFORMATION Update(bool Force = false)
         {
-            return null;
-        }
-        return new USN_JOURNAL_DATA(usnBuffer);
+            DateTime checkValue = LastUpdate;
 
+            Log.Debug($"LastUpdate is {LastUpdate},  Minimum is {DateTime.MinValue}, Now is {DateTime.Now}");
+
+            checkValue.AddMinutes(10);
+
+            if (Force || (LastUpdate == DateTime.MinValue) || (checkValue > DateTime.Now))
+            {
+                UsnCapableDrives = FindUsnCapableDrives();
+                ActiveUsnJournalDrives = FindActiveUsnJournalDrives();
+                LastUpdate = DateTime.Now;
+            }
+
+            return this;
+        }
+        // TODO: may want to add dynamic extension capabilities
+
+        private SYSTEM_USN_INFORMATION()
+        {
+        }
     }
 
-}
-
-//
-// This is used to return information about drives on the system that support the USN journal and whether or not the USN journal is enabled
-// on the given drive.
-public struct USN_JOURNAL_DRIVE_DATA
-{
-    public string Drive;
-    public bool Enabled;
-    public USN_JOURNAL_DATA JournalData;
-}
-
-internal class SYSTEM_USN_INFORMATION
-{
-    private static readonly Lazy<SYSTEM_USN_INFORMATION> _SystemUsnInformation = new Lazy<SYSTEM_USN_INFORMATION>((() => new SYSTEM_USN_INFORMATION()));
-
-    public static SYSTEM_USN_INFORMATION Data { get { return _SystemUsnInformation.Value; } }
-
-    private List<string> UsnCapableDrives = new List<string>();
-
-    public static List<string> GetUsnCapableDrives()
+    public class DELETE_USN_JOURNAL_DATA
     {
-        return Data.Update().UsnCapableDrives;
+        /*
+        //
+        //==================== FSCTL_DELETE_USN_JOURNAL ======================
+        //
+        //  Structure for FSCTL_DELETE_USN_JOURNAL
+        //
+
+        typedef struct {
+
+        ULONGLONG UsnJournalID;
+        ULONG DeleteFlags;
+
+        } DELETE_USN_JOURNAL_DATA, *PDELETE_USN_JOURNAL_DATA;
+
+        #define USN_DELETE_FLAG_DELETE              (0x00000001)
+        #define USN_DELETE_FLAG_NOTIFY              (0x00000002)
+
+        #define USN_DELETE_VALID_FLAGS              (0x00000003)
+
+        #endif
+        */
     }
 
-    private static List<string> FindUsnCapableDrives()
+    public class USN_JOURNAL
     {
-        MountManager mountManager = new MountManager();
+        private string DeviceName = new string("");
+        private SafeFileHandle DeviceHandle = new SafeFileHandle(IntPtr.Zero, true);
+        private IntPtr UsnRecordBuffer = IntPtr.Zero;
 
-        List<string> drives = mountManager.GetAllDrives();
-        List<string> usnCapableDrives = new List<string>();
+        ~USN_JOURNAL()
+        {
+            if (!DeviceHandle.IsInvalid)
+            {
+                DeviceHandle.Close();
+            }
 
-        foreach (string drive in drives)
+            if (IntPtr.Zero != UsnRecordBuffer)
+            {
+                Marshal.FreeHGlobal(UsnRecordBuffer);
+                UsnRecordBuffer = IntPtr.Zero;
+            }
+        }
+
+        public USN_JOURNAL(string Drive)
+        {
+            DeviceName = Drive;
+            OpenDrive(Drive);
+        }
+
+        private void OpenDrive(string Drive)
         {
             // open the drive, check if it supports the USN journal, and if it does
             // determine if it is enabled.
-            SafeFileHandle driveHandle = new SafeFileHandle(IntPtr.Zero, true);
-            UNICODE_STRING c_drive = new UNICODE_STRING(drive);
-            OBJECT_ATTRIBUTES objattr = new OBJECT_ATTRIBUTES(new SafeFileHandle(IntPtr.Zero, true), c_drive);
-            ACCESS_MASK mask = (UInt32)FILE_ACCESS_MASK.FILE_READ_ATTRIBUTES | FILE_ACCESS_MASK.FILE_WRITE_ATTRIBUTES | FILE_ACCESS_MASK.SYNCHRONIZE;
+            FILE_ACCESS_MASK mask;
+            OBJECT_ATTRIBUTES objattr = new OBJECT_ATTRIBUTES(new SafeFileHandle(IntPtr.Zero, true), new UNICODE_STRING(Drive));
             IO_STATUS_BLOCK statusBlock = new IO_STATUS_BLOCK();
             FILE_ATTRIBUTES fileAttr = FILE_ATTRIBUTES.NORMAL;
             SHARE_ACCESS shareAccess = SHARE_ACCESS.FILE_SHARE_READ | SHARE_ACCESS.FILE_SHARE_WRITE;
             CREATE_DISPOSITION disposition = CREATE_DISPOSITION.FILE_OPEN;
             CREATE_OPTIONS options = CREATE_OPTIONS.FILE_SYNCHRONOUS_IO_NONALERT | CREATE_OPTIONS.FILE_NON_DIRECTORY_FILE;
             EXTENDED_ATTRIBUTE ea = new EXTENDED_ATTRIBUTE();
+            mask = FILE_ACCESS_MASK.FILE_READ_ATTRIBUTES | FILE_ACCESS_MASK.FILE_WRITE_ATTRIBUTES | FILE_ACCESS_MASK.SYNCHRONIZE;
 
-            NtStatusCode status = NtCreateFile(ref driveHandle, mask, objattr, ref statusBlock, null, fileAttr, shareAccess, disposition, options, ea);
+            NtStatusCode status = NtCreateFile(ref DeviceHandle, mask, objattr, ref statusBlock, null, fileAttr, shareAccess, disposition, options, ea);
 
             if (!NtStatus.NT_SUCCESS(status))
             {
+                Log.Fatal($"Opening drive {Drive} failed with status {status:x} ({status})");
                 throw new IOException($"NtCreateFile failed, status {status} ({status:X}) = {NtStatusToString.StatusToString(status)}");
-            }
-
-            // Check file system characteristics
-            FILE_FS_ATTRIBUTE_INFORMATION fsAttrInfo = FILE_FS_ATTRIBUTE_INFORMATION.GetFsAttributeInformation(driveHandle);
-
-            Log.Debug($"Check Drive {drive} for USN support:");
-            if (0 != (FILE_SYSTEM_ATTRIBUTE_FLAGS.FILE_SUPPORTS_USN_JOURNAL & fsAttrInfo.FileSystemAttributes))
-            {
-                usnCapableDrives.Add(drive);
             }
         }
 
-        return usnCapableDrives;
-    }
+        #region public static
 
-    private List<USN_JOURNAL_DRIVE_DATA> ActiveUsnJournalDrives = new List<USN_JOURNAL_DRIVE_DATA>();
-
-    public static List<USN_JOURNAL_DRIVE_DATA> GetActiveUsnJournalDrives()
-    {
-        return Data.Update().ActiveUsnJournalDrives;
-    }
-
-    private static List<USN_JOURNAL_DRIVE_DATA> FindActiveUsnJournalDrives()
-    {
-        List<USN_JOURNAL_DRIVE_DATA> usnDrives = new List<USN_JOURNAL_DRIVE_DATA>();
-        MountManager mountManager = new MountManager();
-
-        List<string> drives = FindUsnCapableDrives();
-
-        foreach (string drive in drives)
+        public static List<USN_JOURNAL_DRIVE_DATA> GetActiveUsnJournalDrives()
         {
-            // open the drive, check if it supports the USN journal, and if it does
-            // determine if it is enabled.
-            SafeFileHandle driveHandle = new SafeFileHandle(IntPtr.Zero, true);
-            UNICODE_STRING c_drive = new UNICODE_STRING(drive);
-            OBJECT_ATTRIBUTES objattr = new OBJECT_ATTRIBUTES(new SafeFileHandle(IntPtr.Zero, true), c_drive);
-            FILE_ACCESS_MASK mask = FILE_ACCESS_MASK.FILE_READ_ATTRIBUTES | FILE_ACCESS_MASK.FILE_WRITE_ATTRIBUTES | FILE_ACCESS_MASK.SYNCHRONIZE;
+            return SYSTEM_USN_INFORMATION.GetActiveUsnJournalDrives();
+        }
+
+        public static List<string> GetUsnCapableDrives()
+        {
+            return SYSTEM_USN_INFORMATION.GetUsnCapableDrives();
+        }
+        #endregion public static
+
+        // We use this to determine where we are in reading the USN journal so we can repeatedly read it.
+        private Int64 LastUsnRequested;
+        private List<USN_RECORD> Records = new List<USN_RECORD>();
+        private Dictionary<Int64, USN_RECORD> RecordsByUsn = new Dictionary<Int64, USN_RECORD>();
+
+        // This routine is called to see if there are any more USN records and, if so, make sure we've grabbed them.
+        public uint UpdateUsnRecords()
+        {
+            uint count = 0;
             IO_STATUS_BLOCK statusBlock = new IO_STATUS_BLOCK();
-            FILE_ATTRIBUTES fileAttr = FILE_ATTRIBUTES.NORMAL;
-            SHARE_ACCESS shareAccess = SHARE_ACCESS.FILE_SHARE_READ | SHARE_ACCESS.FILE_SHARE_WRITE;
-            CREATE_DISPOSITION disposition = CREATE_DISPOSITION.FILE_OPEN;
-            CREATE_OPTIONS options = CREATE_OPTIONS.FILE_SYNCHRONOUS_IO_NONALERT | CREATE_OPTIONS.FILE_NON_DIRECTORY_FILE;
-            EXTENDED_ATTRIBUTE ea = new EXTENDED_ATTRIBUTE();
+            SafeFileHandle handle = new SafeFileHandle(IntPtr.Zero, true);
 
-            NtStatusCode status = NtCreateFile(ref driveHandle, mask, objattr, ref statusBlock, null, fileAttr, shareAccess, disposition, options, ea);
+            USN_JOURNAL_DATA? journalData = USN_JOURNAL_DATA.GetUsnJournalData(DeviceHandle, ref statusBlock);
 
-            if (!NtStatus.NT_SUCCESS(status))
+            Debug.Assert(null != journalData); // don't call us on a drive that doesn't have a USN journal!
+
+            Debug.Assert(journalData.MaximumSize > 4096);
+            ulong bufferSize = journalData.MaximumSize * 2;
+            IntPtr buffer = Marshal.AllocHGlobal((int)(bufferSize));
+
+            try
             {
-                throw new IOException($"NtCreateFile failed, status {status} ({status:X}) = {NtStatusToString.StatusToString(status)}");
-            }
+                READ_USN_JOURNAL_DATA readUsnJournalData = new READ_USN_JOURNAL_DATA(journalData);
 
-            USN_JOURNAL_DRIVE_DATA usnDrive = new USN_JOURNAL_DRIVE_DATA();
-            ControlCodes controlCodes = ControlCodes.Instance;
+                if (journalData.FirstUsn > LastUsnRequested)
+                {
+                    LastUsnRequested = journalData.FirstUsn;
+                }
 
-            usnDrive.Drive = drive;
-            USN_JOURNAL_DATA? journalData = USN_JOURNAL_DATA.GetUsnJournalData(driveHandle, ref statusBlock);
+                Debug.Assert(!DeviceHandle.IsInvalid);
 
-            if ((null == journalData) || !NtStatus.NT_SUCCESS(statusBlock.Status))
-            {
-                continue; // not of interest
-            }
+                Log.Debug($"ReadUsnJournal: using buffer of size {bufferSize}");
+                Log.Debug($"ReadUsnJournal: using LastUsnRequested = {LastUsnRequested}, note journalData.FirstUsn is {journalData.FirstUsn}");
+                Log.Debug($"ReadUsnJournal: using UsnJournalId = {journalData.UsnJournalID}");
+                statusBlock.Status = NtStatusCode.STATUS_UNSUCCESSFUL;
+                NtStatusCode status = readUsnJournalData.ReadUsnJournal(DeviceHandle, LastUsnRequested, buffer, bufferSize, ref statusBlock);
 
-            Log.Debug($"USN Journal Data for drive {drive}:");
-            journalData.DebugLog();
-            Log.Debug("\nJson version:");
-            Log.Debug(journalData.GetJson());
-            Log.Debug("\n");
+                Log.Debug($"ReadUsnJournal for drive {DeviceName} starting with {LastUsnRequested} returned status {status:x} ({status}) and buffer returned is {statusBlock.Information:X} ({statusBlock.Information}) bytes long");
+                int bytesReturned = (int)statusBlock.Information;
 
-            usnDrives.Add(usnDrive);
+                Debug.Assert(NtStatus.NT_SUCCESS(status));
+                
 
-        }
+                // Now we need to ingest all these records.
+                for (int offset = 8; offset < bytesReturned;)
+                {
+                    Log.Debug($"Decode USN Journal Record buffer = 0x{buffer:X} at offset {offset}");
+                    USN_RECORD record = USN_RECORD.UnpackUsnJournalRecord(buffer, ref offset, bytesReturned);
 
-        return usnDrives;
-    }
+                    Debug.Assert(offset <= bytesReturned);
 
-    public static USN_JOURNAL_DATA? GetUsnJournalDataForDrive(string Drive)
-    {
-        Data.Update();
-        foreach (var drive in Data.ActiveUsnJournalDrives)
-        {
-            if (drive.Drive == Drive)
-            {
-                // Same drive
-                return drive.JournalData;
-            }
-        }
+                    if ((record != null) && !RecordsByUsn.ContainsKey(record.Usn))
+                    {
+                        Log.Debug("USN Journal Record:");
+                        record.DumpLog();
+                        Records.Add(record);
+                        RecordsByUsn.Add(record.Usn, record);
+                        LastUsnRequested = record.Usn;
+                        count++;
+                    }
 
-        return null;
-    }
+                }
 
-    private DateTime LastUpdate;
-
-    private SYSTEM_USN_INFORMATION Update(bool Force = false)
-    {
-        DateTime checkValue = LastUpdate;
-
-        Log.Debug($"LastUpdate is {LastUpdate},  Minimum is {DateTime.MinValue}, Now is {DateTime.Now}");
-
-        checkValue.AddMinutes(10);
-
-        if (Force || (LastUpdate == DateTime.MinValue) || (checkValue > DateTime.Now))
-        {
-            UsnCapableDrives = FindUsnCapableDrives();
-            ActiveUsnJournalDrives = FindActiveUsnJournalDrives();
-            LastUpdate = DateTime.Now;
-        }
-
-        return this;
-    }
-    // TODO: may want to add dynamic extension capabilities
-
-    private SYSTEM_USN_INFORMATION()
-    {
-    }
-}
-
-public class DELETE_USN_JOURNAL_DATA
-{
-    /*
-    //
-    //==================== FSCTL_DELETE_USN_JOURNAL ======================
-    //
-    //  Structure for FSCTL_DELETE_USN_JOURNAL
-    //
-
-    typedef struct {
-
-    ULONGLONG UsnJournalID;
-    ULONG DeleteFlags;
-
-    } DELETE_USN_JOURNAL_DATA, *PDELETE_USN_JOURNAL_DATA;
-
-    #define USN_DELETE_FLAG_DELETE              (0x00000001)
-    #define USN_DELETE_FLAG_NOTIFY              (0x00000002)
-
-    #define USN_DELETE_VALID_FLAGS              (0x00000003)
-
-    #endif
-    */
-}
-
-public class USN_JOURNAL
-{
-    private string DeviceName = new string("");
-    private SafeFileHandle DeviceHandle = new SafeFileHandle(IntPtr.Zero, true);
-    private IntPtr UsnRecordBuffer = IntPtr.Zero;
-
-    ~USN_JOURNAL()
-    {
-        if (!DeviceHandle.IsInvalid)
-        {
-            DeviceHandle.Close();
-        }
-
-        if (IntPtr.Zero != UsnRecordBuffer)
-        {
-            Marshal.FreeHGlobal(UsnRecordBuffer);
-            UsnRecordBuffer = IntPtr.Zero;
-        }
-    }
-
-    public USN_JOURNAL(string Drive)
-    {
-        DeviceName = Drive;
-        OpenDrive(Drive);
-    }
-
-    private void OpenDrive(string Drive)
-    {
-        // open the drive, check if it supports the USN journal, and if it does
-        // determine if it is enabled.
-        FILE_ACCESS_MASK mask;
-        OBJECT_ATTRIBUTES objattr = new OBJECT_ATTRIBUTES(new SafeFileHandle(IntPtr.Zero, true), new UNICODE_STRING(Drive));
-        IO_STATUS_BLOCK statusBlock = new IO_STATUS_BLOCK();
-        FILE_ATTRIBUTES fileAttr = FILE_ATTRIBUTES.NORMAL;
-        SHARE_ACCESS shareAccess = SHARE_ACCESS.FILE_SHARE_READ | SHARE_ACCESS.FILE_SHARE_WRITE;
-        CREATE_DISPOSITION disposition = CREATE_DISPOSITION.FILE_OPEN;
-        CREATE_OPTIONS options = CREATE_OPTIONS.FILE_SYNCHRONOUS_IO_NONALERT | CREATE_OPTIONS.FILE_NON_DIRECTORY_FILE;
-        EXTENDED_ATTRIBUTE ea = new EXTENDED_ATTRIBUTE();
-        mask = FILE_ACCESS_MASK.FILE_READ_ATTRIBUTES | FILE_ACCESS_MASK.FILE_WRITE_ATTRIBUTES | FILE_ACCESS_MASK.SYNCHRONIZE;
-
-        NtStatusCode status = NtCreateFile(ref DeviceHandle, mask, objattr, ref statusBlock, null, fileAttr, shareAccess, disposition, options, ea);
-
-        if (!NtStatus.NT_SUCCESS(status))
-        {
-            Log.Fatal($"Opening drive {Drive} failed with status {status:x} ({status})");
-            throw new IOException($"NtCreateFile failed, status {status} ({status:X}) = {NtStatusToString.StatusToString(status)}");
-        }
-    }
-
-    #region public static
-
-    public static List<USN_JOURNAL_DRIVE_DATA> GetActiveUsnJournalDrives()
-    {
-        return SYSTEM_USN_INFORMATION.GetActiveUsnJournalDrives();
-    }
-
-    public static List<string> GetUsnCapableDrives()
-    {
-        return SYSTEM_USN_INFORMATION.GetUsnCapableDrives();
-    }
-    #endregion public static
-
-    // We use this to determine where we are in reading the USN journal so we can repeatedly read it.
-    private Int64 LastUsnRequested;
-    private List<USN_RECORD> Records = new List<USN_RECORD>();
-
-    // This routine is called to see if there are any more USN records and, if so, make sure we've grabbed them.
-    public uint UpdateUsnRecords()
-    {
-        uint count = 0;
-        IO_STATUS_BLOCK statusBlock = new IO_STATUS_BLOCK();
-        SafeFileHandle handle = new SafeFileHandle(IntPtr.Zero, true);
-
-        USN_JOURNAL_DATA? journalData = USN_JOURNAL_DATA.GetUsnJournalData(DeviceHandle, ref statusBlock);
-
-        Debug.Assert(null != journalData); // don't call us on a drive that doesn't have a USN journal!
-
-        Debug.Assert(journalData.MaximumSize > 4096);
-        ulong bufferSize = journalData.MaximumSize * 2;
-        IntPtr buffer = Marshal.AllocHGlobal((int)(bufferSize));
-
-        try
-        {
-            READ_USN_JOURNAL_DATA readUsnJournalData = new READ_USN_JOURNAL_DATA(journalData);
-
-            if (journalData.FirstUsn > LastUsnRequested)
-            {
-                LastUsnRequested = journalData.FirstUsn;
-            }
-
-            Debug.Assert(!DeviceHandle.IsInvalid);
-
-            Log.Debug($"ReadUsnJournal: using buffer of size {bufferSize}");
-            Log.Debug($"ReadUsnJournal: using LastUsnRequested = {LastUsnRequested}, note journalData.FirstUsn is {journalData.FirstUsn}");
-            Log.Debug($"ReadUsnJournal: using UsnJournalId = {journalData.UsnJournalID}");
-            statusBlock.Status = NtStatusCode.STATUS_UNSUCCESSFUL;
-            NtStatusCode status = readUsnJournalData.ReadUsnJournal(DeviceHandle, LastUsnRequested, buffer, bufferSize, ref statusBlock);
-
-            Log.Debug($"ReadUsnJournal for drive {DeviceName} starting with {LastUsnRequested} returned status {status:x} ({status}) and buffer returned is {statusBlock.Information:X} ({statusBlock.Information}) bytes long");
-            int bytesReturned = (int)statusBlock.Information;
-
-            Debug.Assert(NtStatus.NT_SUCCESS(status));
-
-            // Now we need to ingest all these records.
-            for (int offset = 0; offset < bytesReturned;)
-            {
-                USN_RECORD record = new USN_RECORD();
+                // TODO: I need to make the above logic a loop until there's no more records.
+                // Of course, since the records are being generated dynamically, this is an ongoing
+                // process.
 
             }
-        }
-        finally
-        {
-            if (IntPtr.Zero != buffer)
+            finally
             {
-                Marshal.FreeHGlobal(buffer);
-                buffer = IntPtr.Zero;
+                if (IntPtr.Zero != buffer)
+                {
+                    Marshal.FreeHGlobal(buffer);
+                    buffer = IntPtr.Zero;
+                }
             }
+
+            return count;
         }
 
-        return count;
+        public List<USN_RECORD> ReadUsnRecord(bool RemoveFromList = false)
+        {
+            List<USN_RECORD> Records = new List<USN_RECORD>();
+
+
+
+            return Records;
+        }
+
     }
-
-    public List<USN_RECORD> ReadUsnRecord(bool RemoveFromList = false)
-    {
-        List<USN_RECORD> Records = new List<USN_RECORD>();
-
-
-
-        return Records;
-    }
-
-}
 }
