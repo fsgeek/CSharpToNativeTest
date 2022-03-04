@@ -7,23 +7,11 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Serilog;
 using System.Diagnostics;
-using USNJournal;
 
-
-//
-// See: https://www.genericgamedev.com/general/converting-between-structs-and-byte-arrays/
-//
-// This argues for building a generic model of serialization that is based upon a template class.
-// While the binary reader/writer model is slightly faster as the author points out, it means
-// writing a lot more code.
-//
-// I'm not going back to re-do this.  I do think it is wise to consider using the serializable type model
-// moving forward
-//
-namespace USNJournal
+namespace Indaleko.Windows
 {
     // This is a singleton
-    public sealed class ControlCodes
+    public sealed class USNControlCodes
     {
         public UInt32 FSCTL_ENUM_USN_DATA { get { return Ioctl.CTL_CODE(Ioctl.FILE_DEVICE_FILE_SYSTEM, 44, Ioctl.METHOD_NEITHER, Ioctl.FILE_ANY_ACCESS); } }
         public UInt32 FSCTL_READ_USN_JOURNAL { get { return Ioctl.CTL_CODE(Ioctl.FILE_DEVICE_FILE_SYSTEM, 46, Ioctl.METHOD_NEITHER, Ioctl.FILE_ANY_ACCESS); } } // READ_USN_JOURNAL_DATA, USN
@@ -369,10 +357,10 @@ namespace USNJournal
             bool first = true;
             string reason = "";
 
-            if (0!= (Reason & USN_REASON_DATA_OVERWRITE))
+            if (0 != (Reason & USN_REASON_DATA_OVERWRITE))
             {
                 if (!first) { reason += "|"; }
-                reason+= "USN_REASON_DATA_OVERWRITE";
+                reason += "USN_REASON_DATA_OVERWRITE";
                 first = false;
             }
 
@@ -924,7 +912,7 @@ namespace USNJournal
 
             private void UnpackV3(IntPtr Buffer)
             {
-                FILE_ID_128 fid= Marshal.PtrToStructure<FILE_ID_128>(Buffer);
+                FILE_ID_128 fid = Marshal.PtrToStructure<FILE_ID_128>(Buffer);
                 FILE_ID_128 pfid = Marshal.PtrToStructure<FILE_ID_128>(Buffer + 16);
                 Log.Debug($"fid is {fid}");
                 Log.Debug($"pfid is {pfid}");
@@ -993,7 +981,7 @@ namespace USNJournal
 
                 }
 
-                Offset += (int) commonHeader.RecordLength;
+                Offset += (int)commonHeader.RecordLength;
 
             }
         }
@@ -1503,7 +1491,7 @@ namespace USNJournal
                         {
                             WriteIndented = true,
                         };
-                        Console.WriteLine($"First record added {JsonSerializer.Serialize(record,options)}");
+                        Console.WriteLine($"First record added {JsonSerializer.Serialize(record, options)}");
                         dumpedfirstrecord = true;
                     }
 
