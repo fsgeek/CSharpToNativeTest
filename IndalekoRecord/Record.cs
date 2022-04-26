@@ -1,8 +1,4 @@
 ﻿using MongoDB.Bson;
-using MongoDB.Driver;
-using System.Security.Principal;
-using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
 
 namespace Indaleko
 {
@@ -50,7 +46,6 @@ namespace Indaleko
             var attrs = new BsonDocument(Attributes);
 
             document.Add("Attributes", attrs);
-
 
             document.Add("Data", new BsonBinaryData(Data));
 
