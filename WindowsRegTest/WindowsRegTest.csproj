@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MongoDB.Driver" Version="2.14.1" />
+    <ProjectReference Include="..\IndalekoRecord\Indaleko.csproj" />
   </ItemGroup>
 
 </Project>
