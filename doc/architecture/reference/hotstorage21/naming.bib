@@ -1,0 +1,436 @@
+@misc{ashish,
+  author = {Anonymized authors},
+  title  = {Anonymized title},
+  year = {2019},
+}
+
+@article{mashwani2019360,
+  title   = {360° Semantic File System: Augmented Directory Navigation for Nonhierarchical Retrieval of Files},
+  author  = {Syed Rahman {Mashwani} and Shah {Khusro}},
+  journal = {IEEE Access},
+  volume  = {7},
+  pages   = {9406--9418},
+  year    = {2019}
+}
+
+@inproceedings{9229638,
+  author    = {M. -A. {Vef} and R. {Steiner} and R. {Salkhordeh} and J. {Steinkamp} and F. {Vennetier} and J. -F. {Smigielski} and A. {Brinkmann}},
+  booktitle = {2020 IEEE International Conference on Cluster Computing (CLUSTER)},
+  title     = {DelveFS - An Event-Driven Semantic File System for Object Stores},
+  year      = {2020},
+  volume    = {},
+  number    = {},
+  pages     = {35-46},
+  doi       = {10.1109/CLUSTER49012.2020.00014}
+}
+
+%% This describes the use of the pub/sub model for monitoring changes; similar to what we're doing, but
+%% certainly not the same.
+@inproceedings{vef2020delvefs,
+	title="DelveFS - An Event-Driven Semantic File System for Object Stores",
+	author="Marc-Andre {Vef} and Rebecca {Steiner} and Reza {Salkhordeh} and Jorg {Steinkamp} and Florent {Vennetier} and Jean-Francois {Smigielski} and Andre {Brinkmann}",
+	booktitle="2020 IEEE International Conference on Cluster Computing (CLUSTER)",
+	pages="35--46",
+	notes="Sourced from Microsoft Academic - https://academic.microsoft.com/paper/3097009932",
+	year="2020"
+}
+
+% This seems to be the last placeless documents reference, so it is the one that I've used
+% Interestingly, it is heavily cited, but from the technology appropriation perspective.
+@article{dourish2003the,
+	title="The Appropriation of Interactive Technologies: Some Lessons from Placeless Documents",
+	author="Paul {Dourish}",
+	journal="conference on computer supported cooperative work",
+	volume="12",
+	number="4",
+	pages="465--490",
+	notes="Sourced from Microsoft Academic - https://academic.microsoft.com/paper/2004942240",
+	year="2003"
+}
+
+%% These references are FROM the placeless paper above and seemed to be germane to the conversation
+%% we are having here.  I'm not suggesting we need to USE these, but this is a good gathering spot
+%% for related works.
+
+@inproceedings{harrison1996re,
+	title="Re-place-ing space: the roles of place and space in collaborative systems",
+	author="Steve {Harrison} and Paul {Dourish}",
+	booktitle="Proceedings of the 1996 ACM conference on Computer supported cooperative work",
+	pages="67--76",
+	notes="Sourced from Microsoft Academic - https://academic.microsoft.com/paper/2029544898",
+	year="1996"
+}
+
+@article{barreau1995finding,
+	title="Finding and reminding: file organization from the desktop",
+	author="Deborah {Barreau} and Bonnie A. {Nardi}",
+	journal="ACM Sigchi Bulletin",
+	volume="27",
+	number="3",
+	pages="39--43",
+	notes="Sourced from Microsoft Academic - https://academic.microsoft.com/paper/2097127516",
+	year="1995"
+}
+
+@inproceedings{dourish1999getting,
+	title="Getting some perspective: using process descriptions to index document history",
+	author="Paul {Dourish} and Richard {Bentley} and Rachel {Jones} and Allan {MacLean}",
+	booktitle="Proceedings of the international ACM SIGGROUP conference on Supporting group work",
+	pages="375--384",
+	notes="Sourced from Microsoft Academic - https://academic.microsoft.com/paper/1981566060",
+	year="1999"
+}
+
+@article{placeless-tois,
+author = {Dourish, Paul and Edwards, W. Keith and LaMarca, Anthony and Lamping, John and Petersen, Karin and Salisbury, Michael and Terry, Douglas B. and Thornton, James},
+title = {Extending Document Management Systems with User-Specific Active Properties},
+year = {2000},
+issue_date = {April 2000},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {18},
+number = {2},
+issn = {1046-8188},
+url = {https://doi.org/10.1145/348751.348758},
+doi = {10.1145/348751.348758},
+abstract = {Document properties are a compelling infrastructure on which to develop document management applications. A property-based approach avoids many of the problems of traditional heierarchical storage mechanisms, reflects document organizations meaningful to user tasks, provides a means to integrate the perspectives of multiple individuals and groups, and does this all within a uniform interaction framework. Document properties can reflect not only categorizations of documents and document use, but also expressions of desired system activity, such as sharing criteria, replication management, and versioning. Augmenting property-based document management systems with active properties that carry executable code enables the provision of document-based services on a property infrastructure. The combination of document properties as a uniform mechanism for document management, and active properties as a way of delivering document services, represents a new paradigm for document management infrastructures. The Placeless Documents system is an experimental prototype developed to explore this new paradigm. It is based on the seamless integration of user-specific, active properties. We present the fundamental design approach, explore the challenges and opportunities it presents, and show our architectures deals with them.},
+journal = {ACM Trans. Inf. Syst.},
+month = apr,
+pages = {140–170},
+numpages = {31},
+keywords = {document services, document management systems, user experience, active properties, component software}
+}
+
+%% End references from Placeless Documents
+%%
+
+%% Papers on semantic file systems and/or 
+%% per-process or per-user namespaces
+@inproceedings{giffordSFS,
+author = {Gifford, David K. and Jouvelot, Pierre and Sheldon, Mark A. and O'Toole, James W.},
+title = {Semantic File Systems},
+year = {1991},
+isbn = {0897914473},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/121132.121138},
+doi = {10.1145/121132.121138},
+abstract = {A semantic file system is an information storage system that provides flexible associative access to the system's contents by automatically extracting attributes from files with file type specific transducers. Associative access is provided by a conservative extension to existing tree-structured file system protocols, and by protocols that are designed specifically for content based access. Compatiblity with existing file system protocols is provided by introducing the concept of a virtual directory. Virtual directory names are interpreted as queries, and thus provide flexible associative access to files and directories in a manner compatible with existing software. Rapid attribute-based access to file system contents is implemented by automatic extraction and indexing of key properties of file system objects. The automatic indexing of files and directories is called "semantic" because user programmable transducers use information about the semantics of updated file system objects to extract the properties for indexing. Experimental results from a semantic file system implementation support the thesis that semantic file systems present a more effective storage abstraction than do traditional tree structured file systems for information sharing and command level programming.},
+booktitle = {Proceedings of the Thirteenth ACM Symposium on Operating Systems Principles},
+pages = {16–25},
+numpages = {10},
+location = {Pacific Grove, California, USA},
+series = {SOSP '91}
+}
+
+@article{plan9,
+author = {Pike, Rob and Presotto, Dave and Thompson, Ken and Trickey, Howard and Winterbottom, Phil},
+title = {The Use of Name Spaces in Plan 9},
+year = {1993},
+issue_date = {April 1993},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {27},
+number = {2},
+issn = {0163-5980},
+url = {https://doi.org/10.1145/155848.155861},
+doi = {10.1145/155848.155861},
+abstract = {Plan 9 is a distributed system built at the Computing Sciences Research Center of AT&T Bell Laboratories over the last few years. Its goal is to provide a production-quality system for software development and general computation using heterogeneous hardware and minimal software. A Plan 9 system comprises CPU and file servers in a central location connected together by fast networks. Slower networks fan out to workstation-class machines that serve as user terminals. Plan 9 argues that given a few carefully implemented abstractions it is possible to produce a small operating system that provides support for the largest systems on a variety of architectures and networks. The foundations of the system are built on two ideas: a per-process name space and a simple message-oriented file system protocol.},
+journal = {SIGOPS Oper. Syst. Rev.},
+month = apr,
+pages = {72–76},
+numpages = {5}
+}
+
+@inproceedings{inversion,
+        author = {Michael A. Olson},
+        title = {The Design and Implementation of the Inversion File System},
+        booktitle = {{USENIX} Winter 1993 Conference ({USENIX} Winter 1993 Conference)},
+        year = {1993},
+        address = {San Diego, CA},
+        url = {https://www.usenix.org/conference/usenix-winter-1993-conference/design-and-implementation-inversion-file-system},
+        publisher = {{USENIX} Association},
+        month = jan,
+}
+
+@inproceedings{smartstore,
+  author={Hua, Yu and Jiang, Hong and Zhu, Yifeng and Feng, Dan and Tian, Lei},
+  booktitle={Proceedings of the Conference on High Performance Computing Networking, Storage and Analysis}, 
+  title={SmartStore: a new metadata organization paradigm with semantic-awareness for next-generation file systems}, 
+  year={2009},
+  volume={},
+  number={},
+  pages={1-12},
+  doi={10.1145/1654059.1654070}
+  }
+  
+  @inproceedings{tagfs,
+  added-at = {2006-12-01T01:10:01.000+0100},
+  author = {Bloehdorn, Stephan and G{\"{o}}rlitz, Olaf and Schenk, Simon and V{\"{o}}lkel, Max},
+  biburl = {https://www.bibsonomy.org/bibtex/216a0e8515f53d24a33c44a9651328c39/deynard},
+  booktitle = {Proceedings of the 6th International Conference on Knowledge Management (I-KNOW 06), Graz, Austria, September 6-8, 2006},
+  description = {posted on 2006-11-22},
+  interhash = {f8a2c0592c5108f5b0ba1052b2a5ad22},
+  intrahash = {16a0e8515f53d24a33c44a9651328c39},
+  keywords = {tagfs filesystem tagging semantic},
+  month = {September},
+  timestamp = {2006-12-01T01:10:01.000+0100},
+  title = {TagFS - Tag Semantics for Hierarchical File Systems},
+  year = 2006
+}
+
+@inproceedings{gfs,
+author = {Di Sarli, Daniele and Geraci, Filippo},
+title = {GFS: A Graph-Based File System Enhanced with Semantic Features},
+year = {2017},
+isbn = {9781450348331},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3077584.3077591},
+doi = {10.1145/3077584.3077591},
+abstract = {Organizing documents in the file system is one of the most tedious and thorny tasks for most computer users. Taxonomies based on hand made directory hierarchies still remain the only possible alternative for most small and medium enterprises, public administrations and individual users. However, both the limitations of the hierarchical organization of file systems and the difficulty of maintaining the coherence within the taxonomy have raised the need for more scalable and effective approaches.Desktop searching applications provide proprietary interfaces that enable content-based searching at the cost of having no control on the indexing and ranking of results. Semantic file systems, instead, leave users the freedom to manage the taxonomy according to their specific needs, but lose the standard file system features.In this paper we describe GFS (graph-based file system) a new hybrid file system that extends the standard hierarchical organization of files with semantic features. GFS allows the user to nest semantic spaces inside the directory hierarchy leaving unaltered system folders. Semantic spaces allow customized file tagging and leverage on browsing to guide file searching.Since GFS does not change the low-level interface to interact with file systems, users can continue to use their favorite file managers to interact with it. Moreover, no changes are required to integrate the semantic features in proprietary software.},
+booktitle = {Proceedings of the 2017 International Conference on Information System and Data Mining},
+pages = {51–55},
+numpages = {5},
+keywords = {user experience, Semantic browsing, file tagging},
+location = {Charleston, SC, USA},
+series = {ICISDM '17}
+}
+
+%% Search-based techniques
+@inproceedings{provsearch,
+author = {Shah, Sam and Soules, Craig A. N. and Ganger, Gregory R. and Noble, Brian D.},
+title = {Using Provenance to Aid in Personal File Search},
+year = {2007},
+isbn = {9998888776},
+publisher = {USENIX Association},
+address = {USA},
+abstract = {As the scope of personal data grows, it becomes increasingly difficult to find what we need when we need it. Desktop search tools provide a potential answer, but most existing tools are incomplete solutions: they index content, but fail to capture dynamic relationships from the user's context. One emerging solution to this is context-enhanced search, a technique that reorders and extends the results of content-only search using contextual information. Within this framework, we propose using strict causality, rather than temporal locality, the current state of the art, to direct contextual searches. Causality more accurately identifies data flow between files, reducing the false-positives created by context-switching and background noise. Further, unlike previous work, we conduct an online user study with a fully-functioning implementation to evaluate user-perceived search quality directly. Search results generated by our causality mechanism are rated a statistically-significant 17\% higher on average over all queries than by using content-only search or context-enhanced search with temporal locality.},
+booktitle = {2007 USENIX Annual Technical Conference on Proceedings of the USENIX Annual Technical Conference},
+articleno = {13},
+numpages = {14},
+location = {Santa Clara, CA},
+series = {ATC'07}
+}
+
+@inproceedings{uprove2,
+  title={UProve2: privacy-aware, scalable, ubiquitous provenance to enhance file search},
+  author={Rasel, Annajiat Alim and Ali, Mohammed Eunus},
+  booktitle={2016 International Conference on Networking Systems and Security (NSysS)},
+  pages={1--5},
+  year={2016},
+  organization={IEEE}
+}
+
+@inproceedings{pindex,
+  title={P-index: An efficient searchable metadata indexing scheme based on data provenance in cold storage},
+  author={Liu, Jinjun and Feng, Dan and Hua, Yu and Peng, Bin and Zuo, Pengfei and Sun, Yuanyuan},
+  booktitle={International Conference on Algorithms and Architectures for Parallel Processing},
+  pages={597--611},
+  year={2015},
+  organization={Springer}
+}
+
+@techreport{page1999pagerank,
+  title={The PageRank citation ranking: Bringing order to the web.},
+  author={Page, Lawrence and Brin, Sergey and Motwani, Rajeev and Winograd, Terry},
+  year={1999},
+  institution={Stanford InfoLab}
+}
+
+%% Federated naming
+@inproceedings{nfs,
+  title={Design and implementation of the Sun network filesystem},
+  author={Sandberg, Russel and Goldberg, David and Kleiman, Steve and Walsh, Dan and Lyon, Bob},
+  booktitle={Proceedings of the Summer USENIX conference},
+  pages={119--130},
+  year={1985}
+}
+
+@inproceedings{metastorage,
+  author={Bermbach, David and Klems, Markus and Tai, Stefan and Menzel, Michael},
+  booktitle={2011 IEEE 4th International Conference on Cloud Computing}, 
+  title={MetaStorage: A Federated Cloud Storage System to Manage Consistency-Latency Tradeoffs}, 
+  year={2011},
+  volume={},
+  number={},
+  pages={452-459},
+  doi={10.1109/CLOUD.2011.62}}
+
+@article{howard1988scale,
+	title="Scale and performance in a distributed file system",
+	author="John H. {Howard} and Michael L. {Kazar} and Sherri G. {Menees} and David A. {Nichols} and M. {Satyanarayanan} and Robert N. {Sidebotham} and Michael J. {West}",
+	journal="ACM Transactions on Computer Systems",
+	volume="6",
+	number="1",
+	pages="51--81",
+	notes="Sourced from Microsoft Academic - https://academic.microsoft.com/paper/2005373714",
+	year="1988"
+}
+
+% The Howard TOCS paper is a better reference than the '86 paper.
+@article{afs,
+author = {Morris, James H. and Satyanarayanan, Mahadev and Conner, Michael H. and Howard, John H. and Rosenthal, David S. and Smith, F. Donelson},
+title = {Andrew: A Distributed Personal Computing Environment},
+year = {1986},
+issue_date = {March 1986},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {29},
+number = {3},
+issn = {0001-0782},
+url = {https://doi.org/10.1145/5666.5671},
+doi = {10.1145/5666.5671},
+abstract = {The Information Technology Center (ITC), a collaborative effort between IBM and Carnegie-Mellon University, is in the process of creating Andrew, a prototype computing and communication system for universities. This article traces the origins of Andrew, discusses its goals and strategies, and gives an overview of the current status of its implementation and usage.},
+journal = {Commun. ACM},
+month = mar,
+pages = {184–201},
+numpages = {18}
+}
+
+@article{Adya:2003:Farsite,
+author = {Adya, Atul and Bolosky, William J. and Castro, Miguel and Cermak, Gerald and Chaiken, Ronnie and Douceur, John R. and Howell, Jon and Lorch, Jacob R. and Theimer, Marvin and Wattenhofer, Roger P.},
+title = {Farsite: Federated, Available, and Reliable Storage for an Incompletely Trusted Environment},
+year = {2003},
+issue_date = {Winter 2002},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {36},
+number = {SI},
+issn = {0163-5980},
+url = {https://doi.org/10.1145/844128.844130},
+doi = {10.1145/844128.844130},
+abstract = {Farsite is a secure, scalable file system that logically functions as a centralized file server but is physically distributed among a set of untrusted computers. Farsite provides file availability and reliability through randomized replicated storage; it ensures the secrecy of file contents with cryptographic techniques; it maintains the integrity of file and directory data with a Byzantine-fault-tolerant protocol; it is designed to be scalable by using a distributed hint mechanism and delegation certificates for pathname translations; and it achieves good performance by locally caching file data, lazily propagating file updates, and varying the duration and granularity of content leases. We report on the design of Farsite and the lessons we have learned by implementing much of that design.},
+journal = {SIGOPS Oper. Syst. Rev.},
+month = dec,
+pages = {1–14},
+numpages = {14}
+}
+
+@article{unix,
+author = {Ritchie, Dennis M. and Thompson, Ken},
+title = {The UNIX Time-Sharing System},
+year = {1974},
+issue_date = {July 1974},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {17},
+number = {7},
+issn = {0001-0782},
+url = {https://doi.org/10.1145/361011.361061},
+doi = {10.1145/361011.361061},
+abstract = {UNIX is a general-purpose, multi-user, interactive operating system for the Digital Equipment Corporation PDP-11/40 and 11/45 computers. It offers a number of features seldom found even in larger operating systems, including: (1) a hierarchical file system incorporating demountable volumes; (2) compatible file, device, and inter-process I/O; (3) the ability to initiate asynchronous processes; (4) system command language selectable on a per-user basis; and (5) over 100 subsystems including a dozen languages. This paper discusses the nature and implementation of the file system and of the user command interface.},
+journal = {Commun. ACM},
+month = jul,
+pages = {365–375},
+numpages = {11},
+keywords = {operating system, PDP-11, time-sharing, command language, file system}
+}
+
+@inproceedings{scfs,
+  title={SCFS: A Shared Cloud-backed File System.},
+  author={Bessani, Alysson Neves and Mendes, Ricardo and Oliveira, Tiago and Neves, Nuno Ferreira and Correia, Miguel and Pasin, Marcelo and Verissimo, Paulo},
+  booktitle={USENIX Annual Technical Conference},
+  pages={169--180},
+  year={2014},
+  organization={Citeseer}
+}
+
+@INPROCEEDINGS{federatedMetaData,
+  author={Wang, Cong and Thareja, Komal and Stealey, Michael and Ruth, Paul and Baldin, Ilya},
+  booktitle={2019 IEEE High Performance Extreme Computing Conference (HPEC)}, 
+  title={COMET: A Distributed Metadata Service for Federated Cloud Infrastructures}, 
+  year={2019},
+  volume={},
+  number={},
+  pages={1-7},
+  doi={10.1109/HPEC.2019.8916536}}
+  
+  
+%% Security
+@INPROCEEDINGS{federatedACL,
+  author={Demchenko, Yuri and Ngo, Canh and de Laat, Cees and Lee, Craig},
+  booktitle={2014 IEEE International Conference on Cloud Engineering}, 
+  title={Federated Access Control in Heterogeneous Intercloud Environment: Basic Models and Architecture Patterns}, 
+  year={2014},
+  volume={},
+  number={},
+  pages={439-445},
+  doi={10.1109/IC2E.2014.84}}
+
+
+@article{benet2014ipfs,
+	title="IPFS - Content Addressed, Versioned, P2P File System.",
+	author="Juan {Benet}",
+	journal="arXiv preprint arXiv:1407.3561",
+	notes="Sourced from Microsoft Academic - https://academic.microsoft.com/paper/1844512392",
+	year="2014"
+}
+
+@inproceedings{guo2012burrito,
+	title="BURRITO: wrapping your lab notebook in computational infrastructure",
+	author="Philip J. {Guo} and Margo {Seltzer}",
+	booktitle="TaPP'12 Proceedings of the 4th USENIX conference on Theory and Practice of Provenance",
+	pages="7--7",
+	notes="Sourced from Microsoft Academic - https://academic.microsoft.com/paper/2158532686",
+	year="2012"
+}
+
+% Usable security is hard for users
+@inproceedings{mazurek2014toward,
+	title="Toward strong, usable access control for shared distributed data",
+	author="Michelle L. {Mazurek} and Yuan {Liang} and William {Melicher} and Manya {Sleeper} and Lujo {Bauer} and Gregory R. {Ganger} and Nitin {Gupta} and Michael K. {Reiter}",
+	booktitle="Proceedings of the 12th USENIX conference on File and Storage Technologies",
+	pages="89--103",
+	notes="Sourced from Microsoft Academic - https://academic.microsoft.com/paper/2237802441",
+	year="2014"
+}
+
+% This is about using crypto keyed hash trees in very large data sets. Not sure where it fits.
+@inproceedings{li2013horus,
+	title="Horus: fine-grained encryption-based security for large-scale storage",
+	author="Yan {Li} and Nakul Sanjay {Dhotre} and Yasuhiro {Ohara} and Thomas M. {Kroeger} and Ethan L. {Miller} and Darrell D. E. {Long}",
+	booktitle="Proceedings of the 11th USENIX conference on File and Storage Technologies",
+	pages="147--160",
+	notes="Sourced from Microsoft Academic - https://academic.microsoft.com/paper/1459126247",
+	year="2013"
+}
+
+% this is a promising security model to consider using
+@inproceedings{adya2002farsite,
+	title="Farsite: federated, available, and reliable storage for an incompletely trusted environment",
+	author="Atul {Adya} and William J. {Bolosky} and Miguel {Castro} and Gerald {Cermak} and Ronnie {Chaiken} and John R. {Douceur} and Jon {Howell} and Jacob R. {Lorch} and Marvin {Theimer} and Roger P. {Wattenhofer}",
+	booktitle="Proceedings of the 5th symposium on Operating systems design and implementation (Copyright restrictions prevent ACM from being able to make the PDFs for this conference available for downloading)",
+	volume="36",
+	pages="1--14",
+	notes="Sourced from Microsoft Academic - https://academic.microsoft.com/paper/2121133177",
+	year="2002"
+}
+
+%% Provenance references
+@article{provprimer,
+author = {Carata, Lucian and Akoush, Sherif and Balakrishnan, Nikilesh and Bytheway, Thomas and Sohan, Ripduman and Seltzer, Margo and Hopper, Andy},
+title = {A Primer on Provenance},
+year = {2014},
+issue_date = {May 2014},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {57},
+number = {5},
+issn = {0001-0782},
+url = {https://doi.org/10.1145/2596628},
+doi = {10.1145/2596628},
+abstract = {Better understanding data requires tracking its history and context.},
+journal = {Commun. ACM},
+month = may,
+pages = {52–60},
+numpages = {9}
+}
+
+@inproceedings{camflow,
+	title = {Practical Whole-System Provenance Capture},
+	booktitle = {Symposium on Cloud Computing (SoCC{\textquoteright}17)},
+	year = {2017},
+	organization = {ACM},
+	author = {Pasquier, Thomas and Xueyuan Han and Goldstein, Mark and Moyer, Thomas and Eyers, David and Margo Seltzer and Bacon, Jean}
+}

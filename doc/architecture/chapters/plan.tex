@@ -1,0 +1,316 @@
+\chapter{Plan}
+\label{ch:plan}
+
+\reto{
+    I recall, we had this to be structured in work packages (of course with some more information):\\%
+    WP1: Literature Survey\\%
+    - Duration: 3m\\%
+    - State: Completed\\%
+    WP2: Model definition\\%
+    - Duration: 6m\\%
+    - State: On going\\%
+    WP3: storage silo implementation\\%
+    - Duration: 6m\\%
+    - State: not started. \\%
+    WPN: write thesis\\%
+    - Duration: 3m\\%
+    - State: not started. \\%
+}
+
+\section{Contributions}
+\label{ch:introduction:sec:contributions}
+
+\begin{epigraph}
+    \textit{I don't let the cleaners in\ldots because \textbf{I} know where
+        everything in this room is.  All the books, the papers --- and the moment
+        they start cleaning, those things get hopelessly organized and tucked away
+        and I can never find them again.} --- Crown of Midnight, Sarah J. Maas
+\end{epigraph}
+
+This thesis proposal describes what I intend to contribute to our understanding
+of pragmatic file systems:
+
+\begin{enumerate}
+    \item \label{contribution:model} An explicit model for what computer storage
+          naming is: how and why we name data objects, what a name \emph{should be} in a
+          computer storage context to correspond how names are used and formed \reto{that's probably going to be super related to Saltzers work... };
+          and
+    \item \label{contribution:arch} An architecture and design of a potential
+          naming system that supports the naming model (\autoref{contribution:model}
+          that is sufficiently flexible to work across the full range of current and
+          prospective computer storage needs: in-memory compute systems, small
+          devices, computer workstations, enterprise scale storage systems, and
+          distributed, geo-replicated cloud storage systems, which permits the
+          construction of new purpose-built storage systems with the strong naming
+          support as well
+          as integration of existing storage systems; and
+    \item \label{contribution:purpose-built} Implement and evaluate a novel
+          storage system implementation based on this design (\autoref{contribution:arch}) that
+          demonstrate strong naming support within a single storage silo model; and
+    \item \label{contribution:existing} Implement and evaluate an implementation
+          of the richer naming system (\autoref{contribution:arch}) on an existing
+          computer storage system; and
+    \item \label{contribution:combined-system}  Implement and evaluate the
+          combination of both the novel storage system implementation
+          (\autoref{contribution:purpose-built}) and the enhanced legacy system
+          (\autoref{contribution:existing}) into a unified system consistent with the
+          model (\autoref{contribution:arch}).
+
+\end{enumerate}
+
+To provide these contributions I must implement a number of novel new
+approaches to naming in computer storage systems.  In this chapter I provide a
+high level overview of my plan to accomplish this.
+
+\section{Research Questions}
+\label{ch:plan:sec:research-questions}
+
+\reto{Somehow I feel like the research questions should go into the problem statement section.
+    (unless that's required to behere)
+}
+
+This plan is focused on answering the following research questions:
+
+\begin{itemize}
+    \item \textbf{Can a storage silo implementation that separates naming, meta-data,
+              and storage management into distinct components be constructed without
+              sacrificing performance?}\label{ch:plan:rq:naming-separation-performance}  It is easy to talk about \emph{functionality} but
+          there is a real risk with a radically new architecture that it will
+          not be usable due to the performance costs. Part of the challenge in
+          answering this research question is to pick appropriate benchmarks.  My goal
+          is to demonstrate there is \emph{no} significant cost associated with I/O
+          performance (less than 5\%), and that there is at most modest cost
+          associated with meta-data performance (creating, opening, deleting,
+          renaming) versus existing systems (less than 10\%).  While I think it would
+          be useful to work with someone interested in data visualization to
+          demonstrate improvements in data analysis and access, I do not propose doing
+          this as part of my own work.  I discuss this in more detail in
+          \autoref{ch:plan:sec:storage-silo-implementation}.
+
+    \item \textbf{Can a federated meta-data service be constructed to provide meaningful
+              security guarantees against information leakage?}
+          \label{ch:plan:rq:security} By increasing the exposure
+          of information via enhanced/augmented meta-data there are clear benefits for
+          compliance measures, but these are achieved at the expense of making
+          additional meta-data available.  Part of the original design was to address
+          these concerns and this research question evaluates the efficacy of that
+          design.  To do this will require examining the security model my system
+          uses, the potential information exposure, and at least a first-order
+          analysis of the impact of information leaks.  Depending upon my analysis of
+          the answer to this question it may be necessary to augment the \system
+          security model to better protect the information.
+
+    \item \textbf{How can \system, implemented as a cross-silo naming and meta-data service,
+              provide measurable benefits to those using this system?}
+          \label{ch:plan:rq:cross-silo-naming-benefits} The research
+          question itself is vague at this point because while I can suggest
+          anticipated benefits in terms of cross-silo data location it is difficult to
+          identify the ``benefits'' let alone quantify them.  Despite this, both will
+          be necessary, which makes this a ``high risk'' research question. \tm{I
+              don't think this is a good research question as written, so I need to
+              re-work this\ldots again.  The difficulty here is that measuring this is not
+              going to be particularly easy, unless we turn this into an \ac{HCI}
+              activity, such as by looking at ``abandonment rates'' when people start
+              searching for things.  That \emph{may} be what is required, though, to make
+              this argument because a performance eval of the software doesn't make much
+              sense --- to what would I compare this?}
+
+\end{itemize}
+
+My model for \system is quite broad.  Building the pieces
+to satisfy this architecture from scratch is a monumental undertaking that
+outstrips the time available while I complete my PhD.
+
+The next step then is to determine what is possible given current technological
+components and what extensions are necessary to expand those components to
+answer the research questions. I propose achieving this by combining those
+existing technological components, identifying key elements that are necessary,
+and analyzing how to minimize the risk involved by focusing on answering the
+research questions rather than re-implementing functionality that \emph{already
+    exists} and is sufficient to the task.
+
+One key area in which I expect to develop new techniques is meta-data extraction
+and construction from existing data and storing that meta-data into pre-existing
+technology components.  I describe this further in the following sections.
+
+\section{Storage Silo Implementation}
+\label{ch:plan:sec:storage-silo-implementation}
+
+While my objective is to construct \system, which will support multiple silos
+combined with federated naming, activity, and meta-data services, my proposed
+initial step is to do this on a single system consisting of two storage silos.
+
+This section constitutes an initial ``straw person'' proposal for what I
+anticipate constructing.  \MIS{I would call this the MVP --- how do we most
+    simply demonstrate the key ideas behind this work in a constrained setting.}
+In doing so I expect to evaluate at least two of the following research questions:
+
+\begin{itemize}
+    \item \textbf{Can the separation of naming from the file system(s) be achieved
+              without compromising performance?} This is related to the broader question articulated earlier in this
+          chapter (\autoref{ch:plan:rq:naming-separation-performance}.)
+
+    \item \textbf{Can this two-silo naming system be used to demonstrate more effective
+              data location?}  The original motivation is that rich, dynamic naming will
+          enable ``finding my stuff''.  One approach to this would be to build on top
+          of prior work done in our department related to \emph{data curation} to see
+          if a richer naming system can be used to simplify that
+          task~\cite{Vitale_2020}.
+
+    \item \textbf{Can a non-traditional storage mechanism be effective when used as a storage silo
+              within this separated naming and meta-data service model?}  This
+          specifically speaks to the non-hierarchical name system idea that was
+          previously proposed in ``Hierarchical File Systems Are
+          Dead''~\cite{seltzer2009hierarchical}.  While not a primary motivator for
+          the main thesis, I am intrigued by the idea of taking a persistent memory
+          key-value store along the lines of ``Modernizing File System through
+          In-Storage Indexing''~\cite{koo2021modernizing} where the key-value store is
+          in persistent memory, which allows me to leverage my own prior
+          work. \MIS{you should take a look at the Inversion file system of
+              Mike Olson (circa 1990-3). It's basically building a file system
+              on top of an RDBMS -- think about exactly what you are trying to
+              do on the KV store that is different.
+          }\tm{I have looked at inversion previously.  I do not think that
+              maps onto the ideas I've expressed elsewhere about this approach,
+              but perhaps this isn't a good research question for \emph{this}
+              proposal.
+          }
+
+    \item \textbf{Does the explicit separation of meta-data and naming from the file
+              system enable the creation of dynamic per-user name\-spaces?} Traditional
+          name\-spaces are static in that the names of objects within them
+          are not changed by the system, yet relationship based name\-spaces could be
+          dynamic.  Further, the namespace of interest to me now may not be the same
+          as the namespace of interest to someone using the same data but in the
+          context of a different role --- by not tying the namespace to the data does
+          it provide a more functional namespace?  \tm{This question is not fleshed
+              out enough at this point.}
+
+    \item \textbf{Does capturing activity context related to the way that data is
+              constructed and used allow construction of enhanced data management
+              mechanisms?} One obvious way of demonstrating this might be to show where it
+          does permit that type of enhanced data management mechanism.  For example,
+          this might be related to the data curation aspect of prior work. It is
+          likely there are other similar data management activities that might yield a
+          useful basis for finding information of interest.
+
+\end{itemize}
+
+I anticipate that this work will require developing specific components, which
+largely correspond to the services described in
+\autoref{ch:model:sec:architecture:subsec:services}.
+
+One key aspect that is not well-defined in the model section but is
+important to do as part of this work is to define what an \emph{activity
+    context} is, how it is created, and how it is used within the system.  This will
+be an important aspect of this work, even if the actual implementation is quite
+simple, possibly capturing only a tiny amount of information.\MIS{I continue to
+    claim that an AC is the result of a query applied to a rich MD store.}\tm{This
+    is an area in which I think the anthropological linguistic perspective is
+    useful. Activity context in a human sense would involve who is present, what
+    you've discussed before that, where you are located, etc.  So my model is quite
+    a bit different than a query capture, but this is a good thing to explore
+    further.
+}
+Initial
+techniques for doing this can likely be based upon existing information
+gathering systems, such as \emph{eBPF}\tm{add to glossary, define out}\MIS{I
+    find glossaries unhelpful; you want to define terms in context. No reader is
+    going to remember them from the glossary nor are they going to want to turn back
+    to look them up.
+} in Linux
+or \emph{ETW}\tm{add to glossary, define out} on Windows, both of which are
+pre-existing systems with well-defined mechanisms for extracting information
+from production systems.
+
+To review, the services that will be implemented in this phase of my work are:
+
+\begin{description}
+    \item[Metadata Servers] --- there are existing models for meta-data servers,
+        such as Egeria~\footnote{\url{https://github.com/odpi/egeria}} or
+        Amundsen~\footnote{\url{https://github.com/amundsen-io/amundsen}} (a
+        demonstrative, but not definitive list) that might be sufficient. If
+        not, using a key-value store such as
+        WiredTiger~\footnote{\url{https://github.com/wiredtiger/wiredtiger}} to
+        construct a metadata server is also viable. \tm{I'd rather not build
+            anything I don't have to but my concern is that this is going to be a
+            core bit of the work; the right thing to do is to do a more thorough
+            search for these technologies and figure out which one looks like a good
+            fit. \emph{Building} one is possible but seems like a big project on its
+            own.}
+
+    \item[Namespace Servers] --- my expectation is that this will need to be
+        constructed; it must interoperate with the metadata servers.  Work here will
+        include defining the interface to constructing a new namespace or retrieving
+        a previously constructed namespace. While the ultimate goal is to have a
+        federated namespace service, this initial effort need only provide a single,
+        non-federated namespace even though that is more limited than the actual
+        design.
+
+    \item[Activity Monitors] --- these create the activity context information I
+        described previously.  I would expect that only a single activity monitor
+        will be built for this initial system prototype and the details of this will
+        be driven by the chosen definition of the activity context and relevant
+        activity providers.
+
+    \item[Attribute Services] --- because \system is a naming system, we need a
+        mechanism that retrieves storage attributes. Initially, this will consist of
+        a source for scanning current content and then a monitoring mechanism
+        (likely similar to the activity provider) that notifies the attribute
+        service to update the attributes of files that have changed.
+
+    \item[Update Notification Server] --- existing systems provide change
+        notifications.  In a cross-silo system this sort of dynamic state monitoring
+        will also be useful.  An initial implementation for a local system could
+        consist simply of using the existing change notification mechanism(s) for
+        watching changes.  A more robust implementation could use information from
+        the meta-data service(s) to determine if a given change is of interest.
+        This dynamic change tracking could then be federated as part of the later
+        planned work.
+\end{description}
+
+
+This proposal is quite broad and consists of no working software at the present
+time.  To achieve this I propose taking the initial architecture and
+constructing\MIS{I was expecting this system to do something like, "I need to
+    widget that does X. I can do that by starting with existing widget A and
+    extending it in the following ways."
+}
+a design based upon this architecture.  To evaluate the design, I
+propose choosing at least two distinct storage silos and at least one target
+operating system.\MIS{You must have thought about what you'd pick -- why not say
+    that?
+}  To the extent possible, initial implementation would focus on
+combining existing components as much as possible.  For example, Using MinIo and
+Sparkle Share as storage silos, with Windows Cloud Sync would provide documented
+and generally well-understood technologies on which to construct these
+services.\MIS{OK, so you have -- then you need to talk a bit more about these
+    technologies, exactly what they bring to the table and what they don't -- i.e.,
+    what you will have to do (not at the code level, but the conceptual level) to
+    leverage them.}
+The Meta-data server can be constructed using one of the available key-value
+stores (e.g., WiredTiger).  The Notification service could start with Emitter.
+Initial activity context work can be built using eBPF or other inbuilt tracing
+mechanisms.  This leaves how to build the attribute services as an open area to
+be further refined.
+
+\tm{TBD}
+
+\section{Federated Naming/Meta-data Security}
+\label{ch:plan:sec:federated-naming-security}
+
+\tm{TBD}
+
+\section{Cross-Silo Naming/Meta-data Benefits}
+\label{ch:plan:sec:cross-silo-naming-benefits}
+
+\tm{TBD}
+
+\section{Timeline}
+\label{ch:plan:sec:timeline}
+
+\input{chapters/schedule}
+
+The purpose of the schedule shown in \autoref{ch:plan:tab:schedule} is subject to adjustment as the research
+progresses.
+

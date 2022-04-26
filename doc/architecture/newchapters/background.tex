@@ -1,0 +1,986 @@
+\chapter{Background}
+\label{ch:background}
+
+\begin{epigraph}
+    \textit{Paradigm paralysis refers to the refusal or inability to think or see
+        outside or beyond the current framework or way of thinking or seeing or
+        perceiving things.  Paradigm paralysis is often used to indicate a general
+        lack of cognitive flexibility and adaptability of thinking.} --- The Oxford
+    Review Encyclopedia of Terms (2021).
+\end{epigraph}
+
+
+Key topics crucial to understanding my proposal are:
+
+\begin{enumerate}
+    \item Why finding is important. I discuss the related background in
+          \autoref{ch:background:sec:importance-of-finding}.
+
+    \item How to help people find things.  I discuss the background related to
+          finding things in \autoref{ch:background:sec:useful-information-for-finding}.
+
+    \item Storage Access mechanisms.  I discuss the APIs that are available to
+          various services in \autoref{ch:background:sec:storage-silos}.
+
+    \item Existing Meta-data.  I discuss existing meta-data that are already
+          known to exist and can be extracted in \autoref{ch:background:sec:meta-data}.
+
+\end{enumerate}
+
+This information is useful in better understanding the architecture proposed in
+\autoref{ch:architecture}.
+
+\section{The Importance of Finding}
+\label{ch:background:sec:importance-of-finding}
+
+In \autoref{ch:introduction:sec:activitycontext} I provided a basic definition
+of activity context and described Vannevar Bush's 1945 work observing the
+difference between computer index systems and human associative
+memory~\cite{bush1945we}.
+
+While preparing this proposal I spent time looking at the guides many libraries
+provided about the naming of files. I found a body of recommendations about file naming
+standards from significant academic and governmental sources and summarize that
+in \autoref{table:data-management}.  These recommendations are consistent with
+prior work~\cite{briney2015data}.
+
+\begin{sidewaystable}
+    \centering
+    \caption{Sample Academic and Governmental Naming Conventions}
+    \label{table:data-management}
+    {\renewcommand{\arraystretch}{2.0} %<- modify value to suit your needs
+        \begin{tabular}{p{5cm}p{15cm}}
+            University of Cambridge                                   &
+            \url{https://www.data.cam.ac.uk/data-management-guide/organising-your-data}
+            \\
+            Harvard University                                        &
+            \url{https://datamanagement.hms.harvard.edu/collect/file-naming-conventions}
+            \\
+            Smithsonian Institution                                   &
+            \url{https://library.si.edu/sites/default/files/tutorial/pdf/filenamingorganizing20180227.pdf}
+            \\
+            Leland Stanford, Jr. University                           &
+            \url{https://library.stanford.edu/research/data-management-services/data-best-practices/best-practices-file-naming}
+            \\
+            United States National Institute of Science \& Technology &
+            \url{https://www.nist.gov/system/files/documents/pml/wmd/labmetrology/ElectronicFileOrganizationTips-2016-03.pdf}
+            \\
+            University of British Columbia                            &
+            \url{https://researchdata.library.ubc.ca/files/2019/01/FileName_Guidelines_20140410_v03.pdf}
+            \\
+            University of Chicago                                     &
+            \url{https://guides.lib.uchicago.edu/c.php?g=565143       & p=3892706}
+            \\
+            University of Toronto                                     &
+            \url{https://onesearch.library.utoronto.ca/researchdata/file-management}
+            \\
+            University of Washington                                  &
+            \url{https://itconnect.uw.edu/learn/workshops/online-tutorials/web-publishing/web-publishing-at-the-uw/internet-file-management/4}
+            \\
+        \end{tabular}
+    }%
+\end{sidewaystable}
+
+In \autoref{table:data-management} I provide links to a number of organizations
+that publish recommendations for ``naming files.'' While they vary somewhat,
+there is far more similarity than difference.  Harvard's list is:
+
+\begin{itemize}
+    \item Think about your files
+    \item Identify metadata (e.g., date, sample, experiment)
+    \item Abbreviate or encode metadata
+    \item Use versioning
+    \item Think about how you will search for your files
+    \item Deliberately separate metadata elements
+    \item Write down your naming conventions
+\end{itemize}
+
+The important observation here is how we rely upon the file name to provide
+context for \emph{what} a given file represents.  Uniformity of information is
+important --- the ``naming convention'' permits not only identifying similarity
+but key elements of \emph{difference} between any two named things.
+
+It is difficult not to look at this as a modern indictment of a system that is
+fundamentally broken: requiring users understand meta-data, versioning,
+encoding, \emph{and} capturing the naming represents a significant cognitive
+burden.
+
+Saltzer pointed this out as well: ``This approach forces back onto the user the
+responsibility to state explicitly, as part of each name, the name of the
+appropriate context~\cite{Saltzer1978}.''
+
+The \emph{purpose} of the file system was to serve as the provider of
+``human-oriented names''~\cite[Table III]{Saltzer1978}. Mogul observed that
+``Better file systems allow us to manage our files more effectively, solve
+problems that cannot now be efficiently solved, and build better
+software~\cite[p. 1]{mogul1986representing}.''
+Gifford observed: ``[A] semantic file system can provide associative
+attribute-based access to the contents of an information storage system with the
+help of file type specific transducers... The results to date are consistent
+with our thesis that semantic file systems present a more effective storage
+abstraction than do traditional tree structured file systems for information
+sharing...~[p. 22]\cite{gifford1991semantic}''
+
+Saltzer challenged us with general naming but set it aside for future research.
+Mogul captured the idea that \emph{properties} could be used to store additional
+meta-data about files.  Gifford explored the idea that information about \emph{what} a
+file represents could be extracted and used to dynamically organize files based
+upon semantic content of the files themselves.
+
+Despite these insights, the tools we have for \emph{finding} remain
+primitive. Forcing users to embed context is a \emph{naming} solution, but it
+creates cognitively challenging requirements such as ``naming conventions.''
+Similarly, creating tagging mechanisms using extended attributes or properties
+has not provided sufficient benefit to be broadly used.  Semantic file systems
+have been implemented in modern indexing services and are somewhat useful but
+have clearly \emph{not} solved the problem.
+
+All of these solutions are ``inward focused.'' That is, they focus on the
+\emph{file} (or object): its attributes, which includes its name and its
+contents. They fail to understand the file's usage context: it's relationship to
+other files and \emph{to other events in the user's environment}. Thus, the
+relevant prior systems work falls short of evaluating my thesis.
+
+\section{Useful Information for Finding}
+\label{ch:background:sec:useful-information-for-finding}
+
+\begin{table}[tbph]
+    \centering
+    \caption{Useful Context Information (See
+        \autoref{ch:background:sec:useful-information-for-finding})}\label{table:useful-information}
+    \begin{minipage}{\textwidth}
+        \begin{tabular}{p{3cm}ccccccl}
+            \multicolumn{1}{c}{\multirow{2}[3]{*}{Information}}          & \multicolumn{6}{c}{Dimensions}                        & \multicolumn{1}{c}{\multirow{2}[3]{*}{Reference}}                                                                                                                                                                                                                                                                                                                                                                                                                                               \\
+            \cmidrule{2-7}                                               & \multicolumn{1}{c}{\begin{sideways}Who\end{sideways}} & \multicolumn{1}{c}{\cellcolor[rgb]{ .906,  .902,  .902}\begin{sideways}When\end{sideways}} & \multicolumn{1}{c}{\begin{sideways}Where\end{sideways}} & \multicolumn{1}{c}{\cellcolor[rgb]{ .906,  .902,  .902}\begin{sideways}What\end{sideways}} & \multicolumn{1}{c}{\begin{sideways}Why\end{sideways}} & \multicolumn{1}{c}{\cellcolor[rgb]{ .906,  .902,  .902}\begin{sideways}How\end{sideways}} &                                                                                         \\
+            \midrule
+            Social Media                                                 & X                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       %who
+                                                                         & \cellcolor[rgb]{.906, .902, .902} X                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     %when
+                                                                         & X                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       %where
+                                                                         &
+            \cellcolor[rgb]{
+                .906,  .902,
+                .902} X %what
+                                                                         &                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         %what
+                                                                         &
+            \cellcolor[rgb]{ .906,  .902,  .902} X %How
+                                                                         & \cite{vianna2014a,vianna2019searching}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  \\
+            \rowcolor[rgb]
+            { .851,  .851,  .851}  E-mail                                & X
+                                                                         & X
+                                                                         &
+
+                                                                         &
+            X
+
+                                                                         &
+
+                                                                         & X
+                                                                         &
+            \cite{kim2009retrieval}
+            \tabularnewline
+            Webpage                                                      & X
+                                                                         & X
+                                                                         & X                                                     & X
+                                                                         &                                                       & X
+                                                                         & \cite{kim2009retrieval,soules2005connections}
+            \tabularnewline
+
+            \rowcolor[rgb]
+            { .851,  .851,  .851} Document~\footnote{PDF,RTF,Word, etc.} & X                                                     & X                                                                                          & X                                                       & X                                                                                          &                                                       & X                                                                                         & \cite{kim2009retrieval,soules2005connections,hellerstein2017ground,vianna2019searching}
+            \tabularnewline
+
+            Audio                                                        &                                                       & X                                                                                          &                                                         &                                                                                            &                                                       & X                                                                                         & \cite{gemmell2002mylifebits}
+            \tabularnewline
+
+            \rowcolor[rgb]{ .851,  .851,  .851}
+            Image                                                        &                                                       & X                                                                                          & X                                                       &                                                                                            &                                                       & X                                                                                         & \cite{gemmell2002mylifebits}
+            \tabularnewline
+
+            Video                                                        &
+                                                                         & X
+                                                                         & X                                                     &
+                                                                         & X                                                     &
+                                                                         & \cite{gemmell2002mylifebits,}
+            \tabularnewline
+
+            \rowcolor[rgb]{ .851,  .851,  .851}
+            Applications                                                 & X                                                     & X                                                                                          & X                                                       & X                                                                                          &                                                       & X                                                                                         & \cite{hellerstein2017ground,provsearch}
+            \tabularnewline
+
+            Behavior                                                     & X                                                     & X                                                                                          & X                                                       & X                                                                                          & X                                                     & X                                                                                         & \cite{hellerstein2017ground,provsearch}
+            \tabularnewline
+
+            \rowcolor[rgb]{ .851,  .851,  .851}
+            Change                                                       & X                                                     & X                                                                                          & X                                                       & X                                                                                          & X                                                     & X                                                                                         & \cite{hellerstein2017ground,provsearch}
+            \tabularnewline
+
+            Calendar                                                     & X                                                     & X                                                                                          & X                                                       & X                                                                                          & X                                                     & X                                                                                         & \cite{kalokyri2017integration,vianna2014a,vianna2019searching}
+            \tabularnewline
+
+            \rowcolor[rgb]{ .851,  .851,  .851}
+            Paths                                                        & X                                                     & X                                                                                          & X                                                       & X                                                                                          & X                                                     & X                                                                                         & \cite{vianna2019searching,provsearch}
+            \tabularnewline
+
+            GPS                                                          &                                                       & X                                                                                          & X                                                       &                                                                                            &                                                       & X                                                                                         & \cite{vianna2014a}
+            \tabularnewline
+
+            \rowcolor[rgb]{ .851,  .851,  .851}
+            File System~\footnote{The distinction between \emph{paths} which
+                involve understanding application behavior and file system activity,
+                which is about specific files or directories demonstrates potential
+                complexity due to data collection from multiple sources in the
+            same system.}                                                & X
+                                                                         & X
+                                                                         & X                                                     & X
+                                                                         &                                                       & X                                                                                          & \cite{vianna2014a,provsearch}
+            \tabularnewline
+
+            Weather                                                      &                                                       & X                                                                                          & X                                                       & X                                                                                          &                                                       & X                                                                                         & \cite{vianna2014a}
+            \tabularnewline
+
+            \rowcolor[rgb]{ .851,  .851,  .851}
+            Financial Data                                               & X                                                     & X                                                                                          & X                                                       & X                                                                                          &                                                       & X                                                                                         & \cite{vianna2019thesis}
+            \tabularnewline
+
+            % Blank line before new header
+            \multicolumn{8}{c}{}
+            \tabularnewline
+
+
+            \rowcolor[rgb]{ .751,  .751,  .751} \multicolumn{8}{c}{New Suggestions}
+            \tabularnewline
+            Voice/Video Calls                                            & X                                                     & X                                                                                          &                                                         &                                                                                            &                                                       & X                                                                                         &
+            \tabularnewline
+
+            \rowcolor[rgb]{ .851,  .851,  .851}
+            Collaboration~\footnote{Discord, Slack, Teams}               & X                                                     & X                                                                                          & X                                                       & X                                                                                          &                                                       & X                                                                                         &
+            \tabularnewline
+
+            Music                                                        & X                                                     & X                                                                                          &                                                         & X                                                                                          &                                                       & X                                                                                         &
+            \tabularnewline
+
+            \rowcolor[rgb]{ .851,  .851,  .851}
+            Medical Info~\footnote{Wearable Monitor, Insulin Pump}       & X                                                     & X                                                                                          &                                                         & X                                                                                          & X                                                     & X                                                                                         &
+            \tabularnewline
+        \end{tabular}%
+    \end{minipage}
+\end{table}
+
+% What is this table going to tell me? Ideally, I want to be able to identify
+% information that has been identified as useful.
+
+I summarize prior work useful to this proposal in
+\autoref{table:useful-information}.  In some cases the precise information about
+what data was used is not clear from the available materials and thus is not
+included in \autoref{table:useful-information}.  The table identifies the
+specific information, what \emph{type} this represents, and the reference that
+provides this information. My classification of \emph{type} is based upon
+previously proposed types~\cite{vianna2019searching} of \emph{who}, \emph{when},
+\emph{where}, \emph{what}, \emph{why}, and \emph{how}.
+
+The remainder of this section reviews the literature on which
+\autoref{table:useful-information} is based and explains how it
+relates to my broader thesis.
+
+\emph{Search} is one tool that assists in \emph{finding} but it is not the first
+choice for many human users~\cite{bergman2019search}.  Thus, improvements in search
+are only beneficial at the point that the existing organizational system has
+already failed.
+
+The Human-Computer Interface community has provided an insightful definition of
+good design:
+
+\begin{quotation}
+    \emph{
+        A well designed computer system permits use of the tools it offers without
+        requiring users to dedicate extensive mental processing to operations
+        inherent in the system design rather than the task.  Furthermore, its
+        tools are designed to also reduce task-specific mental processing,
+        especially those types of processing that are performed more effectively
+        by computers than by people, such as calculations and \textbf{accurate storage and
+            recall of large amounts of pre-specified
+            information}~\cite{brown1999human}\emph{[bold face is my addition]}.
+    }
+\end{quotation}
+
+Information retrieval researchers are thus more interested in evaluating the
+outcome of a human finding the object they seek, rather than the efficiency of
+the underlying search infrastructure~\cite{bergman2019factors}. The need to find
+things is pervasive: clearly there are obvious things like the need to access a
+particular document, but there are other important needs, such as the need to
+find objects that must be removed, such as when it is required to comply with
+legal obligations, such as the ``right to be forgotten'' under the
+GDPR~\footnote{https://gdpr.eu/right-to-be-forgotten/}~\cite{ritzdorf2014assisted}.
+Some users prefer to delete content they know they will no longer
+need~\cite{Vitale_2020}.  While the reasons for finding and removing content
+vary, the ability to do so efficiently is directly related to \emph{finding}
+that information.
+
+Prior work has suggested a number of different factors that can be used to find
+content:
+
+\begin{itemize}
+    \item Naming similarity; similarly names files are often related.
+    \item Content similarity: files with similar content are often related.
+    \item Temporal similarity: files that were created and/or accessed around
+          the same time are more likely to be related~\cite{soules2003can}.
+    \item Causality: files that are created using the same tool
+          are more likely to be related.
+\end{itemize}
+
+Prior work has also observed that using contextual information from ``personal
+digital traces'' clearly assists in finding relevant personal data: ``Work in
+Cognitive Psychology has shown that contextual cues are strong triggers for
+autobiographical memories~\cite{vianna2019searching}.''  The source code for the
+data collection tools used by the authors is still available, albeit
+dated~\footnote{\url{https://github.com/ameliemarian/DigitalSelf}}.
+
+The \emph{finding} problem is one at the heart of the personal information
+management research efforts, whose work suggests that one reason search is not
+preferred is that it \emph{takes longer} than
+navigation~\cite{bergman2019search}.  The semantic file system work fits well
+with this observation, as one of its primary contributions was the observation
+that search results can be represented as ``virtual directories,'' which
+provides a means of presenting search results as a form of
+navigation~\cite{gifford1991semantic}.
+
+Similarly, prior work established the need to be able to support a broad
+range of storage locations --- the ``storage silos'' that I have previously
+mentioned.  In \emph{Stuff I've Seen} researchers found that the ability to
+search across silos in a uniform fashion led to increased
+utilization of such tools~\cite{dumais2003stuff}. Indeed, the observation in the
+personal information management community repeatedly stresses the importance of
+supporting cross-silo management of digital data.
+
+This makes sense: when we are looking for a specific object that we know exists,
+we do not particularly care \emph{where} it is stored.
+
+The research on ``table top interfaces'' is another useful example of how the
+HCI field is exploring alternative interfaces.  Their findings include the fact
+that hierarchical structures do not work well in collaborative table top
+systems~\cite{collins2007tabletop}.  There are similarities between table
+top interfaces and mobile interfaces in terms of their interaction models, e.g.,
+no keyboards or mice.  The mobile device solution initially was to create silos
+for each application's files. While it freed the applications and users from the
+underlying hierarchical name space, it led to an explosion in the number of
+silos on a single device.  Some applications (e.g., cloud storage on mobile
+devices) still expose hierarchical interfaces but even they tend to demote the
+hierarchical name space in favor of other presentation models.  In essence, the
+virtual directories of the semantic file system have become the primary
+interface.
+
+The \emph{MyLifeBits} project followed one person's goal of organizing their
+own data: ``We hoped to substantially improve the ability to organize, search,
+annotate, and utilize content. Also, we wanted to obtain a unified database in
+contrast to the many data “islands” being created including mail, contacts, and
+meetings, finances, health records, photos, etc. Frustration with the file
+system led to testing the suitability of databases for personal storage, and
+ultimately into research about next generation storage
+systems~\cite{gemmell2002mylifebits}.'' Note that the authors
+identified many of the same problems that still exist today, including the
+multi-silo problem, yet those problems remain unsolved.
+
+The use of richer contextual information to better search and organize data is
+one that seems to be a perennial favorite for greater exploration.  The database
+community has observed specific types of context that are useful: applications,
+behavior, and change:  ``In decoupled systems, behavioral context spans multiple
+services, applications and formats and often originates from high volume
+sources~\cite{hellerstein2017ground}\ldots''
+
+The use of ``personal digital traces'' is close to the work that I have proposed
+as part of my thesis.  The authors observe: ``Search of personal data is usually focused on retrieving information
+that users know exists in their own data set, even though most
+of the time they do not know in which source or device they have
+seen the desired information. Current search tools such as Spotlight
+and Gmail search are not adequate to deal with this scenario where
+the user has to perform the same search multiple times on different
+services or/and devices rather than search over just a single service.
+Besides, traditional searches are often inefficient as they typically
+identify too many matching documents.~\cite{vianna2019searching}''
+
+Finally, I note that the importance of context spans disciplines.  The study of
+\emph{pragmatics} in Linguistics relates to the understanding of meaning within
+the context in which it is used: ``Pragmatics is a field of linguistics
+concerned with what a speaker implies and a listener infers based on
+contributing factors like the situational context, the individuals’ mental
+states, the preceding dialogue, and other
+elements.~\footnote{\url{https://www.masterclass.com/articles/pragmatics-in-linguistics-guide}}''
+Closer to home, the database community has explored the importance of
+context in terms of human understanding: ``Context has often a significant
+impact on the way humans (or machines) act and on how they
+interpret things; furthermore, a change in context causes a
+transformation in the experience that is going to be lived.
+The word itself, derived from the Latin \emph{con} (with or together) and
+\emph{texere} (to weave), describes a context not just
+as a profile, but as \emph{an active process dealing with the way
+    humans weave their experience within their whole environment, to give it
+    meaning}.~\cite{bolchini2007data}''
+
+\section{Storage Silo Access}
+\label{ch:background:sec:storage-silos}
+
+The number of novel storage implementations is large.  For example there are dozens of file
+systems actively in use~\footnote{See
+    \url{https://en.wikipedia.org/wiki/Comparison_of_file_systems}}. In addition,
+there is a constant stream of new proposed
+variants~\cite{10.1145/3477113.3487265,kadekodi2021winefs}.
+
+Thus, rather than review the myriad of file systems that exist and contribute
+novel storage silos, I instead focus on classifying storage silos by the
+interface that is used to access them.
+
+\begin{comment}
+\begin{table}[tbhp]
+    \centering
+    \caption{Cloud Storage API reference}
+    \label{table:cloud-apis}
+    \begin{adjustbox}{max width=\textwidth}
+        \begin{tabular}{ll}
+            Cloud Storage & Reference                                                                 \\
+            Dropbox       & \url{https://www.dropbox.com/developers/documentation/http/documentation} \\
+            Amazon S3     & \url{https://docs.aws.amazon.com/AmazonS3/latest/API/Welcome.html}        \\
+            OneDrive      &
+            \url{https://docs.microsoft.com/en-us/graph/onedrive-concept-overview}
+            \\
+            Google Drive  & \url{https://developers.google.com/drive}                                 \\
+            \\
+        \end{tabular}
+    \end{adjustbox}
+\end{table}
+\end{comment}
+
+\begin{itemize}
+    \item File system APIs.  Most file systems use or support a POSIX like
+          interface, which typically includes create, open, close, read, write, delete,
+          rename, and read directory.  In addition, most local file
+          systems provide monitoring interfaces, which permits monitoring
+          state change.
+
+    \item Object Store. The OpenStack Object Store interface provides a
+          useful definition of a robust implementation that maps to the HTTP
+          protocol quite
+          closely~\footnote{\url{https://docs.openstack.org/api-ref/object-store/}}.
+          Object stores are commonly used because of their simplicity and
+          sufficiency for a range of uses in both device local and internet
+          enabled applications. Thus, object stores normally support an
+          authentication protocol and object access protocol using get
+          (retrieve object contents and meta-data), put (object create or
+          update), copy, delete, head (retrieve object meta-data), and
+          post (update object meta-data).
+
+    \item Cloud storage.  There is a greater range of APIs for cloud storage,
+          with each implementation typically providing documentation. Many of these
+          consist of ``Web APIs'' which are implemented using the HTTP or HTTPS
+          protocols. Areas of common functionality, albeit varying
+          implementation, are authentication, file access, and file change
+          notifications. Google Drive, Dropbox, Amazon S3, and Microsoft
+          OneDrive all support mechanisms for authentication, file access
+          (including meta-data access) and file change notifications. They do
+          not use a common API for doing this so that an
+          importation/interaction layer must be written for each one of them;
+          ideally I expect to be able to produce a common event format that I
+          can use with all of them.
+
+    \item Databases. There are several types of common databases,
+          including relational databases such as Oracle, MySQL, Microsoft SQL,
+          PostgresSQL, IBM DB2, Sybase, and Teradata. They all support some
+          variant of the common structured query language which is typically
+          accessed via programming libraries that simplify the various
+          differences. Non-relational databases have become increasingly
+          popular in recent years.  Examples of commonly-used non-relational
+          databases include MongoDB, Cassandra, Redis, and Neo4j and can be
+          classified as document stores, column store, key-value stores, and graph stores.
+
+    \item Applications. While applications \emph{also} tend to consume services from other
+          storage layers, the context of those operations is often not
+          visible. A file system has no way of knowing that the file just
+          created by the e-mail program was an attachment, rather than a data
+          file used by the application program itself --- but the
+          application is aware of this important contextual understanding.
+          There is far less structure or
+          regularity of applications.  These applications tend to have their
+          own unique interfaces. For example, graphical user interface based
+          ``file browsers'' often have ``hooking''
+          interfaces that permit intercepting higher level operations such as ``copy
+          a file.'' Collaboration applications such as Slack, Discord, and Teams
+          also have extension interfaces for interacting with them but these
+          interfaces do tend to be specific to the application.  Commonly used
+          non-web based e-mail programs such as Thunderbird and Outlook have public
+          APIs for building extensions.
+
+\end{itemize}
+
+One of the challenges in trying to create a classification system for ``storage
+silos'' is that the dividing line is often not clear.  For example, if one
+accesses an Oracle database via a REST API, is that a database or cloud storage?
+For the purposes of understanding the range of APIs this general breakdown is
+sufficient and allows me to identify broad categories of silos to consider using
+in my work.
+
+\section{Existing Meta-Data}
+\label{ch:background:sec:meta-data}
+
+The volume of available meta-data is high enough that one of the challenges I
+face in conducting experiments to evaluate my hypothesis is coping with the
+volume of information.
+
+My summary of useful information in \autoref{table:useful-information} includes
+references to prior work that draws upon existing meta-data. The work regarding
+collection of personal digital traces is particularly germane, because not only
+did the authors identify useful information, they made their own tools publicly
+available.
+
+Beyond this, I can point to existing meta-data sources that I know exist and can
+be used as part of my own work.  One is the extended Berkeley Packet Filter
+(eBPF) support that is available on Linux and being added to Windows.  eBPF is
+an extensible framework for collecting data from the running operating system by
+injecting ``hooks'' that allow detailed monitoring.  There are already existing
+eBPF filters that provide extensive meta-data.  For example, the Linux OSQuery
+interface has an eBPF alternative backend for data collection.  The community
+developing and extending eBPF is quite active and the scope of information
+already available is
+extensive~\footnote{https://ebpf.io/blog/ebpf-updates-2021-02}.  From the
+perspective of testing my thesis, I expect it will not require extensive
+development of new software.
+
+Windows has an operating system level introspection package known as
+Event Tracing for
+Windows~\footnote{\url{https://docs.microsoft.com/en-us/windows/win32/etw/about-event-tracing}}
+(ETW)
+as well as Microsoft's recent work on supporting eBPF on Windows (likely by
+leveraging their ETW
+work)~\footnote{\url{https://microsoft.github.io/ebpf-for-windows/}}.
+
+Both ETW and eBPF should provide ample existing meta-data from which to draw
+upon.  Combined with the Personal Digital Tracing tools~\cite{vianna2014a}, there
+is a rich set of existing meta-data from which to draw upon, making the design
+and implementation of the tools I need to test my thesis simpler.
+
+\endinput
+
+\begin{comment}
+There is an extensive amount of relevant prior work that has been done, not only within
+the computer systems literature but also other related fields such as Human-Computer
+Interface, Information Retrieval, Data Visualization, Data Analytics, Machine
+Learning, Linguistics, Personal Information Management, and Security.
+
+Fundamentally, the topic of \emph{finding} relevant data is one that is
+important, particularly as the size of data collections continues to grow.  The
+key related prior work falls into one of three categories:
+
+\begin{enumerate}
+
+    \item Important information explaining why the systems community must
+          provide services for improving \emph{finding}.  Improving \emph{finding}
+          is the fundamental reason I propose building \emph{Finding as a Service}.
+
+    \item Insight into the types of information that are useful for enhancing
+          \emph{finding}. This information comes from a diverse range of fields. My
+          review of this literature is focused on identifying what information is
+          already known to be useful.
+
+    \item Background within the systems field about prior work upon which I am
+          building.  I focus on adding usage information --- what I refer to as
+          \emph{activity context} --- in combination with other information about
+          digital objects.
+
+\end{enumerate}
+
+
+
+\section{Known Useful Usage Information}
+\label{ch:background:sec:known-useful-usage-info}
+
+\section{Prior Systems Work}
+\label{ch:background:sec:prior-systems-work}
+
+\begin{comment}
+
+\tm{I have added a number of crucial papers here that need to be added to the
+    bibliography and referenced here. They help establish why all of this is
+    important.
+}
+
+\tm{It suddenly occurred to me \emph{why} the table top interface is important:
+    it's more or less what we have with mobile devices.  No mouse/keyboard like a
+    desktop/laptop and a need to be able to visually limit things.  MOST
+    applications completely hide the file system beneath them and the few that don't
+    (e.g., Dropbox) provide a mostly hierarchical view.  That makes me wonder if
+    there's an interesting project in taking the work from the table top space,
+    combining it with Connections, and MyDigitalBits (or whatever it is called),
+    etc. and building an interesting interface to this stuff.  I don't want to build
+    that, but if I have to I'll contract with someone to build it once I have a
+    better idea of what I think should be built.  I know I found a graph style file
+    browser at one point.  I need to find that paper again because that was
+    interesting.
+}
+
+\tm{I moved this material from the Intro to here, since it seems more applicable to here.}
+\section{Naming versus Finding}
+\label{sec:intro:sec:naming-vs-finding}
+
+Early work in describing information focused on the problem of \emph{naming} as
+a means of identifying a specific digital object. Thus, very early systems used
+single level name systems, which were appropriate for the systems at that time.
+
+In 1956 IBM introduced its first fixed disk drive (IBM 350 RAMAC Disk,) which
+stored up to 5MB of data.  That IBM disk drive weighed approximately
+1,000kg~\footnote{https://www.7dayshop.com/blog/terabyte-evolution/}.
+From this is is clear that the total universe of data was quite small by modern
+considerations.
+
+Of course, a single name space certainly did not scale well.  Fortunately, the
+nascent field of computer science had an obvious metaphor to use: the physical
+filing cabinet.  By 1958 the hierarchical name space was described as a logical
+organization scheme for files~\cite{barnard1958}.  Hierarchical name systems
+were quickly and broadly adopted in a number of areas, including file systems,
+which provide logical computer storage organization. The idea of hierarchical
+name space makes its way into modern operating systems through
+Multics~\cite{daley1965general} and TENEX~\cite{murphy1972storage}.  The
+research communit did explore non-hierarchical file organization models at least
+by the 1970s in the CAP file system~\cite{needham1977cap}.
+
+In the 1970s work on naming extended to rich ``naming networks'' with the
+hierarchical name space used as a simplified solution required by resource
+constraints of the time.  Saltzer defines a \emph{naming network} as ``a catalog
+system in which a catalog may contain the name of any object, including another
+catalog.  An object is located by a multi-component path name (q.v.) relative to
+some working catalog (q.v)~\cite{Saltzer1978}.''
+
+Usually these ``catalogs'' are tied to an underlying unit of storage, which I
+refer to as a ``silo''.  While this includes traditional storage devices
+such as ``disk drives'' which are managed by file systems, it extends to any
+logical storage mechanism for maintaining digital data: object stores and
+databases, which are typically presented to users via a rich interface,
+such as through an e-mail server or collaborative messaging service.
+
+Thus, it is logical to think of this as a \emph{naming} problem, which has led
+to formal recommendations on naming \emph{schemes} that should be adopted to
+simplify location of relevant information.  Beneath this is the key observation
+that it is \emph{finding} that is the fundamental problem, not \emph{naming}.
+
+Indeed, the systems community has long admitted the importance of
+``findability''.  For example, the original UNIX developers explicitly called
+out the presence of their indexing service as being an essential service when
+presenting their research to the systems community~\cite{ritchie1973unix}. The
+community proposed adding additional meta-data to
+files~\cite{mogul1986representing}: this work gave rise to \emph{extended
+    attributes} or \emph{properties} which are found in a number of file systems in
+active use today~\cite{cao2007ext4,chutani1992episode}. Semantic file systems
+were proposed to extract additional indexing information from the contents of
+the files~\cite{gifford1991semantic}.  While semantic file systems never really
+caught on, the idea of using file contents as part of an indexing system is
+present in some form on all modern operating systems. More recent work has
+suggested adding ``tag'' information, either manually or
+automatically~\cite{tagfs,bloehdorn2006tagfs,Soules2004}, non-hierarchical name spaces over object
+stores~\cite{seltzer2009hierarchical}, and graph file systems~\cite{di2017gfs}.
+
+This exploration of presenting digital data to human users is not restricted to
+the systems community.  The Information Retrieval and the Human Computer
+Interface communities have pointed out the deficiencies of hierarchical name
+spaces since at least the 1980s~\cite{malone1983how,vicente1987assaying} and the
+research literature is rich with suggested alternatives~\cite{vicente1988accommodating,gemmell2002mylifebits,dumais2003stuff,collins2007tabletop}.
+
+The bulk of this prior work focuses on characteristics of the digital objects we
+seek to find.  Thus, prior work focuses on using file data and meta-data to
+improve findability.  However, this inward looking focus does not allow us to
+answer questions that are logical to a human but are related to the extrinsic
+characteristics of digital objects: \emph{what else was happening?}
+
+Some prior work has explored considering extrinsic factors. \emph{Placeless}
+focused on using process level information extracted from their document processing
+system to associate files together~\cite{placeless-tois}. \emph{Burrito} proposed \emph{activity context},
+which they define as ``the user's actions at a particular time~\cite{guo2012burrito}.''
+Provenance information relates to directly observable information about the
+construction of a given digital object and it can be used to augment file
+search, which in turn improves findability~\cite{provsearch}.
+
+Thus, the goal of my thesis is to expand upon this idea of looking at extrinsic
+information to better understand the use of digital artifacts, which will enable
+other communities, such as the HCI community, to build powerful new tools to
+enable finding relevant digital content.
+
+There is an extensive history of work in storage.  Thus, rather than attempt to
+review all potentially related work I have tried to curate it in focusing on key
+aspects of my own thesis. Thus, I attempt to explore the broad range of things
+that might be considered a ``storage silo''.  Then I review the information that
+prior research has identified is useful in improving the \emph{finding} process.
+I also review the information that we already collect on our systems, both
+information that has previously been applied to the finding problem as well as
+information that is collected but does not appear to have been used.  Throughout
+this process I strive to try and point back to the use cases
+(\autoref{ch:intro:sec:use-cases}) and explain why this prior work does not
+satisfy these use cases.
+
+
+\section{Storage Silos}
+\label{ch:background:sec:storage-silos}
+
+I use the term \emph{Storage Silo} in a very broad fashion.  My motivation for
+doing so is to admit that many tools exist that \emph{de facto} serve as a form
+of storage provider, even if we do not ordinarily think of them as such.  For
+example, if one uses an e-mail program it combines some form of internal
+database with existing storage.  To the user, this information is presented in a
+name space that enables finding using ordering and search.  Associated
+information, such as a spreadsheet, executable program, or image is associated
+with a given e-mail message --- we often say it is \emph{attached}.  Even though
+the e-mail program might use other storage services, we normally do not expect
+users to look directly through the database and storage location of the e-mails
+and attachments.  Thus, it is logical to think of this as a distinct storage
+silo.
+
+To simplify this process, I propose the following taxonomy of storage
+silos:
+
+\begin{itemize}
+    \item \textbf{Local device storage}.  This is the storage provided by the
+          local system.  Typically this will have an hierarchical name space
+          representation and while its contents may be shared with other computers,
+          normally it is not shared.  The usual expectation then is that there is a
+          software component which manages the namespace, the allocation and freeing
+          of storage space, and the enforcement of any access security provided by the
+          storage system.  Typically, this would be what we call a \emph{file
+              system}. Examples of this would include FFS~\cite{mckusick1984a},
+          NTFS~\cite{custer1994inside}, EXT4~\cite{cao2007ext4}, and Apple's
+          proprietary
+          APFS~\footnote{\url{https://developer.apple.com/documentation/foundation/file_system/about_apple_file_system}}.
+          All of these file systems provide at least one notification mechanism
+          for when the contents of the file system change. These file systems
+          provide varying level of support for ``extended attributes'' but none
+          provide a way to efficiently search those extended attributes. None of
+          them have a way of associating activity context between local files
+          and other storage silos.
+
+
+    \item \textbf{Remote storage}.  This is storage accessed by the local system
+          but usually provided by a remote system.  Typically this will have an
+          hierarchical name space representation that the remote system maintains and shares with
+          the local system. While local storage is typically always available, remote
+          storage usually requires network access to the remote storage facility.
+          Further, the limited bandwidth and increased latency may make it impractical
+          to perform brute force operations such as search on the remote storage in
+          many instances.  Remote storage does not have a common model for
+          associating activity context with files.
+
+    \item \textbf{Cloud storage}.  In recent years a number of different cloud
+          storage solutions have entered common use.  This includes IDrive, Google Drive,
+          Nextcloud, iCloud, pCloud, Box, Spider Oak, Microsoft OneDrive, Adobe
+          Cloud, and Dropbox.  Each of these cloud storage mechanisms
+          does provide search tools, but they do not use a common interface and
+          searching across them requires looking at each one.  Increasingly common is
+          to use a sparse file technique where the entire namespace is stored on the
+          local computer system but the data contents of the files are retrieved in an
+          on-demand fashion. As I noted with remote storage, this limits the ability
+          to perform brute-force searches because it may require transfering large
+          amounts of data from the cloud storage to the local system. The examples
+          that I have provided all generally have some sort of hierarchical name
+          space for organizing content.  None of these systems provide a mechanism for
+          associating activity context with cloud stored files or querying such
+          state.
+
+    \item \textbf{Database}.  The line between databases and file systems has
+          always been a fluid one, where the capabilities of one are sometimes adopted
+          by the other.  Applications use databases because they offer the ability to
+          perform certain data operations rapidly, such as finding relevant records
+          within the database.  Indeed, the idea of presenting a database as being a
+          file system with an hierarchical name has been previously
+          explored~\cite{inversion}.  Examples of commonly used local databases
+          include Microsoft SQL, MySQL, PostreSQL, MongoDB, OrientDB, MariaDB,
+          SQLite. Each database supports a mechanism for accessing specific
+          content within the database externally, suggesting that information
+          could be constructed externally.  None of these databases provide a mechanism
+          for associating activity context with database entries, though they
+          normally provide a mechanism for identifying specific content stored by the
+          database externally.
+
+    \item \textbf{Object Stores}.  Object stores have become a common mechanism
+          for providing flexibile file systems-like storage without the requirement of
+          an hierarchical name space.  Such stores can be local --- a simple key-value
+          store such as BerkelyDB used for rapid access to application data, for  example, or remote ---
+          Amazon S3, Google Cloud Storage, or Azure Blob Storage.  None of these
+          systems provide a mechanism for associating activity context with objects.
+
+
+    \item \textbf{Collaboration Tools}.  Increasingly, a common way to share
+          data is through a collaboration tool.  Examples of this include: Slack,
+          Discord, Teams, Asana, Trello, and Ryver.  These act more like
+          non-traditional storage silos, yet they are used precisely that way:
+          we share files using them, download them to our local system, and then
+          use them.  Intriguingly, at least some of these allow extracting a
+          link to the message in which a file has been shared, which suggests
+          that we can create an external linkage. To the best of my knowledge,
+          none of these systems provide a mechanism for associating activity
+          context with their objects.
+
+    \item \textbf{E-Mail programs}. While early e-mail programs did not have a
+          mechanism for ``attaching documents'' we gained the ability to do so more than
+          two decades ago~\cite{rfc2045}. While there is a set of standards about the
+          encoding, most e-mail programs provide the ability to independently access
+          attached documents.  As a result, our very e-mail boxes have become yet
+          another commonly used storage silo. While e-mail providers can be local
+          programs on our computers, web interfaces, or some amalgam of these, they all
+          provide mechanisms for accessing attached documents. Examples of common e-mail
+          providers that support attached documents includes: Gmail, Outlook,
+          Thunderbird, Edison, Spike, Proton, Front, and Mimecast.  While search
+          mechanisms are common, none of these e-mail programs appear to provide a
+          mechanism for associating activity context with their e-mails and attached
+          documents.  Note that this is such a common scenario, I described it as one of
+          my use cases (\autoref{use-case:e-mail}).
+
+\end{itemize}
+
+\section{Useful Information for Finding}
+\label{ch:background:sec:useful-information-for-finding}
+
+Much of systems research is focused on \emph{search} but for those using search
+their primary goal is \emph{finding}.  Other communities have a much broader
+sense of utility:
+
+\begin{quotation}
+    \emph{
+        A well designed computer system permits use of the tools it offers without
+        requiring users to dedicate extensive mental processing to operations
+        inherent in the system design rather than the task.  Furthermore, its
+        tools are designed to also reduce task-specific metnal processing,
+        especially those types of processing that are performed more effectively
+        by computers than by people, such as calculations and accurate storage and
+        recall of large amounts of pre-specified
+        information~\cite{brown1999human}.
+    }
+\end{quotation}
+
+Thus, the emphasis for researchers working with data retrieval is not to
+evaluate the efficiency of the search infrastructure but rather to determine if
+that infrastructure leads to the human user finding the document they
+seek~cite{bergman2019factors}. The need for finding is one that the HCI
+community continues to explore: one recent example relates to finding documents
+that are no longer needed, a specialized, complex, yet also important aspect of
+data management~\cite{Vitale_2020}. Finding related content is sometimes also
+required for compliance~\cite{ritzdorf2014assisted}.
+Fundamentally, though, the most important
+example of finding is when a human user is looking for a \emph{specific} set of
+files.  Abandonment --- where the user gives up on the search --- is certainly
+one viable way of determining success of potential new tools, since users stop
+when they are either successful or have exhausted their patience.
+
+Prior work has suggested a number of different factors that can be used to find
+content:
+
+\begin{itemize}
+    \item Naming similarity; similarly names files are often related.
+    \item Content similarity: files with similar content are often related.
+    \item Temporal similarity: files that were created and/or accessed around
+          the same time are more likely to be related~\cite{soules2003can}.
+    \item Causality: files that are created using the same tool
+          are more likely to be related.
+\end{itemize}
+
+In addition, we hypothesize that there are usage factors that can be used to
+find content:
+
+\begin{itemize}
+    \item Location similarity: files that were accessed or modified in the
+          same geographical location may be related.  I suspect this is really more
+          a factor for mobile devices.
+
+    \item
+\end{itemize}
+
+Some recent findings in the personal information management research community
+are quite counter-intuitive, such as finding that search tends to take longer to
+find something than navigation~\cite{bergman2019search}. While this suggests to
+me that an approach in which search is used by tools to find relevant
+information, using the virtual directory approach used with semantic file
+systems~\cite{gifford1991semantic} might be more effective.
+
+Similarly, prior work has established the need to be able to support a broad
+range of storage locations --- the ``storage silos'' that I have previously
+mentioned.  In \emph{Stuff I've Seen} researchers found that the ability to
+search across these storage domains in a uniform fashion led to increased
+utilization of such tools~\cite{dumais2003stuff}. Indeed, the observation in the
+personal information management community repeatedly stresses the importance of
+supporting cross-silo management of digital data.
+
+This makes sense: when we are looking for a specific object that we know exists,
+we do not particularly care \emph{where} it is stored.
+
+\tm{My sense is I need to do more here but this is quickly becoming a time sink
+    and I don't think it fundamentally changes the narrative.  Thus, I defer this.
+}
+
+\section{Meta-data Collection}
+\label{ch:background:meta-data-collection}
+
+Modern systems collect a dizzying amount of information from our computing
+devices: the websites we visit, the programs we run, the files with which we
+interact, the music we play, our location, the time of day, etc.  Some prior
+work has used this information to improve search, including
+Burrito~\cite{guo2012burrito} and provenance directed
+search~\cite{provsearch,uprove2,vianna2019searching}.  Burrito focused on the
+operations directly related to the user \emph{actions} which is narrower than
+considering the user's \emph{environment}.  Similarly, provenance focuses on
+causality, which is certainly useful for excluding noise, yet can also miss
+information that might prove useful.  Examples that I am considering
+include:
+
+\begin{itemize}
+    \item Location --- this type of information is routinely used by
+          advertisers on a user's computing device to determine what advertisements
+          to show, so we know this information is available.  Being able to identify
+          content that is linked by \emph{where} the files were created and/or
+          accessed yields potentially interesting new data for sifting the data
+          presented to users.
+
+    \item Music --- we have posited that some users may associate what they
+          were doing with what they were listening to at the time.  While it may be
+          possible to capture audio recordings of ambient sound, we also note that
+          integration between music players and other applications \emph{already}
+          exists, and thus can be captured as well.  Being able to sort through
+          content based upon music could be useful.  While prior work has not
+          explicitly identified music, it has identified \emph{mood} as a factor
+          that impacts file usage and the two can be linked.
+
+    \item News events --- external events do impact human users and create
+          associative context that might be generally useful in finding relevant
+          content.  Existing digital devices already monitor news events on our
+          behalf, so the data is readily available.  Of course, news in this context
+          could be fairly general and include the weather, notable local events, or
+          events at national or international scale.  Both free and paid
+          services are available.  For example \url{https://mediastack.com}.
+          Their API is a publicly documented REST API.
+
+    \item Web access --- we know it is common that searching the internet
+          using a web browser is a common activity during creative endeavors,
+          including writing this document.  Thus, being able to identify web pages
+          that might have been accessed and/or used is another logical source of
+          information.  This information is already available inside existing
+          browsers, so it could be incorporated as one more event in the relevant
+          activity context.  There are a range of ways that internet access
+          can be identified, including inside the browser via a browser
+          extension, using the network activity information from your local
+          system, using eBPF filters to monitor network activity, etc. We know
+          this can be done because existing products provide such features,
+          such as SentryPC (\url{https://www.sentrypc.com}), which works with
+          both Windows and Mac computers. Linux makes similar information
+          available through eBPF and/or monitoring the proc file system. Note
+          that the specific APIs for these are generally platform specific.
+
+    \item Chat --- we often speak with people about projects we are
+          working on together.  Thus, knowing that we were working with
+          someone on a particular project yields another example of activity
+          context that could be used to improve our ability to find the
+          relevant content.  I am not certain if this information is readily
+          available from existing communications applications.  If it is, this
+          could yield another powerful example of activity context that proves
+          useful to the broader goal of identifying applicable files.
+
+\end{itemize}
+
+This list is hardly exhaustive; rather I describe these elements as
+demonstrative.  One of the interesting aspects of this work will be to
+collaborate with researchers from other fields to suggest a more thorough list
+of potential information that we can provide and then work with them to identify
+the most interesting.  Ideally, this should produce a feedback loop that can be
+used to improve activity contexts in the future.
+
+\end{comment}

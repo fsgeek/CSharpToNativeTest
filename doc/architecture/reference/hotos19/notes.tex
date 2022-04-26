@@ -1,0 +1,24 @@
+\section{Random Notes}
+
+So this is where things get interesting.  One thought I'd had was that I'd get rid of directories entirely - they don't serve any real \textit{point}
+other than to capture a relationship; in another embodiment the directories are simply a form of vertex.  I still like the model without explicit
+directories, since we could have a \textit{sibling} relationship.  So, for example, you just give everything in the same directory the same
+\textit{is contained by} label.  Then you find everything in that directory by finding all the files that have the same label (ah, because THAT is a
+relationship!)
+
+This needs more fleshing out, for sure.  It's quite radical but that is what is needed here.  There are tons of questions here, though.
+
+
+
+Graphs are a generalization of trees (or trees are a limited type of graph).  Trees are easier to search than graphs because they are by definition without cycles.
+
+Note: cycles are in fact a real issue in real operating systems already and are detected in a primitive fashion (“how many links have we traversed already”). 
+
+Note that in the search field, graphs are walked and cycles detected by keeping track of what has already been visited.  [5] This approach didn’t work when memory was limited (e.g., 1965 or 1973) but now memory is considerably more available than it has been in the past.
+
+Question: is it viable for us to keep track of the “what’s been visited” as we do graph walking.
+
+What is a “graph file system”?
+
+Files are our vertices.  They remain containers of data and attributes (we will want to generalize container to abstract storage from name space).
+Edges are connections between vertices.  Question: do we want a hypergraph (so one edge per property) or a graph (so multiple properties per edge, with unique edges).  Searching the graph is likely to be an important aspect of this (e.g., the pragmatic aspect).

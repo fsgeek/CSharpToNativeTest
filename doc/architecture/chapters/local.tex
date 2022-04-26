@@ -1,0 +1,28 @@
+
+% This describes what I'm proposing to implement
+\chapter{Local Naming}
+\label{ch:local}
+
+The first contribution that I propose for my thesis is to identify,
+implement, and evaluate a system in which naming and storage are distinctly
+separated.  This system will be consistent with the underlying goals and basic
+architecture of \autoref{ch:model} but focus on a small-scale system: that of a
+pair of devices belonging to a single individual.  I call this the ``local''
+model.
+
+By focusing on the modest scale of a single individual, I will focus on
+answering key issues that are fundamental to \system.  I propose answering the
+following questions:
+
+\begin{enumerate}
+    \item What is necessary to implement the rich namespace model of \system
+          while efficiently supporting legacy applications?
+    \item How can existing applications utilize the cross-silo naming model of
+          \system without being modified?
+    \item How effective is \system when used within this local context?
+\end{enumerate}
+
+Despite the modest scale, this work will require implementing at least basic
+versions of most of the components described in
+\autoref{ch:model:sec:architecture}, which will lay the groundwork for other
+elements of this thesis.

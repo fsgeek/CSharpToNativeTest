@@ -1,0 +1,78 @@
+\begin{figure}[!tb]
+    \centering
+    \includegraphics[width=0.45\textwidth]{example-image-a}
+    \caption{\system Architecture Picture (\textbf{TBD})}
+    \label{fig:arch}
+\end{figure}
+
+\section{Architecture}
+\label{sec:arch}
+
+\tm{So now ``all we need'' is an architecture.  Last time around, we had a simple API, and a fairly abstract naming service.  My sense is that we did (try to) address a number of these concerns.  So, it seems what we need are: (1) the federated naming service itself, which implies that a naming service handles two classes of attributes: those for which it claims to be authoritative, and those for which it claims to be caching (non-authoritative). Multiple naming services can be authoritative for the same attributes, which permits replication. Question 1: can we have attributes for which no naming service is authoritative?  (2) the notification service(s) that permit a client to indicate they are interested in being notified when specific events occur.  I'm not sure what this exactly looks like at the moment, particularly in a cross-silo environment.  (3) An API --- how do we create objects in this system, how do we \textit{find} objects in this system?}
+
+In \system we consider each object is a collection of components. Each component consists of a key, a security label, and a data value.  A \textit{key} is a value that identifies the context of the given component.  Keys may be well-known, such as creation time, length, activity context, user identity, or descriptive identity.  A \textit{security label} provides information about the security attributes of the component, such as a digital signature verifying the key and data value of the component, or other information needed to properly authenticate or decode the key and data value.\tm{I'm being a bit vague here because for non-sensitive cases this is likely to be a nonce, and for sensitive cases this could be a PKI-encrypted private data decryption key for the data value itself.} A \textit{data value} is a collection of information that provides relevant context to the given \textit{key}, such as a 64-bit timestamp value or data length component.
+
+In this model, an object becomes immutable once it has been created. If the underlying storage object is modified, a new object is inserted into \system.  Our expectation is that the relationship between the original object and this new instance of the object will be captured by the system.  Deletion of the underlying object can similarly be indicated by inserting a new object into \system that operates as a ``tombstone''. \tm{This suggests that we might want to allow deleting or skipping over objects that are short-lived, which prior work indicates is the vast majority of objects.  Is one of these objects useful when the underlying storage is no longer useful?  How do we prevent this thing from blowing up in size?}
+
+\subsection{Naming Service}
+\label{sec:arch:naming}
+
+The naming service aspect of \system is a critical component, responsible for implementing our federated naming scheme.  Naming services can provide any mixture of authoritative and caching services.  We say that a given naming services is \textit{authoritative} if it is authorized to provide definitive information about one or more components.  A \system authoritative naming service can be co-resident with a storage silo, such as the case for workgroup file server, in which the naming service provides authoritative services for all the directly attached storage on that file server. A \system authoritative naming service can be separate from a storage silo, such as when an edge device offloads authoritative naming to a cloud-based naming service service. Authoritative naming services can use standard replication mechanisms to provide resilience and geo-distributed services, and could provide varying consistency models.  A \textit{caching} naming service can be used to improve performance by storing information from authoritative name services; this is similar to the way that the domain name system uses caching to boost performance of common operations.
+
+\subsection{Notification Service}
+\label{sec:arch:notification}
+
+The notification service part of \system is used to provide a subscription based model for notifying interested and authorized parties of events which occur in the naming system itself. Thus, notifications are only delivered to a subscriber if the entity that initiated the event authorizes disclosure, subject to organizational requirements.  Since our API has a limited number of operations (\S \ref{sec:arch:api}), there are a correspondingly small number of events that can be reported.
+
+\subsection{Usage Interface}
+\label{sec:arch:api}
+
+The interface to \system is a simple one, consisting of just three operations: create, delete, and find. A \textit{create} operation indicates the creation of a new object and a notification authorization.  Objects may include traditional namespace elements, such as a containing ``directory'' and a human-provided contextual ``name'', as well as attributes that are generated by the underlying storage system, such as a uniform resource identifier (URI) that can be used to map from the \system object to the underlying storage location.  A \textit{delete} operation indicates the deletion of an existing object.  Deletion might be required to comply with legal requirements, such as the ``right to be forgotten'', or simply because the underlying storage object has itself been deleted.  A \textit{find} operation is a query operation that indicates the types of \system objects of interest to the caller. We envision that the arguments to this would be a narrowing definition of the \system objects to be returned to the caller.  Thus, an empty argument would be a request for all known \system objects.
+
+In addition to the other information required by these calls, each will also be provided with a notification authorization.  A notification authorization indicates what notifications, if any, should be sent about the event.  We envision the default would be "no notification", but other instances might be to notify the creator and/or a set of collaborators --- this is useful if this event should be proactively visible to other devices associated with this creator, for example.  Similarly, if a broader dissemination is needed, such as within an organizational boundary (team, group, company, etc.), the notification can indicate the breadth of the notification.
+
+
+
+\endinput
+
+\sasha{Tasks: A short description of the overall architecture with a picture. 
+Describe how we will solve the problems identified in the previous section. Create a new subsection for each problem. Reference those subsections in the table presented in the previous section. }
+
+
+
+We observe that effectively all existing storage namespaces consist of a
+key-value store and a naming layer.  For example, the traditional \texttt{inode}
+model used in UNIX file systems typically uses a table of inodes which are in
+turn referenced using an index value (the ``key'').  The corresponding meta-data
+(or data) then is the ``value'' associated with the given key.
+
+In the 1950s when the hierarchical name space was first proposed, it was based
+on the well-understood model of a physical filing system.  This was adopted
+because it was reasonable, understandable, and easy to implement on the computer
+systems of that era.  Since that time storage has changed.  Hand-held devices
+are routinely used for viewing and creating new information that is then stored
+both on the device as well as transparently copied to other remote computers
+(``the cloud'').
+
+
+
+
+\subsection{Validation}
+
+\reto{addressing the how do you want to validate/evaluate.. putting this here for now}
+
+\paragraph{Acceptable performance}
+We can handle everything that's possible today and the performance is OK. 
+
+\paragraph{New features}
+showing we can handle distinct use-cases that are either hard, or impossible today:
+
+    -- for example, you go somewhere where you don't have access to your ""normal"" work environment, but you need to get some project things done; or you need to collect and deliver all related documents because a law suit awaits you.
+        Today: you need to manually find the related files and store them on the local drive of the laptop/tablet/...
+         Nirvana: you basically use the semantic relationship to effortlessly find related files 
+          => I think this poses an interesting question: how does this work exactly in Nirvana regarding local copies.... (create new namespace, like branch off and merge)
+    -- Maybe something like this ""cloud neutralitly"" thing but better?"
+
+\paragraph{Make HCI research possible}
+
+\paragraph{Threat model and security and privacy}

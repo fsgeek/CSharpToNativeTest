@@ -1,0 +1,78 @@
+\section{Search}\label{sec:search}
+
+The driving force behind our graph file system design is to provide the
+infrastructure to make it easier for users to find data.
+Users do not navigate to data, they \textit{search} for it, so we
+consider more effective search models to further
+motivate the graph file system.
+
+We observe that there are two different models of ``search'': application
+search and user search.
+Applications need to be able to open files quickly 
+using a \textit{key}. For example, both NFS~\cite{sandberg1986sun}
+and AFS~\cite{sidebotham1986volumes} use the file system \textit{inode number} as their
+mechanism for identifying the specific file or directory being accessed,
+because it is fast, avoiding a costly namespace traversal.
+Similarly, NTFS supports the ability of applications to open a file by 
+identifier~\cite{sreenivas2011bypass}.
+They did this to support their implementation
+of the Apple File Protocol (``service for Macintosh'') but has subsequently been used
+for other uses. Indeed, it has been further extended to permit files to be opened by an
+application-defined identifier (a UUID); Microsoft continues to support file IDs in 
+ReFS~\cite{microsoft:refs:features}. The Google File System~\cite{Ghemawat2003} 
+observation was similar: applications can use keys to find their files.
+
+Modern applications tend to either create files that they use internally, often going to great lengths
+to hide their location from the user; or maintain a list of recently used items with a full path name,
+which breaks when the path changes, even if the file did not change.  A key interface for applications
+better fits this usage model. Thus, a ``search by key'' interface is sufficient.
+
+The more challenging problem is user-focused search.
+\begin{comment}
+Many of the
+characteristics in a good human usable search system do not benefit the programs
+directly.
+\end{comment}
+For human users, we want to enable a model like the
+\textit{memex}~\cite{bush1945we}: ``A memex is a device in which an individual stores
+all his books, records, and communications, and which is mechanized so that it may be
+consulted with exceeding speed and flexibility. It is an enlarged intimate supplement
+to his memory.''
+
+The HCI community has a long history researching
+more effective search, including such efforts as
+SIS~\cite{dumais2016stuff} and faceted search~\cite{arenas2016faceted,tunkelang2009faceted,hearst2006design,klungre2018evaluating,walton2017looking,cleverley2015retrieving}.
+Critical to this work is the idea that search is most effective
+when \textit{not} bound to a specific taxonomic order --- very much the opposite of today's 
+hierarchical search model, which enforces a rigid
+order on the structure of information.
+
+How does a graph file system then enable modern search?
+First, support for a broad and extensible set of attributes and 
+relationships brings search engine technology to bear in the
+service of file systems.
+There is some irony that the success of web search, and in particular the
+primacy of relationships in those algorithms~\cite{page1999pagerank}, has had
+virtually no impact on how we find our own local data.
+Second, the generalized graph structure, which no longer elevates any single
+organzation gets rid of the \textit{specific taxnomic order} that HCI
+researchers determine to be counterproductive.
+Third, although some degree of temporal query is possible using \texttt{find},
+its interface is not especially accessible to the typical user, and it requires
+a series of manual operations to express natural queries such as
+``Show me the documents I wrote last summer after I got back from my Amazon
+rafting trip.''
+
+Our goal is not to specify the entire range of searches that can be realized, but rather to
+explore file system structures that enable the creation and mining of relationships to help users to find relevant data.
+
+\begin{comment}
+To help motivate our work, we consider the \textit{Graph Query 
+Language}~\footnote{https://gql.today/wp-content/uploads/2018/05/a-proposal-to-the-database-industry-not-three-but-one-gql.pdf} 
+(GQL) as a starting point.  GQL is an emerging language
+attuned to the needs of \textit{property graphs}, which happen to be similar to the model that we envision for our new
+file system.  It attempts to merge the strengths of three existing graph database query languages into a single, standard,
+query language for property graphs~\cite{van2016pgql,francis2018cypher,angles2018g}.
+
+% This choice is motivated by our realization that the new model we propose is a property graph~\cite{rudolf2013graph}.
+\end{comment}

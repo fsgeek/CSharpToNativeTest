@@ -1,0 +1,35 @@
+$pdflatex = 'lualatex -file-line-error %O %S';
+$pdf_mode = 4;
+
+add_cus_dep( 'acn', 'acr', 0, 'makeglossaries' );
+add_cus_dep( 'glo', 'gls', 0, 'makeglossaries' );
+add_cus_dep( 'tex', 'aux', 0, 'makeexternaldocument' );
+
+$clean_ext .= " acr acn alg ddf glo gls glg bbl xdy xwm glsdefs run.xml";
+sub makeglossaries {
+  my ($base_name, $path) = fileparse( $_[0] );
+  pushd $path;
+  my $return = system "makeglossaries", $base_name;
+  popd;
+  return $return;
+}
+
+sub makeexternaldocument {
+    if (!($root_filename eq $_[0]))
+    {
+        # FOR PDFLATEX
+        # system( "latexmk -cd -pdf \"$_[0]\"" );
+
+        # FOR LATEX+DVIPDF
+        # system( "latexmk -cd \"$_[0]\"" );
+
+        # FOR XELATEX
+        # system( "latexmk -cd -xelatex \"$_[0]\"" );
+
+        # FOR LUALATEX
+        system( "latexmk -cd -lualatex \"$_[0]\"" );
+   }
+}
+
+@default_excluded_files = ('terms.tex');
+@default_files=('diss');

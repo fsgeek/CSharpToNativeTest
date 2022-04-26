@@ -1,0 +1,191 @@
+\begin{thebibliography}{22}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Dourish et~al.(2000)Dourish, Edwards, LaMarca, Lamping, Petersen,
+  Salisbury, Terry, and Thornton]{placeless-tois}
+Paul Dourish, W.~Keith Edwards, Anthony LaMarca, John Lamping, Karin Petersen,
+  Michael Salisbury, Douglas~B. Terry, and James Thornton.
+\newblock Extending document management systems with user-specific active
+  properties.
+\newblock \emph{ACM Trans. Inf. Syst.}, 18\penalty0 (2):\penalty0 140–170,
+  April 2000.
+\newblock ISSN 1046-8188.
+\newblock \doi{10.1145/348751.348758}.
+\newblock URL \url{https://doi.org/10.1145/348751.348758}.
+
+\bibitem[{Guo} and {Seltzer}(2012)]{guo2012burrito}
+Philip~J. {Guo} and Margo {Seltzer}.
+\newblock Burrito: wrapping your lab notebook in computational infrastructure.
+\newblock In \emph{TaPP'12 Proceedings of the 4th USENIX conference on Theory
+  and Practice of Provenance}, pages 7--7, 2012.
+
+\bibitem[Wang et~al.(2019)Wang, Thareja, Stealey, Ruth, and
+  Baldin]{federatedMetaData}
+Cong Wang, Komal Thareja, Michael Stealey, Paul Ruth, and Ilya Baldin.
+\newblock Comet: A distributed metadata service for federated cloud
+  infrastructures.
+\newblock In \emph{2019 IEEE High Performance Extreme Computing Conference
+  (HPEC)}, pages 1--7, 2019.
+\newblock \doi{10.1109/HPEC.2019.8916536}.
+
+\bibitem[Hua et~al.(2009)Hua, Jiang, Zhu, Feng, and Tian]{smartstore}
+Yu~Hua, Hong Jiang, Yifeng Zhu, Dan Feng, and Lei Tian.
+\newblock Smartstore: a new metadata organization paradigm with
+  semantic-awareness for next-generation file systems.
+\newblock In \emph{Proceedings of the Conference on High Performance Computing
+  Networking, Storage and Analysis}, pages 1--12, 2009.
+\newblock \doi{10.1145/1654059.1654070}.
+
+\bibitem[Pasquier et~al.(2017)Pasquier, Han, Goldstein, Moyer, Eyers, Seltzer,
+  and Bacon]{camflow}
+Thomas Pasquier, Xueyuan Han, Mark Goldstein, Thomas Moyer, David Eyers, Margo
+  Seltzer, and Jean Bacon.
+\newblock Practical whole-system provenance capture.
+\newblock In \emph{Symposium on Cloud Computing (SoCC{\textquoteright}17)}.
+  ACM, 2017.
+
+\bibitem[Carata et~al.(2014)Carata, Akoush, Balakrishnan, Bytheway, Sohan,
+  Seltzer, and Hopper]{provprimer}
+Lucian Carata, Sherif Akoush, Nikilesh Balakrishnan, Thomas Bytheway, Ripduman
+  Sohan, Margo Seltzer, and Andy Hopper.
+\newblock A primer on provenance.
+\newblock \emph{Commun. ACM}, 57\penalty0 (5):\penalty0 52–60, May 2014.
+\newblock ISSN 0001-0782.
+\newblock \doi{10.1145/2596628}.
+\newblock URL \url{https://doi.org/10.1145/2596628}.
+
+\bibitem[Gifford et~al.(1991)Gifford, Jouvelot, Sheldon, and
+  O'Toole]{giffordSFS}
+David~K. Gifford, Pierre Jouvelot, Mark~A. Sheldon, and James~W. O'Toole.
+\newblock Semantic file systems.
+\newblock In \emph{Proceedings of the Thirteenth ACM Symposium on Operating
+  Systems Principles}, SOSP '91, page 16–25, New York, NY, USA, 1991.
+  Association for Computing Machinery.
+\newblock ISBN 0897914473.
+\newblock \doi{10.1145/121132.121138}.
+\newblock URL \url{https://doi.org/10.1145/121132.121138}.
+
+\bibitem[Pike et~al.(1993)Pike, Presotto, Thompson, Trickey, and
+  Winterbottom]{plan9}
+Rob Pike, Dave Presotto, Ken Thompson, Howard Trickey, and Phil Winterbottom.
+\newblock The use of name spaces in plan 9.
+\newblock \emph{SIGOPS Oper. Syst. Rev.}, 27\penalty0 (2):\penalty0 72–76,
+  April 1993.
+\newblock ISSN 0163-5980.
+\newblock \doi{10.1145/155848.155861}.
+\newblock URL \url{https://doi.org/10.1145/155848.155861}.
+
+\bibitem[Olson(1993)]{inversion}
+Michael~A. Olson.
+\newblock The design and implementation of the inversion file system.
+\newblock In \emph{{USENIX} Winter 1993 Conference ({USENIX} Winter 1993
+  Conference)}, San Diego, CA, January 1993. {USENIX} Association.
+\newblock URL
+  \url{https://www.usenix.org/conference/usenix-winter-1993-conference/design-and-implementation-inversion-file-system}.
+
+\bibitem[Bloehdorn et~al.(2006)Bloehdorn, G{\"{o}}rlitz, Schenk, and
+  V{\"{o}}lkel]{tagfs}
+Stephan Bloehdorn, Olaf G{\"{o}}rlitz, Simon Schenk, and Max V{\"{o}}lkel.
+\newblock Tagfs - tag semantics for hierarchical file systems.
+\newblock In \emph{Proceedings of the 6th International Conference on Knowledge
+  Management (I-KNOW 06), Graz, Austria, September 6-8, 2006}, September 2006.
+
+\bibitem[Di~Sarli and Geraci(2017)]{gfs}
+Daniele Di~Sarli and Filippo Geraci.
+\newblock Gfs: A graph-based file system enhanced with semantic features.
+\newblock In \emph{Proceedings of the 2017 International Conference on
+  Information System and Data Mining}, ICISDM '17, page 51–55, New York, NY,
+  USA, 2017. Association for Computing Machinery.
+\newblock ISBN 9781450348331.
+\newblock \doi{10.1145/3077584.3077591}.
+\newblock URL \url{https://doi.org/10.1145/3077584.3077591}.
+
+\bibitem[Page et~al.(1999)Page, Brin, Motwani, and Winograd]{page1999pagerank}
+Lawrence Page, Sergey Brin, Rajeev Motwani, and Terry Winograd.
+\newblock The pagerank citation ranking: Bringing order to the web.
+\newblock Technical report, Stanford InfoLab, 1999.
+
+\bibitem[Shah et~al.(2007)Shah, Soules, Ganger, and Noble]{provsearch}
+Sam Shah, Craig A.~N. Soules, Gregory~R. Ganger, and Brian~D. Noble.
+\newblock Using provenance to aid in personal file search.
+\newblock In \emph{2007 USENIX Annual Technical Conference on Proceedings of
+  the USENIX Annual Technical Conference}, ATC'07, USA, 2007. USENIX
+  Association.
+\newblock ISBN 9998888776.
+
+\bibitem[Rasel and Ali(2016)]{uprove2}
+Annajiat~Alim Rasel and Mohammed~Eunus Ali.
+\newblock Uprove2: privacy-aware, scalable, ubiquitous provenance to enhance
+  file search.
+\newblock In \emph{2016 International Conference on Networking Systems and
+  Security (NSysS)}, pages 1--5. IEEE, 2016.
+
+\bibitem[Liu et~al.(2015)Liu, Feng, Hua, Peng, Zuo, and Sun]{pindex}
+Jinjun Liu, Dan Feng, Yu~Hua, Bin Peng, Pengfei Zuo, and Yuanyuan Sun.
+\newblock P-index: An efficient searchable metadata indexing scheme based on
+  data provenance in cold storage.
+\newblock In \emph{International Conference on Algorithms and Architectures for
+  Parallel Processing}, pages 597--611. Springer, 2015.
+
+\bibitem[Ritchie and Thompson(1974)]{unix}
+Dennis~M. Ritchie and Ken Thompson.
+\newblock The unix time-sharing system.
+\newblock \emph{Commun. ACM}, 17\penalty0 (7):\penalty0 365–375, July 1974.
+\newblock ISSN 0001-0782.
+\newblock \doi{10.1145/361011.361061}.
+\newblock URL \url{https://doi.org/10.1145/361011.361061}.
+
+\bibitem[Sandberg et~al.(1985)Sandberg, Goldberg, Kleiman, Walsh, and
+  Lyon]{nfs}
+Russel Sandberg, David Goldberg, Steve Kleiman, Dan Walsh, and Bob Lyon.
+\newblock Design and implementation of the sun network filesystem.
+\newblock In \emph{Proceedings of the Summer USENIX conference}, pages
+  119--130, 1985.
+
+\bibitem[{Howard} et~al.(1988){Howard}, {Kazar}, {Menees}, {Nichols},
+  {Satyanarayanan}, {Sidebotham}, and {West}]{howard1988scale}
+John~H. {Howard}, Michael~L. {Kazar}, Sherri~G. {Menees}, David~A. {Nichols},
+  M.~{Satyanarayanan}, Robert~N. {Sidebotham}, and Michael~J. {West}.
+\newblock Scale and performance in a distributed file system.
+\newblock \emph{ACM Transactions on Computer Systems}, 6\penalty0 (1):\penalty0
+  51--81, 1988.
+
+\bibitem[Bessani et~al.(2014)Bessani, Mendes, Oliveira, Neves, Correia, Pasin,
+  and Verissimo]{scfs}
+Alysson~Neves Bessani, Ricardo Mendes, Tiago Oliveira, Nuno~Ferreira Neves,
+  Miguel Correia, Marcelo Pasin, and Paulo Verissimo.
+\newblock Scfs: A shared cloud-backed file system.
+\newblock In \emph{USENIX Annual Technical Conference}, pages 169--180.
+  Citeseer, 2014.
+
+\bibitem[{Benet}(2014)]{benet2014ipfs}
+Juan {Benet}.
+\newblock Ipfs - content addressed, versioned, p2p file system.
+\newblock \emph{arXiv preprint arXiv:1407.3561}, 2014.
+
+\bibitem[Bermbach et~al.(2011)Bermbach, Klems, Tai, and Menzel]{metastorage}
+David Bermbach, Markus Klems, Stefan Tai, and Michael Menzel.
+\newblock Metastorage: A federated cloud storage system to manage
+  consistency-latency tradeoffs.
+\newblock In \emph{2011 IEEE 4th International Conference on Cloud Computing},
+  pages 452--459, 2011.
+\newblock \doi{10.1109/CLOUD.2011.62}.
+
+\bibitem[Adya et~al.(2003)Adya, Bolosky, Castro, Cermak, Chaiken, Douceur,
+  Howell, Lorch, Theimer, and Wattenhofer]{Adya:2003:Farsite}
+Atul Adya, William~J. Bolosky, Miguel Castro, Gerald Cermak, Ronnie Chaiken,
+  John~R. Douceur, Jon Howell, Jacob~R. Lorch, Marvin Theimer, and Roger~P.
+  Wattenhofer.
+\newblock Farsite: Federated, available, and reliable storage for an
+  incompletely trusted environment.
+\newblock \emph{SIGOPS Oper. Syst. Rev.}, 36\penalty0 (SI):\penalty0 1–14,
+  December 2003.
+\newblock ISSN 0163-5980.
+\newblock \doi{10.1145/844128.844130}.
+\newblock URL \url{https://doi.org/10.1145/844128.844130}.
+
+\end{thebibliography}

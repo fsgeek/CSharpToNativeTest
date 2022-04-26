@@ -1,0 +1,164 @@
+\documentclass[sigconf,anonymous,10pt,authorversion]{acmart}
+\settopmatter{printacmref=false} % Removes citation information below abstract
+\renewcommand\footnotetextcopyrightpermission[1]{} % removes footnote with conference information in first column
+\pagestyle{plain} % removes running headers
+
+\usepackage{xspace} % for the spaces after the \commands,
+\usepackage{yfonts} % this is for illuminated characters - can remove
+\usepackage[font=itshape,noorphans]{quoting}
+\bibliographystyle{unsrtnat}
+
+\AtBeginDocument{%
+  \providecommand\BibTeX{{%
+    \normalfont B\kern-0.5em{\scshape i\kern-0.25em b}\kern-0.8em\TeX}}}
+
+\setcopyright{rightsretained}
+\copyrightyear{2021}
+\acmYear{2021}
+\acmDOI{10.1145/1122445.1122456}
+
+% \ccsdesc[500]{Computer systems organization}
+
+% \keywords{naming}
+
+\acmConference[The 13th ACM Workshop on Hot Topics in Storage
+and File Systems]{HotStorage '21}
+%\acmBooktitle{The 13\textsuperscript{th} ACM Workshop on Hot Topics in Storage
+% and File Systems, July 27-28, 2021}
+\acmPrice{}
+\acmISBN{978-1-4503-XXXX-X/18/06}
+
+% Lifted the comments and choice of initials from Silos; feel free to edit as needed!
+\newcommand{\nb}[2]{{\yellowbox{#1}\triangles{#2}}}
+\newcommand{\nbc}[3]{
+ {\colorbox{#3}{\bfseries\sffamily\scriptsize\textcolor{white}{#1}}}
+ {\textcolor{#3}{\sf\small$\blacktriangleright$\textit{#2}$\blacktriangleleft$}}}
+\newcommand{\version}{\emph{\scriptsize\id}}
+\newcommand{\ugh}[1]{#1} % please rephrase
+\newcommand{\ins}[1]{#1} % please insert
+\newcommand{\del}[1]{} % please delete
+\newcommand{\chg}[2]{#2} % please change
+\renewcommand{\nb}[2]{\nbc{#1}{#2}{orange}}
+
+% Margo
+\definecolor{miscolor}{rgb}{0.4,0.6,0.2}
+\newcommand\MIS[1]{\nbc{MIS}{#1}{miscolor}}
+
+% Tony
+\definecolor{tmcolor}{rgb}{0.5,0,0.5}
+\newcommand\tm[1]{\nbc{TM}{#1}{tmcolor}}
+
+% Sasha
+\definecolor{sfcolor}{rgb}{0.2,0.0,0.5}
+\newcommand\sasha[1]{\nbc{SF}{#1}{sfcolor}}
+
+% Reto
+\definecolor{retocolor}{rgb}{1.0,0.49,0.0}
+\newcommand\reto[1]{\nbc{RA}{#1}{retocolor}}
+
+% Surbhi
+\definecolor{spcolor}{rgb}{0.0,0.4,1.0}
+\renewcommand\sp[1]{\nbc{SP}{#1}{spcolor}}
+
+% Joel
+\definecolor{jncolor}{rgb}{0.5,0.4,1.0}
+\newcommand\jkn[1]{\nbc{JN}{#1}{jncolor}}
+
+% Ada
+\definecolor{adacolor}{rgb}{1.0, 0.5, 0.5}
+\newcommand\ada[1]{\nbc{AG}{#1}{adacolor}}
+
+\settopmatter{printfolios=true} % this gives page numbering
+
+% system name
+% Kwishut is the Musqueam word for "name" (literally "to name it")
+% http://www.sfu.ca/~gerdts/papers/HulquminumWords.pdf
+%
+\newcommand{\system}[0]{\emph{Kwishut}\xspace}
+
+% use cases
+\newcommand{\usecaseactivitycontext}[0]{\textsc{activity context}\xspace}
+\newcommand{\usecasedatarelationship}[0]{\textsc{data relationships}\xspace}
+\newcommand{\usecasecrosssilosearch}[0]{\textsc{cross-silo search}\xspace}
+\newcommand{\usecasenotifications}[0]{\textsc{notifications}\xspace}
+\newcommand{\usecasepersnamespace}[0]{\textsc{personalized namespace}\xspace}
+
+% persons used in the use-cases (https://www.verywellfamily.com/unisex-baby-names-2759884)
+\newcommand{\persa}[0]{Addison\xspace}
+\newcommand{\persb}[0]{Bailey\xspace}
+\newcommand{\persc}[0]{Cameron\xspace}
+\newcommand{\persd}[0]{Dana\xspace}
+\newcommand{\perse}[0]{Evan\xspace}
+\newcommand{\persf}[0]{Quinn\xspace}
+\newcommand{\persg}[0]{Reese\xspace}
+
+% ability to explain 
+
+
+% terminology
+%Copy: bit-for-bit identical
+\newcommand{\doccopy}[0]{copy\xspace}
+%  derivation: the semantics change 
+\newcommand{\docderivation}[0]{derivation\xspace}
+% conversion: semantically identical but not Bit-for-Bit
+\newcommand{\docconversion}[0]{conversion\xspace}
+
+
+\begin{document}
+
+\title{Position: Naming is Hard}
+
+\author{Tony Mason}
+\email{fsgeek@cs.ubc.ca}
+%\orcid{1234-5678-9012}
+\affiliation{%
+  \institution{University of British Columbia}
+  \streetaddress{201 --- 2366 Main Mall}
+  \city{Vancouver}
+  \state{British Columbia}
+  \country{Canada}
+  \postcode{V6T 1Z4}
+}
+
+\renewcommand{\shortauthors}{Mason, et al.}
+
+\begin{abstract}
+    Users store data in multiple storage silos, such as Google drive, Slack, email, Dropbox, and local file systems that mostly rely on traditional user-assigned names. A user who wants to locate a document that she saved while having a conversation with her colleague on a specific subject last month will have a hard time finding that document if she doesn’t remember in which silo it was stored or what name it was given.
+    
+    Prior work that introduced a \emph{Placeless} storage architecture enabled cross-silo search using semantically meaningful attributes, while other prior work used data provenance to construct a user's \emph{activity context} (e.g., what they were doing at the time they created or accessed data) to aid in document location. We take a position that despite these prior systems that demonstrated rich semantic search capabilities, we still cannot provide these capabilities using existing system APIs and abstractions. 
+    
+    We explain that this is not simply an HCI problem and identify the systems problems that must be solved to realize this vision. We present \system, an architectural blueprint for enabling semantically rich, multi-silo data management.
+    
+\end{abstract}
+
+\maketitle
+
+\thispagestyle{empty}
+
+
+\balance
+
+%%\yinipar{\color{blue}O}nce upon a time computer memory was \textit{ephemeral} and computer storage was \textit{persistent}--- until the day that Intel introduced \textit{persistent memory} (PMEM).  The storage community embraced pmem and declared that it was just the newest incarnation of computer storage. They built file systems that extolled the virtues of copy-on-write persistence and novel new application.  Unfortunately, they ignored the needs of applications that wanted to use it as \textit{memory}.  Fortunately, we recognized the importance of supporting applications needing to use persistent \textit{memory} for what it is --- a vastly larger amount of memory that just happens to be persistent.  The need of applications wanting large memories inspired us to build \textbf{daxFS}, the first persistent memory file system that focused on providing a secure, multi-tenant persistent memory allocator that \textit{also} optimizes the performance of persistent memory by the applications that need it.
+
+
+\input{introduction}
+
+\input{use-cases-problems}
+\input{architecture-new}
+\input{eval}
+\input{background}
+\input{conclusion}
+
+
+\clearpage
+
+%\nocite{*}
+
+\bibliography{naming}
+
+
+\clearpage
+% Remove me...
+%\appendix
+%\input{notes}
+\end{document}

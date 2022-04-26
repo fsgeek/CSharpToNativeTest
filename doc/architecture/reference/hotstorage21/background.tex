@@ -1,0 +1,67 @@
+\section{Related Work}
+\label{sec:background}
+
+\system draws on prior work in semantic file systems, using search to locate documents, and federated naming systems.
+
+\noindent\textbf{Semantic File Systems.}
+Although we introduced our desire for semantically meaningful names with reference to the Placeless architecture, the idea originated in the systems community with the semantic file system~\cite{giffordSFS}, SFS.
+SFS used automatically extracted attributes to construct virtual directories that contained collections of semantically related documents.
+There exist many extensions or variants on this theme such as per-process namespaces~\cite{plan9}, inverting the database/file system layering to build file systems on top of queriable databases~\cite{inversion}, 
+manually tagged file systems~\cite{tagfs},
+constructing semantic metadata stores from distributed storage~\cite{smartstore}, and systems that manage conventional and semantic structures in parallel~\cite{gfs}.
+\system represents another step in this evolution.
+It extends prior work by combining semantic naming with user activity context and is designed for today's multi-silo'd storage encompassing everything from mobile devices to desktops to object stores to cloud storage.
+
+\noindent\textbf{Search.}
+An alternative to creating a semantically meaningful name space is to enable extensive metadata-based search.
+Desktop tools such as Apple’s Spotlight, Linux KDE Baloo, and Windows
+Desktop Search adopt this approach.
+However, breakthroughs in web search (i.e., incorporation of pagerank~\cite{page1999pagerank}) demonstrated that the relationship among objects is at least as important as the metadata itself.
+The efficacy of provenance-assisted search~\cite{provsearch,uprove2,pindex} demonstrates that history, in addition to relationships enhance users' ability to locate documents.
+However, searching for documents is fundamentally different from naming.
+Search-based approaches rely either on a user to select the correct item from many presented or on the sufficiency of providing \emph{any} relevant document.
+However, naming requires the ability to identify a specific document. \system is designed to support both searching and uniquely identifying a specific document.
+
+\noindent\textbf{Multi-silo Data Aggregation.}
+%\MIS{There is an entire market for consultants who help people manage data in multiple silos; who knew?}
+%\MIS{It seems that the biologists are also really interested in multi-silo search.}
+UNIX mount points~\cite{unix} are perhaps the first instance of federating namespaces.
+Distributed federation, as provided by distributed file systems such as NFS~\cite{nfs} and AFS~\cite{howard1988scale} followed soon after adoption of local area networks.
+With the advent of cloud storage, there has been work in federated namespaces that span 
+cloud stores~\cite{scfs,federatedMetaData}. 
+Nextcloud (\url{https://nextcloud.com}) allows users to connect multiple Nextcloud instances and integrate with 
+FTP, CIFS, NFS and Object stores. Yet, documents are still organized in a classic
+hierarchical structure. Peer-to-peer sharing networks (e.g., IPFS \cite{benet2014ipfs}) implement a distributed 
+file system where nodes advertise their files to users.
+MetaStorage~\cite{metastorage} implements a highly available, distributed hash table, 
+% similar to Amazon's DynamoDB, %% trying to cut a line or two to get us under the limit and if we leave this here, it needs a reference
+but with 
+its data replicated and distributed across different cloud providers.
+% MetaStore offers a key-value store interface. 
+Farsite~\cite{Adya:2003:Farsite} organizes multiple machines into virtual file servers, each of which acts as the root of a distributed file system. Comet describes a cloud oriented federated metadata service~\cite{federatedMetaData}.
+
+\endinput
+
+\subsection{Security/Privacy}
+\MIS{Do we need a fourth section on security/privacy?}\tm{I don't think so... we've hit it pretty well elsewhere}.0
+
+Security/Privacy in cloud distributed storage: https://www.usenix.org/conference/fast14/technical-sessions/presentation/mazurek
+\cite{mazurek2014toward}
+\tm{I liked this reference and started looking forward from it to see if there is any more recent work.}
+
+Fine-grain encryption for large scale storage: https://www.usenix.org/conference/fast13/technical-sessions/presentation/li\_yan
+\cite{li2013horus}
+\tm{I didn't see how this applied to this paper.}
+
+Farsite~\cite{adya2002farsite} has a section on privacy and access control.
+
+\reto{Information flow control. Maybe Nickel (OSDI)}
+
+\cite{federatedACL}
+
+
+% Possibly relevant
+Intuitive navigation:
+https://www.nature.com/articles/srep14719
+\tm{Note this is Bergman and Whittaker, the same folks that fairly well point out humans prefer navigation over search, which is why I've tried to steer away from thinking of this as a search problem.  Whittaker is at UCSC and they have a long collaborative history.}
+

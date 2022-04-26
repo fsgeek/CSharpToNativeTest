@@ -1,0 +1,112 @@
+\section{Related Work}\label{sec:background}
+
+The need for better name spaces in file systems is hardly a new
+topic, with many solutions being proposed and implemented over
+the years.
+
+\textit{Search utilities} are successors to the permuted index program.  They permit us to find
+files based on \textit{content} and \textit{attributes}.  MacOS X has \textit{spotlight}, which
+provides an extensible, index-driven search service~\cite{apple:spotlight-extensions}.  Similarly,
+Windows offer a similar extensible service~\cite{microsoft:data-add-in}.  These enable searching
+based upon attributes, e.g., file suffix, date, size, etc., and context-sensitive content, e.g.,
+music files by artist, composer, song title, or even \textit{rights},
+but limited, if any, ability to search by relationship.
+
+%.  A number of other examples
+%of similar search mechanisms
+% exist~\cite{Suguna2015,huo2016mbfs,leung2009magellan}.
+
+%\textit{Databases} enable developers willing to pre-define their data's structure to enable searching
+%on the specifics of the data.  Databases come in a rich array of models: relational, column, document,
+%and graph, for example.  File systems constructed from databases have been extensively 
+%explored~\cite{olson1993design,balabine1999file,balabine2002database,kashyap2004file,murphy2002design}.
+%As we noted previously (\S \ref{sec:graphfs:model}) such approaches have failed to yield clear
+%results.
+
+\textit{Tag Systems} were an early approach to improving hierarchical file systems searchability%
+~\cite{Parker-Wood2014,chou2015findfs,ma2009file,laursen2014,nayuki2017,Andrews2012,Up2016,Jones2016,aws:s3:object:tagging,ames2006lifs,leung2009magellan,frieder2012hierarchical}.
+Automatic tagging systems have become a more common approach here as manual tagging by users 
+has proven to be impractical~\cite{soules2003can,soules2004toward}.
+The addition of \textit{semantic} information
+~\cite{di2017gfs,hua2016real,martin2004formal,Martin2005,martin2008,martin2014,gifford1991semantic,Faubel2008,harlan2011joinfs,Suguna2015,Andrews2012,ngo2007integrating,Omvlee2009,wang2003managing,gopal1999integrating,Codocedo2015,Jones2016,Mahalingam2003,Parker-Wood2014}
+is useful but falls short of addressing the fundamental need to understand
+data relationships, because like more conventional systems,
+these semantically-aware approaches still focus on the file,
+not on the relationships between the files.
+As such, they are simply an add-on to
+the hierarchical model, not a replacement for it.
+Such approaches can provide useful functionality
+in our graph file system model as well.
+Indeed, we even pointed this out (perhaps subconsciously) in prior
+work when we said ``How many of them [files] are \textit{related} to
+each other?'' [emphasis added]~\cite{Seltzer2009} .
+
+Files are rich with relationships.  However, these relationships are not limited to what the
+file system can ``see''.
+Narrowing our vision to the closed pool of file system relationships
+hobbles our ability to capture them.
+For example, the obvious relationship between
+a file and the e-mail from whence it originated is not exploitable in
+any system of which we are aware.
+The academic papers we generate refer to other papers.  An enlightened document application would provide an identifier that can 
+be used to find the corresponding paper - a \textit{refers to} relationship,
+whether on our local system or elsewhere.
+Of course, in the current model, we likely can't
+recall where we stored it when we downloaded it.  As we create new works, we refer to older works --- our own
+documents, web pages, Jupyter notebooks, spreadsheets, pictures, etc. Capturing these relationships permits
+us to reconstruct the process taken to produce an output.
+This is the fundamental problem that the provenance community has been
+addressing, but few systems~\cite{pasquier17camflow,reddy06pass} demonstrate
+an understanding of the role our file systems play in making this
+possible.
+
+Versioning is a feature that continues to reappear in various guises.
+This is simply one example of temporal locality; a
+relationship that we have not yet deeply mined.
+While it is now common practice for
+individual applications to ``remember'' the last few files you have accessed,
+there are few cross-application examples.
+In lieu of the right tools, users invent creative solutions.
+For example, one of the authors \textit{attaches} documents to e-mail
+immediately after reviewing them
+specifically to establish temporal relationship.
+The ability to establish temporal relationships across applications should
+provide powerful capabilities.
+
+We do not know which relationships are useful. One of the hallmarks of good file systems design over the decades
+has been \textit{not} to impose a specific restricted model on what files can be --- we leave that to databases.  
+We do not intend to establish a definitive set of relationships any more than we focus on defining
+the structure of file contents.
+However, we encourage others to explore this area, encourage best practices,
+and build tools that produce and use such relationships, leaving the
+storage and retrieval of relationships to the file system.
+
+% Relationships between files is not new --- this is the quintessential relationship of the modern Internet, with its
+% vast web of content that references across the domains --- but those models are certainly more recent than that
+% of the hierarchical file system.  Unlike the internet, where information is shared, we seek to enable
+% similar relationships useful to our specific usage and with data we do not necessarily wish to share.
+
+Much of the raw data that applications generate would be better \textit{not} injected into
+the hierarchical name space: the location of our personal email database, financial
+software files, binaries, temporary files, etc.  Their presence in the name space clutter
+it and make our existing brute force search slower yet no more useful.
+
+Application programs benefit being
+unfettered from the hierarchical name space~\cite{Ghemawat2003}, both
+in terms of their efficiency as well as the benefits of \textit{not} commingling the private files of individual 
+applications --- but the hierarchical file system requires
+they be stored somewhere within its domain.
+Applications routinely hide most of their files in out of the way 
+locations, as they are only useful to the application itself.
+Thus we end up with ``System Volume Information'' and ``.ssh'' and a myriad of obscure locations where applications 
+hide data from us.
+This is a side effect of the name space model we have used for the past
+50 years.
+
+Prior attempts to address this have done so within the confines of a narrow perspective of what is needed to fully 
+enable the ability of us to find our data.  The HCI community have been poking at the
+edges of this problem for decades as well --- observing the frailties of the hierarchical model and suggesting
+alternatives~\cite{harper2013file,lindley2018exploring,khan2018forgotten,vitale2018hoarding,boardman2003too,nayuki2017,martin2014,Jan2011,Andrews2012,Mander1992,Omvlee2009}.
+
+Our graph file system permits them to escape the existing paradigm \textit{without} giving up support
+of existing applications.

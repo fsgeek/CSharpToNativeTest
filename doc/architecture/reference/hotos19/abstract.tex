@@ -1,0 +1,25 @@
+\section*{Abstract}
+Rumors of the demise of the hierarchical file system namespace have been
+greatly exaggerated.
+While there seems to be wide spread agreement that most users make no use
+of the hierarchical name space, we continue to use it both as the underlying
+storage structure and as the default user interface.
+To compensate for this mismatch between the native organization and the
+way users interact with their data,
+we have produced myriad search tools atop the file system.
+This approach, however, has some limitations.
+In particular, we focus on the absence of generalized relationships
+as first class entities.
+
+The hierarchical namespace elevates the \emph{contains} relationship
+above all else.
+Applications elevate the \emph{was created by me} relationship.
+These are only two particular relationships among many;
+items accessed around the same time share a temporal relationship;
+attachments to email messages share a relationship;
+a collection of documents, email message, notes, etc. form another
+relationship.
+We claim that elevating arbitrary and generalized relationships as first class
+file system elements provides a better user experience and leads to entirely
+different implementation approach.
+

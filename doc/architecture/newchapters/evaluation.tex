@@ -1,0 +1,144 @@
+\chapter{Evaluation}
+\label{ch:evaluation}
+
+\begin{epigraph}
+    \emph{For there is nothing lost, that may be found, if sought.} --- Edmund
+    Spenser, \emph{Finding the Faerie Queene}, 1590.
+\end{epigraph}
+
+An important aspect of supporting my thesis is to evaluate the system that I
+have proposed in \autoref{ch:architecture} and ensure the proposed system
+provides the information necessary to answer my research questions
+(\autoref{ch:research-questions}.)
+
+\section{Useful Events}
+\label{ch:evaluation:sec:events}
+
+Research question \ref{rq:define-ac} asks what constitutes an activity
+context. Research question \ref{rq:capture-ac} asks how to capture this
+information.  Research question \ref{rq:leverage-ac} asks how applications can
+leverage activity context.  These three questions all rely upon identifying
+which events are both useful and practical to collect and aggregate. While prior
+work has identified events that are of interest I expect to find additional
+potentially useful events to collect.  Thus, evaluating the overhead of adding
+new events to the activity context is useful.  Such an evaluation of the
+overhead associated with adding activity context would include: how difficult is
+it to add a new activity context provider to the model and how difficult is it
+to add support for the new activity context
+in an existing tool.
+
+I suggest these metrics because they reflect upon the performance of the
+architectural model that I set out in \autoref{ch:architecture}.
+
+The prior work, notably the personal information trace
+work~\cite{vianna2019thesis}, has publicly available tools that could ease the
+collection of data. I can then use my implementation against my own architecture
+to ensure that resource cost of collection demonstrates the low overhead that I
+expect for collecting such data.
+
+Once I have demonstrated that my own tools implemented against my architecture
+do not have substantial overhead, I can then look at the complexity of adding
+additional data collection, using the suggestions in
+\autoref{table:useful-information} as well as additional information that I can
+identify as potentially useful.  Identifying such potentially useful activity
+context data is an area in which I would expect collaboration could be quite
+beneficial but I am not relying upon such collaboration to conduct my own
+research.
+
+An important metric in evaluating my architecture will be to consider both the
+performance cost of adding additional data collection (measured in performance
+impact) as well as the development effort (measured in code size).  Thus, I
+propose collecting that information while I develop the tools and build
+extensions to collect additional data.
+
+\section{Usefuless of Activity Context}
+\label{ch:evaluation:sec:activity-context}
+
+Research question \ref{rq:leverage-ac} asks a critical question underlying my
+thesis: that \emph{activity context} is itself useful.  There is at least one
+prior work outside the systems field that indicates it
+is~\cite{vianna2019searching} and thus I reasonably expect that I will be able
+to reproduce their results.  It seems logical to consider their evaluation
+methodology as one way to measure the effectiveness of our activity context
+driven model.  This, however, is not an ideal fit as the personal digital traces
+work was evaluated against synthetic existing benchmarks.  Thus, other prior
+work that suggests other potential metrics including the time it takes for a
+user to perform their search and whether or not the search itself was successful
+(using the \emph{abandonment rate}).
+
+Assuming that activity context is useful, a more traditional systems evaluation
+seems justified: what is the cost of collecting and disseminating the activity
+context, what is the time to process queries~\cite{ames2013qmds}, how difficult
+is it to add additional activity context providers, and what is the potential
+added complexity for applications to utilize \emph{activity context}.
+
+\textbf{Note:} While I expect there will be substantial benefit to collaborating
+with others interested in the human-computer interface (HCI) and information
+retrieval (IR) potential for using my work, based upon consultation with my
+supervisors I do not assume that this will be the case.  Thus, the possibility of
+collaboration has the potential to provide considerable impact if my research
+supports my thesis, my thesis proposal is not dependent upon such collaborative
+work. Thus, I intend on being sufficiently flexible to take advantage of
+collaborative opportunities that do arise, but also realistic in completing my
+own work in order to complete my thesis.
+
+\section{Backwards Compatibility}
+\label{ch:evaluation:sec:existing-apps}
+
+Prior work, such as with semantic file systems~\cite{gifford1991semantic}, has
+been realized by using indexing services.  Similarly, personal digital traces
+have been used to augment indexing services~\cite{vianna2019searching,Xu2014}.
+These works have evaluations for the effectiveness of their solutions. Thus,
+virtual directory solutions and indexing solutions have prior evaluations that
+can be leveraged to develop a more extensive evaluation model.
+
+With respect to my own thesis related work, the availability of this type of
+indexing and/or virtual directory mechanism would be helpful in understanding
+the costs and performance of my own architecture to ensure that it can
+adequately meet the needs of my target tool-building community.
+
+\section{Access to Activity Context}
+\label{ch:evaluation:sec:providing-ac}
+
+
+Research question \ref{rq:meta-data-query} asks how to provide activity context to
+enable users and application developers to exploit the enhanced rich meta-data
+of \system.  Much of this work
+relates to performing efficient meta-data queries against a potentially large
+collection of such data. There is a strong body of prior work regarding
+meta-data queries of both static
+and dynamic
+sources~\cite{Strong,revol2011universal,smartstore,pindex,federatedMetaData,huo2016mbfs,Suguna2015,Parker-Wood2014,watson2017exploring,leung2009magellan,leung2009spyglass,niazi2017hopsfs,van2011efficient}.
+The prior work includes a model for providing evaluation.  In addition,
+file system meta-data query specific research has also created a framework for
+evaluation that relates to the performance speed of meta-data
+queries~\cite{ames2013qmds}.
+
+In addition to the performance of such queries, I expect it will also be useful
+to determine the generality and ability to form specific queries.  My
+expectation is that these queries will not ordinarily be initiated directly by
+users but it may be useful, as part of evaluating the interface, to determine if
+human-provided queries are viable and the level of ease with which they can be
+constructed.  I expect further refinement on how to evaluate the flexibility of
+the query mechanism may be avoided by adopting an existing query
+language~\cite{francis2018cypher,van2016pgql}.
+
+\section{Privacy}
+\label{ch:evaluation:sec:privacy}
+
+Research question \ref{rq:privacy} asks about how to ensure the privacy of users
+is preserved when capturing detailed personal information in the \emph{activity
+    context} I propose recording.  Because I have explicitly stated that for my own
+thesis work I will be assuming the user maintains complete control of their
+activity context, I do not propose any specific model for evaluating this
+security because it is \emph{by design} as secure as the user's own data.
+
+Ensuring privacy of meta-data is an active research area, in terms of
+extraction, dissemination, and
+sharing~\cite{10.1007/978-3-030-72465-8_14,eskandarian2021express,budzko2019architecture}.
+Thus, future work that is not envisioned as part of my thesis should be done in
+a context where emerging work is used to evaluate privacy concerns of a more
+general meta-data service.
+
+
+

@@ -1,0 +1,131 @@
+\section{Use Cases}
+
+We consider the following potential use cases for our naming system:
+
+\begin{description}
+
+    \item[Finding historical documents] - in this common usage scenario, we are
+    looking for an object that we identify by what we were doing and when we
+    were doing it as well as potential subjects.
+
+    \item[Related documents in distinct storage locations] --- in this common
+    usage scenario, we are looking for \textit{related} objects that, for
+    whatever reason, are stored in different ``storage silos''.  For example, we
+    received a document via e-mail and then saved it on the ``Dropbox folder''
+    of our local system.  The e-mail and the document are related, but we have
+    no obvious way to traverse back from the document to the original e-mail.
+
+    \item[Ability to search non-traditional storage locations] --- in this usage
+    scenario, we are looking for \textit{objects} that are not stored in a
+    traditional storage silo but instead reside inside some other object storage
+    domain.  For example, objects in an arbitrary object store, such as the
+    ubiquitous key-value store.
+
+    \item[Cross-silo versions / Document Identity]  ---
+    draft.doc that you got from your coworker via e-mail, that version you stored
+    on your local drive, then the one you uploaded to Office365. Another one you've
+    got from another co-worker via Slack. Nirvana will show these as different
+    versions from the same logical document, possibly even the temporal relationships
+    between then
+
+    \item[Notifications] -- Allowing a user to "subscribe" to change
+    notifications for critical documents; e.g., an active collaborative project
+    to ensure users are notified when documents are updated (and of course
+    cancel notifications when they are no longer needed/useful).
+
+    \item[Search Results] -- What kind of searches happened during the writing
+    of of another document (e.g., you are interested in the statistics of a
+    search, but not particular results)
+
+    \item[Compliance] --- Identifying related documents, including references,
+    to specific material that needs to be located as part of compliance with
+    legal mandates, e.g., discovery notices, GDPR data removal requests (``right
+    to be forgotten'').
+\end{description}
+
+
+\subsection{Prior Usecase Examples}
+
+\reto{OLD `usecases follow`}
+
+% locating documents in general
+\noindent\textbf{Locating Documents.}
+Users want to search for particular documents (use-cases \\usecasehistcontext, \\usecasereldocuments).
+Indexing services (e.g., Spotlight), cloud-based platforms, or tools like \texttt{grep} or \texttt{find} provide mechanisms to locate documents based on their name, date of creation or modification, or even the content of the files.
+However, users often need to search different storage silos independently. This poses a burden to the user.
+Worse, searching over locally mounted network attached storage (e.g., NFS or Dropbox) could mean transferring gigabytes worth of data for doing the search.
+Finally, current solutions do not capture activities well such as while on a call with a customer, or while attending a webinar or conference.
+Not only fail existing architecture to capture these aspects, they are also not capturing seemingly simple relationships between a file stored on disk and the e-mail exchange through which it was received and thus losing important contextual information.
+
+% integration with non-traditional storage
+\noindent\textbf{Alternative Storage.}
+Traditional files are not the only way to store documents.
+Today's applications may use object stores, key-value stores and data bases, or even implement their own storage container holding multiple objects (use case \\usecasealtstorage).
+Moreover, applications want to protect their data from unauthorized accesses using various methods such as encryption, for example.
+This makes searching hard and the user is forced to use the interface provided by the application to locate its documents, resulting in yet another manual cross-silo search.
+While point solutions exist, e.g., Android search integration or export as WebDav-based file system, they are not ubiquitously available or do not allow users to search using the full range of attributes.
+
+% document identity / cross silo version
+\noindent\textbf{Document Identity.}
+Documents have an identity. Writing an additional paragraph in this paper, does not change its identity. It rather creates a new version of the same document and both versions are related.
+Likewise, uploading a document to cloud storage, renaming it, or converting it to a PDF also does not change its identity (use-cases \\usecasereldocuments, \\usecasedocidentity).
+In contrast, taking last year's HotStorage paper as a template for this year's paper will change its identity.
+While versioning is available on various storage solutions or VCS systems, it fails to capture cross-silo versions and relation ships. For example,
+the document that was just received via e-mail is in fact a version of the one you have been editing yesterday, and that you have just uploaded to cloud storage for sharing with your co-worker who just sent it to you via e-mail.
+
+% multi-device
+\noindent\textbf{Multi-Device.}
+Users may use various devices to access their files, each of which having different compute and connection capabilities (use-case \\usecasedevices).
+For instance, a desktop machine is powerful and always connected, while a smartphone is low power and can often be disconnected. Cloud-storage or e-mail client apps on the devices provide a search interfaces that may offload the actual search to the server.
+A user with two devices cannot easily look for files on the local disks and has now to do the search manually across multiple devices (similar to \\usecasereldocuments).
+
+% attribute provenance
+\noindent\textbf{Attribute Provenance.}
+Traditional file systems tie the permissions to change attributes with the permissions to change the file contents.
+Any user with sufficient rights can change any attribute or the file contents.
+While there are systems that record the user who changed the file last, it may not capture the entire history of the changes (use-case \\usecaseattrprov).
+Moreover, existing systems do not capture the intent or reason of those changes.
+
+% attribute provenance
+\noindent\textbf{Multi-View.}
+A document cannot be physically present in multiple filing cabinets at the same time.
+Hard and soft links provide references to other other storage locations.
+However, there is still only a single physical organization of files making it impossible to organize files by year-customer, and customer-year at the same time.
+File managers may offer tags, and media libraries to notion of albums and grouping by year to provide specific ways to sort, filter or organize files.
+This approach, however, is not generally available and users cannot freely choose and adapt their \emph{view} of their files (use-case \\usecaseviews)
+
+\section{Notes from the meeting (remove as pleased)}
+
+Focus on the what the system does, with a bit of how..
+
+\begin{itemize}
+    \item Placeless + Burrito?~\footnote{\url{https://www.usenix.org/system/files/conference/tapp12/tapp12-final10.pdf}}
+    \item Attributes that are not traditionally a file.
+    \item GIS information is useful
+    \item don't open files for extracting meta-data
+\end{itemize}
+
+Taxonomy
+
+\begin{itemize}
+ \item table what can be done what can't. 3 columns. Use-case, what can be done, what's hard.
+ \item here's a structure of them. (what's easy and hard to do with today's technology) --> references to architecture section
+ \item evaluation: show that we are supporting the things that are hard.
+\end{itemize}
+
+ \begin{description}
+\item[Section 1] introduction
+\item[Section 2] Background
+\item[Section 3] Use-cases + table
+\item[Section 4] Architecture
+\item[Section 5] Show that use-cases are solved
+ \end{description}
+
+Different clients:
+
+\begin{itemize}
+ \item Desktop: powerful + always connected
+ \item Laptop: powerful + can be offline
+ \item Smartphone: low power + mostly connected
+ \item Smartphone w/o data: low power + mostly disconnected
+\end{itemize}

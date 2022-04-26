@@ -1,0 +1,19 @@
+\section{Future Directions}
+\label{sec:future}
+We now explore a few research directions that \system suggests.
+
+\noindent\textbf{Attribute Security and Integrity.}
+\system decouples naming and attributes from the storage object. This opens up a research direction on the security model of attributes themselves. Are the permissions on the attributes similar to the ones on the storage objects themselves? Can a user change an attribute in its local namespace, but not in the company wide one? This segues into the question of attribute integrity/quality: not all attribute sources have the same trust-level. For instance, a user might label an image ``dog,'' while the image recognition AS might label it ``cat''.
+
+\noindent\textbf{Privacy.}
+\system collects a lot of metadata across multiple communicating channels and storage silos, including activity data. This raises the question of how to manage these metadata in a privacy-preserving manner.
+
+\noindent\textbf{Interface Design.}
+We presented a system architecture that provides a rich context to search and organize storage objects. We envision that this will provide the foundation for new directions in HCI research: By using individual namespaces, we can dynamically organize and visualize documents and other storage objects, and seamlessly navigate and locate related documents providing a new user
+experience.
+
+\noindent\textbf{Relationship-based Queries.}
+\system tracks relationships between storage objects. These relationships provide minimal data provenance~\cite{provprimer} allowin users to locate the chain of related documents originating in a specific activity context.
+These relationships are most naturally expressed as graphs, where nodes are objects, and edges are the relationships between objects. Edges could have weighted-labels, indicating the type and importance of their relationship. 
+This enables more sophisticated data-analysis beyond pure content-based indexing by using graph queries. 
+For instance, lineage queries (i.e., tracing the history of an object) are path traversals, which are challenging to implement efficiently in conventional storage systems. This suggests that the NS and/or MS require sophisticated storage and query mechanisms.

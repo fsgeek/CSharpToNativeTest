@@ -1,0 +1,199 @@
+\section{Research Opportunities}\label{sec:research}
+
+%The use of namespaces has changed, though the design and implementation has not evolved substantially.  Recent initiatives by commercial
+%entities such as Google, Amazon, NetApp, and Qumulo to improve naming within storage silos indicates we have reached the breaking point.
+%While allowing per-silo namespace solutions is one possible future, we view it as important from the \textit{user} perspective to avoid
+%this type of single-vendor lock-in.  However, to achieve our Nirvana model will require research to satisfy a number of outstanding
+%questions that our design has raised.
+
+%We identify five open areas: what is left of a file system when the namespace is removed, what operations should we support on namespaces 
+%versus on silos, what does access control look like, what are the implications of privacy and security, how can storage silos utilize meta-data
+%to smartly optimize storage.
+
+\paragraph{File System Evolution}
+% - what's left of the file system if we have the two kinds of naming
+
+With a distinct namespace implementation, we need to consider questions on how to optimize their interaction.
+For example, should we permit the namespace implementation to store its metadata within the storage silo?
+How can the storage silo access metadata from the namespace?  How can we optimize storage silos when
+they are not burdened with the different needs of namespace and storage management?  Can we provide
+mechanisms to notify the namespace when changes occur within the storage silo?
+These questions arise because we separate the traditional, hierarchical file system structure we have known for more than a half century.
+%Is there a better implementation for extended attributes such that other ecosystem can use them? The current implementation problems are not unique to our ecosystem but general. 
+%How will the layout of the FS change when we associate more user specific, application specific contextual metadata with files?
+%Can the algorithms to access these be improved? For eg: can we provide a hook for user space functions to run to create the contextual metadata when the file changes? 
+% By separating the two kinds of naming in namespaces breaks with the traditional, hierarchical file system structure as we know it for half a decade. The question arises of what is left from the traditional file system? 
+% This seems to translate into concept of a ``thin-waist'' for storage, an object store like construct where the objects are retrieved solely based on their key.
+
+%\subsection{Supported Operations}
+% - operations (interoperability between name spaces)
+Traditionally, users see storage as a convolution of location and its context within the storage, i.e.~the path of the file defining its location and context. 
+Performing a file system operation was reflected on both the file system context and the backing store at the same time. 
+A clean separation of this two concepts into the storage (location name) and namespace (semantic/context name) raises fundamental questions on what kind of operations are supported by each of those two concepts, how  they relate to each other, and how closely coupled they are. 
+
+%\paragraph{Store Operations}
+%Store operations are applied on the object itself. Users should be able to create/delete objects, as well as read/write them. 
+%While those operations seem obvious, it is less clear for other aspects like rename and versioning: how does creating a new version or renaming it play together with the namespaces this object may appear in, and how do we refer to a particular version? 
+%Given users will use the namespace to search for their objects, does renaming even make sense?
+%Based on the four operations mentioned previously, one can build more complex operations like copy or move to, for example, move an object to another silo. 
+%By doing so, should the object identifier be preserved? What happens if we forget the identifier?
+%If not, how are we keeping the namespaces in sync with the new location of the object? Is there an equivalent for the HTTP 3xx status codes indicating temporary or permanent redirects? 
+%Lastly, users want to share access to objects, e.g.~for collaborative editing.
+%We will talk about the rights and permissions involved in the next section with respect to sharing objects. 
+
+%\paragraph{Namespace Operations}
+%Namespace operations are applied on the namespace. Similar to the objects, a user may want to create its own namespace, or delete it again if its no longer used. The central question here is where do these namespaces reside and how do we refer to a particular namespace? 
+%Is there some kind of namespace service, or are they running on a users local machine and thus may not always be accessible? Is there some kind of root namespace to find other namespaces? Is there some kind of register operation?
+
+%Note, that an object may be added to to multiple namespaces, and it may be the case that the alst instace of it within an address space is deleted. What happens then? Can we even know that the last instance is deleted?
+
+%Within a namespace, a user will likely want to add or remove objects, modify their meta-data information, and search the namespace for possible relevant objects based on a query or other objects with are alike a located one. What does it mean that two objects are relate?
+
+%Besides searching, enumerating all objects that have been added to a namespace might also be desirable -- a potentially expensive operation. To what extent can we use the file contents to pre-populate the meta-data of the file? For example, CSCOPE builds an index of referenced symbols of source code files. 
+
+%Besides creating or deleting namespaces, a user may want to merge or unifiy two namespaces, or create a new subnamespace containing only the objects related to a project for instance -- an operation which may be expressed as create plus merge of a search result. 
+
+%Similar to the objects, a user may want to share an address space with other users to collaboratively work on a project, or because a business process requires approval of multiple people.
+
+%Lastly, what is the interface to an namespace and how do they interoperate wich each other? 
+
+
+\paragraph{Differential Privacy and Security}
+% - differential privacy & security (GDPR compliant)
+The notion of access control mentioned above raises the question of how the security model used in this two layer system, as well as potential privacy issues: the meta-data may reveal much information about the object itself, even its presence, replication factor or temporary unavailability within a namespace is leaking information. How do we control this kind of information flow on the namespaces and the backing store?
+
+Can we provide some form of differential privacy to the user of the name space? Effectively by prohibiting the user from enumerating the content of the namespace, and restricting queries to those who only produce one result -- in the sense you need to know precisely what you are looking for. As a more general aspect: how do we effectively prevent data leakage? 
+
+%In the context of privacy regulations like GDPR a user has the right to be forgotten. This implies we need to be able to not only find the relevant objects, but also the corresponding meta data. Is this feasible?
+%Besides the namespace and object ownership, is there a concept of ``content'' ownership?
+For example, in current namespaces there is no simple mechanism for finding all of the references to a specific object (e.g., the embarrassing photo that needs to be forgotten).
+Nirvana provides the ability to find such references.  Can we create a GDPR compliance system that guarantees to expunge such references?
+
+
+\paragraph{Using Metadata to Optimize Storage}
+% - use meta data to organize the underlying storage 
+Currently, we have to explicitly decide on where we want to store our data by manually selecting from various data silos providing different properties, guarantees and methods of sharing. 
+Having a rich namespace containing meta-data for the objects, could we leverage this information to deduce the best method of storage? 
+For instance, the origin of the information may influence the selection of the data silo, whether data is to be encrypted, an expiration date assigned, creating multiple instances of the object in different silos, or whether we may want to keep track of different versions of the object.
+Moreover, one may want to keep multiple, synchronized copies of the same object to support different access pattern or ensure locality. 
+How does regulation come into play (e.g., a object must not leave a certain jurisdiction)? 
+One of the central aspects of storage optimization is the question of which entity performs this? 
+This will likely require some form of synchronization among multiple namespaces that know about the object to ensure stability and avoid frequent changes to the storage.
+
+
+
+%\subsection{Performance and Benchmarking}
+% What are the performance implications
+%The hierarchical structure of traditional file systems enable performance optimizations by trying to optimize locality, e.g., FFS attempted to place files within a directory inside a cylinder group to leverage latency characteristics of rotational disks~\cite{ffs-book}. More recently,  a log-structured \textit{f2fs}~\cite{lee2015f2fs}   has used the file type (e.g., jpeg, mp3) to decide if the file should be written to a ``cold'' segment upon garbage collection. Given the separation of storage objects and their attributes proposed by Nirvana, what are the performance implications of this, both positive and negative? 
+%Can we leverage certain locality information, or even learn them at the storage layer or with hints from the namespace to optimize caching and allocation decisions on selecting a appropriate silo and to organize data layout within a silo. 
+
+%Lastly, the separation of namespace from backing storage enables us to write benchmark suites targeting each of them in isolation, and together as a hole system. How can we devise new, or adapt existing benchmarking suites for this new architecture?
+
+%\tm{The FFS example is fun, since they subsequently found out that if they had the geometry wrong the performance was \textit{worse} than it was if you just assumed a dumb block store.  Plus, modern disk drives are no longer used on the performance critical path, but even before this was true trying to optimize for geometry was a losing proposition.  Drives had multi-track heads, revectored blocks if they detected potential failure, and often did not expose their geometry.  Disk controllers and drives have long supported deep request queues; the move to SSDs has only increased this propensity, to the point that random access is typically very close in terms of performance to sequential access.  On the other hand, previous attempts to build rich namespaces into file systems have been abandoned due to performance considerations (e.g., Microsoft's WinFS).  Joel's list of file systems that include tagging don't have a particularly good performance story either.}
+
+%\subsection{Summary}
+%In this section we outlined a few open research areas which we think are worth to be explored not only by the systems community, but also by researchers in digital privacy, security and human-computer interaction. 
+
+% Different storage options will have different performance characteristics, availability guarantees, and other features like versioning etc. 
+% By decoupling the storage from the hierarchy / namespace, the user may be able to specify certain storage requirements using "tags" or alike. 
+% And the layer on top of the storage may pick the right location based on this. 
+
+% \tm{We need to be careful here: we don't want to push further cognitive load onto users.  However, applications often \textit{can} generate this sort of information, whether automatically or via some form of user interaction. Does the class of storage make that much sense as a namespace parameter, or is this more a silo option?  That begs the question: why do we pick different silos.  Certainly sharing with others is one reason.}
+
+% \sasha{Yeah, I'd prefer saying that the location can be inferred by watching how the object is used.}
+% \tony{Ah, yes, now we can have migration.  But that's pretty much how some of the cloud storage services work these days: the local copy is basically a cache, the remote copy is the preserved instance of it.  AND they offer versioning!}
+
+% \reto{I do think the location should also be explicitly controllable: e.g., regulations may dictate you have to store it in a certain jurisdiction. But the default might be to do that based on its usage and what the user has access to.}
+
+% \tm{I agree - that sounds like we need to be able to control that via the object creation interface.  But this problem/issue exists.  Indeed, that's one use I've seen of EAs - a way to specify particular behavior that is desired by the caller in an abstract and extensible fashion.}
+
+
+% \subsubsection{Store Operations}
+% \begin{description}
+%     \item [create] Creates a new objects
+%     \item [delete] Deletes a new object
+%     \item [write] writes the content of the object
+%     \item [read] reads the content of the object
+%     \item [perm] some permissions management stuff... grant/revoke/change owner?
+% \end{description}
+
+% Compound operations
+% \begin{description}
+%     \item [copy] this is the sequence: create(new), read(other), write(new). Can be cross silo. 
+%     \item [move] this is the sequence: copy(other, new). delete(other). Restrict on cross silo only? Object will get a new uuid/key. 
+% \end{description}
+
+
+% \subsection{Many Copies}
+% There can be many copies of the piece of information. Access the right one based on the required properties: e.g. I want to do random access, low latency, high bandwidth, ... 
+% Keeping them in sync? 
+
+% \tm{It seems the option is either keeping them in sync or simply dealing with the fact that we lose track of things over time (can't find that USB stick any longer, that cloud service account expired a decade ago, that hard disk melted down).  We know that sync creates its own issues, what's the downside to sometimes finding that an object just isn't available now or is permanently unavailable?  It almost feels like HTTP status codes...}
+
+% \reto{Yes, so it seems like being able to maintain a copy across different silos might be a useful thing to do in terms of availability. }
+
+
+
+% \subsection{Versioning}
+% As a special type of related objects we have different versions. 
+% We should be able to pick an object based on its specific version, the latest version, and list all versions of the object. 
+% Different versions will have different identifiers, either a completely different one (e.g., the hash will have a different value), or there is a common prefix between the versions. 
+% The open question here is whether versions are managed by the application, the storage, or both? And how do we find versions in each case?
+
+% \tm{This idea is one I spent a bit of time looking at when I was asking what a namespace without directories might look like. Suppose you choose a file and instead of seeing its contents you see a new list of the versions of that file, that could be visualized using numbers, such as was done in versioning file systems I've seen in the past, or timestamps, or something else.  Then when you pick the object at that level, you get the usual "open this instance" behavior.}
+
+
+% \subsection{Many Namespaces}
+% There can be multiple, locally defined namespaces where they resolve queries to the storage object. 
+% One way this could be viewed is like book marks for the web: you can always use a search engine to find the course page on the web, but you can just bookmark its URL, which effectively creates an entry in your local bookmark namespace, searching this delivers more specific results. 
+% How do we lookup things in application specific namespaces? (comes back to how to resolve a name within a context\cite{Saltzer1978})  \tm{Could we just have some form of context identifier? Gosh that feels an awful lot like an extended attribute in some ways.  If we could easily query files with a given context attached, then an application could pull up those "bookmarks" using that context.}
+
+
+% \subsection{Access Permissions}
+% At some level one has to do access control. Is this where a capability might come into place? 
+
+% \tm{Yes.  Indeed, one argument against hierarchical name spaces is that access control is a nightmare because we tie access to the \textit{path} we walk to get to the object.  From a security perspective, that seems broken - why would I tie protecting a file to the path you can use to get to it, rather than the security access I want to apply to the file? POSIX stipulates security checks at each point along the path walk and this is one of the major costs associated with building file systems with POSIX namespaces.  It gets worse when you build in monitoring facilities, such as Windows directory change notification - the NTFS file system (at least) actually has a check to see if the changed file is visible to the specific monitoring user, which is determined dynamically at the time the event happens.  It \textit{literally} does a full path walk to validate that the file is currently accessible to the given user via the monitored path. Nobody these days argues that monitoring changes like that isn't useful.}
+
+
+
+
+
+% \subsection{Buckets / Related Objects?}
+% Some objects are related with each other.
+
+% \tm{We could think of "related" as being "close to each other in some attribute space".  For example, prior work has identified name and timestamp~\cite{mashwani2019360}.  It could be interesting to see what happens when you also look for content similarity, though that's generally not an easy problem to solve.}
+
+% \reto{Agreed. Thinking of say the linux kernel source code (or any other source code directory). Let's assume we store this on the local file system. in this case `find \$HOME/linux` gets all related files within the namespace of the local file system. Now, one may also populate CSCOPE, which provides another namespace in which all files are related as they belong to the same project, in addition it offers an even more detailed notion of 'related files' e.g. files that call this function. I guess at some point we also may lose track of the namespaces.}
+
+
+
+% \subsection{The Thin Waist for Storage}
+% \reto{is there something like a "thin-waist" for storage, as there is for networking?}
+% \sasha{Seems like there is. Object stores. If everyone is in agreement that object stores already do what you are describing by "thin waste", then this excellent text can be used in the intro.}
+% There are different types of storage options available from local disk, to cloud drives, to online object stores, backup solutions etc. 
+% There are different ways to access and communicate with those storage types. 
+% Users will require to select the right means of communication and access method to retrieve and store data within the various storage options. 
+% In the networking context, we have the \emph{thin-waist} in the OSI model, where the IP layer provides a common interface to route packets between machines, abstracting from the actual transport. 
+% However, there is no 'thin-waist' equivalent in the storage. 
+% There are multiple options of implementing a thin waist:
+% \begin{itemize}
+%     \item UUID: identify information in storage based on some sort of UUID. 
+%           Like the IP layer, the UUID will contain information to address the store and the object in the store
+%     \item mount-point: there is a set of "mount-points" where each storage silo
+%           is identified by its mount point. (somewhat to like the IP of a machine)
+%     \item ....
+% \end{itemize}
+
+% \tm{If we remove the namespace from a file system, what do we have left?  A key-value store?  If so, why wouldn't we argue that \textit{filesystems} themselves are dead?}
+
+
+% \subsection{Performance} \sasha{Sasha TODO}
+% Performance was one of the main reasons why hierarchical namespaces were built into file systems in the first place. E.g., FFS attempted to place files within a directory inside a cylinder group to leverage latency characteristics of rotational disks~\cite{ffs-book}. As disks became more self-managing and storage technology evolved, careful layout of objects on media is no longer considered an advantage that a file system can or should exploit. Yet, few would dispute that access pattern of storage objects can inform their placement and caching. In a similar vein, can names themselves provide hints about how the files should be placed and cached? And if the namespace is decoupled from the file system, will the file system struggle to obtain these hints?
+
+% \tm{The decision to use hierarchical names is one that came about long before FFS was even in the picture.\cite{daley1965general}  In a world in which the names our file systems use are tied up in the names that we use, this emphasis on locality made sense to optimize the performance of rotating media (though, as we learned, this problem is harder in dynamic systems because things move and grow).   There are a TON of factors that impact file systems performance that are tied up into naming. FFS had a linear scan for the first available directory entry that caused an $O(n^2)$ slowdown as the directory grew in size.  Negative lookup turns out to be so common that common programming tools (e.g,, gcc) build caches to prevent/avoid these issues.}
+
+
+
+% \reto{Does something like the naming and binding of objects applies here? \cite{Saltzer1978} -- ultimately you will need to resolve a name within a context to either another name,context or the actual object identifier. Now what is the name of the object here? Is that sort of a globally unique UUID or an URI as the storage layer? And there will be additional namespaces overlay mapping searches/hierarchies/... to the uuid layer.  This may be again like providing a context in which pontentially multiple names (queries?) map to the same uuid/uri. }
+% \tm{Reto makes an interesting point: Users \textit{want} names with semantic meaning but \textit{computers} do not. ``One danger in any discussion of naming is that of getting carried away with both the metaphysical and semantic definitions of naming.'' \url{https://www.cs.rutgers.edu/~pxk/417/notes/04-naming.html}  Thus, there is an inherent mismatch in the goals of human level naming versus computer level naming.  We want computer level naming of objects to be ``easy to resolve'' and human level naming to be ``rich with context and semantic intent''.  Thus, the namespaces we are focusing on map human names to computer names - the URI is a good computer name because it focuses on the crufty issues of locating the actual information.  Our namespace concerns focus on context and semantics, and map the two.  Our current system, where we tie the \textit{human} name into the \textit{computer} name conflates the two and makes doing either well problematic.}
+

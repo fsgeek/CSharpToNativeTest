@@ -1,0 +1,396 @@
+
+\section{A Modest Proposal}\label{sec:graphfs}
+
+% Because our focus is on the \textit{naming} system and not the storage system,
+% for the present time we will not consider the issues that will arise in the
+% storage management layer to support the new model, though we admit that there 
+% are likely to be concerns that will need to be addressed in future work.
+
+Our proposed file system focuses on \textit{relationships} between our files.
+We use an analogy between social graphs and file systems to explore this 
+approach.
+Facebook's graph is a collection of typed objects
+(e.g., users, actions, places) and associations (e.g., friend, authored, tagged).
+File system objects map to users and files; \textit{contains} is, perhaps, the only
+association captured in a file system.
+For the rest of this discussion, we treat directories as the embodiment of the
+\emph{contains} relationship, not objects.
+
+We consider two strawman implementations for elevating relationships to
+first class file system objects.
+
+\subsection{File System as a Graph Database}
+
+In considering a graph based file system, first we consider
+implementing a file system in a graph database, of which there are
+many (\S \ref{sec:background}). Their primary focus is the storage of 
+graph-structured \textit{data}.  Our focus is in the use of graph-structured
+data as critical meta-data inside of a storage system.
+As such, there is a mismatch in design targets between a file system and
+existing graph databases: nodes in graph databases are small; nodes in
+file systems are large. Graph databases tend to favor a navigation-based API;
+file systems need a point query and search API. Graph databases assume that
+attributes and relationships are provided; file systems will frequently derive
+attributes and relationships.
+These differences suggest to us that existing graph databases are not suitable
+as the basis for file systems.
+Nonetheless, we encourage others to consider such an arrangement, should they
+have compelling reason to do so.
+
+\subsection{File System as Social Network}
+
+Next, we consider implementing a file system in the same way Facebook
+implements their social network graph.
+Facebook's original implementation stored the social graph in MySQL, queried
+it from PHP, and cached the results in memcache.
+More recently, Facebook introduced Tao, which is a service that more directly
+implements the fundamental objects and relationships that comprise the
+social graph~\cite{bronson2013tao}.
+While Tao is specifically designed to support the widely distributed,
+replicated, and rapidly changing social network scenario, it provides the
+starting point for conceptualizing a data model premised on the primality of
+relationships.
+Tao stores both objects and associations in a MySQL database and presents
+the graph abstraction via Association and Query APIs in the caching layer.
+Is this a viable structure for a file system?
+
+% in fact, facebook has a separate storage system for videos and pictures 
+% because they are large.
+Unlike objects in Facebook, files are large.
+Although prior work has considered using relational
+database~\cite{olson1993design} and other index-based
+structures~\cite{spillane2013vttree}  to store files,
+the community seems to have
+concluded that such storage is not ideal. We agree, suggesting that
+an RDBMS is not the desired storage system.
+
+What about relationships? Is it appropriate
+to use one persistent representation (e.g., a relational one) and a second
+memory representation (e.g., a graph-structured on) or
+should we use a single graph-structured representation both in persistent store
+and in-memory.
+We propose the latter for two reasons.
+First, the rumored era of non-volatile main memory seems to be around the
+corner, so a modern file system design should embrace a single
+representation.
+Second, while it is reasonable for Facebook to construct the entire graph in
+a distributed pool of main memory, file systems must work on a more limited
+scale and therefore cannot ensure that the realized graph structure will fit
+in main memory.
+
+As neither strawman design seems suitable for our relationship-centric file
+system, we present a new model and file system design.
+
+\subsection{Graph FS Model}
+\label{sec:graphfs:model}
+
+We set out a basic description of our core objects in Table \ref{table:graphfs:terminology}
+%\footnote{We took inspiration for this model from https://github.com/opencypher.}
+and a demonstrative set of example relationships in Table \ref{table:relationship-examples}.
+We do not consider either of these to be exhaustive, but rather propose them as an initial
+basis for discussion.
+The presented model can encompass
+the functionality of the existing hierarchical file system model.
+
+\input{gfsterms.tex}
+
+\begin{comment}
+% Omit because I don't think it is central to our thesis.
+Our relationship-centric file system consists of a \textit{union} of distinct
+name spaces, which permits a name space that is not
+fully connected, yet can still be merged via the existing union model. This permits an
+application to have a private name space for files,
+similar to both CAP and Plan 9~\cite{needham1977cap,pike1992use}.  Isolation also
+enhances security, e.g., the POSIX \textbf{mkstemp} function, which was introduced to
+address the need of applications for temporary files not visible to other applications.
+Such namespaces are like unlinked but open files in UNIX, where such files are
+reclaimed when the process terminates.  By creating a process private ephemeral namespace
+we augment the file system's ability to provide enhanced isolation.
+\end{comment}
+
+Every file has a unique identifier, such as a \textbf{UUID}, similar to
+an inode number or object ID.
+We do not rely upon \textit{names}
+as they are simply mutable properties.
+
+\input{gfsrel.tex}
+
+A \textit{relationship} is a directional association between two files.  We expect there
+to be far fewer relationships than files, though many more \textit{instances} of
+relationships (i.e., the number of edges in our graph exceeds the number of vertices).
+Relationships may be either uni-directional (e.g., derived from) or
+bi-directional (e.g., similar).
+Table \ref{table:relationship-examples}
+provides a set of sample relationships; the universe of relationships
+is extensible.
+As in RDF, relationships are triples: two files and the relationship.
+
+As files have attributes in a conventional file system, both files and
+relationships have attributes in a graph file system.
+A \textit{label} is a simple binary attribute (e.g., executable),
+while a \textit{property} is an arbitrary name/value pair, much like
+an extended attribute, but they are native to the model, not
+an afterthought.
+
+% We will extend our terminology as needed, using the existing terminology of the
+% relationship graph as inspiration for usable models.
+
+\subsection{Interface}\label{sec:graphfs:interface}
+
+\begin{table}[b]
+    \small
+    \captionsetup{justification=centering}
+    \begin{tabular}{p{2cm}p{5cm}}
+        Operation & Description\tabularnewline\hline
+        \multirow{1}{*}{create} &
+        \multirow{1}{*}{\parbox{4.8cm}{Insert new file into graph}}
+        \tabularnewline
+        \multirow{1}{*}{relate} &
+        \multirow{1}{*}{\parbox{4.8cm}{Insert new edge into graph}}
+        \tabularnewline
+        \multirow{1}{*}{label} &
+        \multirow{1}{*}{\parbox{4.8cm}{Insert new labels}}
+        \tabularnewline
+        \multirow{1}{*}{set} &
+        \multirow{1}{*}{\parbox{4.8cm}{Insert new properties}}
+        \tabularnewline
+        \multirow{1}{*}{remove} &
+        \multirow{1}{*}{\parbox{4.8cm}{Remove something from graph}}
+        \tabularnewline
+    \end{tabular}
+    \caption{Graph File Systems Operations}\label{table:graphfs:operations}
+%    \Description{Graph File Systems Operation Examples}
+\end{table}
+
+
+One of the lessons from Plan 9 is that everything can be represented as a file~\cite{pike1992use};
+we expect to
+continue with this paradigm as it has served us well over the years.  While we generally
+think of files as a blob of \textit{persistent} data, in fact it is useful to
+think of them as abstract \textit{generators} of byte stream data.  This fits well
+with our model of separating namespace from storage; how the storage
+providers return data to us is orthogonal to the namespace we use to retrieve it.
+For example, the \textit{procfs} file system creates a synthetic namespace and supports
+I/O operations for reading and modifying data contents of the pseudo-files.
+
+From the namespace perspective, our file system must support operations that manipulate that
+namespace. This includes the ability to create files, relationships,
+relationship instances \textit{between} files, labels, and properties.
+Similarly, we need the ability to remove each of these.
+
+Our model is simple, yet powerful.  It captures interesting concepts such as versioning, using relationships such as
+\textit{precedes} and \textit{succeeds},
+and provenance, using relationships around derivation and use,
+and application specific relationships, such as \textit{indexes} so a database
+system can expose the relationship between its primary data and the
+corresponding index files.
+Although relationships are binary,
+we can create clusters of related files by asking for all the vertices connected
+by a specific relationship.
+
+Where do relationships, labels, and properties come from?
+We identify at least the following five sources:
+1) the system itself will generate traditional
+attributes (e.g., \textit{size}, \textit{read time}) and some
+relationships (e.g., contains);
+2) tools that extract meta-data from different file
+types~\cite{soules2004toward,bloehdorn2006tagfs} will produce more attributes;
+3) applications will generate both attributes and relationships;
+4) users may generate attributes and relationships, although history
+suggests that asking users to annotate data is a losing
+proposition~\cite{soules2003can}; and
+5) kernel extensions, e.g., provenance tracking systems~\cite{pasquier17camflow}
+will generate attributes and relationships.
+
+Several interesting possibilities emerge from this design.
+Hard links are multiple \textit{name} properties attached to the
+same file, potentially in different namespaces.
+Soft links are a relationship between two names.
+The system can capture relationships that extend beyond the file system.
+For example, the \textit{derived from} relationship from
+Table \ref{table:relationship-examples} might describe a file that came
+from a particular email or web site.
+
+\begin{figure}[bt]
+    \captionsetup{justification=centering}
+\includegraphics[width=0.9\linewidth]{figures/model-graph.eps}
+\caption{Graph File System}\label{fig:graphfs-example}
+%\Description{Simplistic Graph File System Picture}
+\end{figure}
+
+Figure \ref{fig:graphfs-example} provides a simplified visualization of our graph file
+system model.
+Our inclusion of disjoint graphs captures the notion that the system
+naturally supports multiple namespaces, implemented as disconnected graph
+components.
+
+\begin{comment}
+
+\subsection{Search Functionality}
+
+
+Motivation for our graph file system was to provide a rich set of search semantics
+to enable more effective human-usable search.  Search starts from an arbitrary 
+file and radiates out from that point: what we seek is often ``close'' in terms of
+our relationship graph. We can return results quickly without doing
+an exhaustive search of the entire graph.  This is similar to how a modern internet search 
+engine, such as Google, works. Only the first few hundred results returned from millions
+of entries returned are usually analyzed.
+
+Our file sytem can support an iterative interface in which it asynchronously constructs
+the search results, returning initial results quickly even as further results are constructed.
+Bounding search depth combined with resuming search as needed permits the iterative process
+to continue without overwhelming the system. We seek to balance performance and completeness. 
+Indeed, our expectation is that --- much like your search engine never returns the 7,345th
+page of search results, the file system will seldom be asked to search the entire graph.  
+This is a far cry from the brute force search that some of us now do when we use \textbf{find} 
+or \textbf{grep -R} to scan through the hundreds of thousands of files that we have managed to
+accumulate over years of work.
+
+There is considerable work already done in the area of graph searching; we expect to utilize
+that work to construct a viable search 
+interface~\cite{angles2018g,,rudolf2013graph,francis2018cypher,van2016pgql}.  
+This aspect of our graph file system is likely to evolve the most as we better understand the
+needs of applications, particularly those seeking to expand the human level searchability, and
+adapt the search interface to meet their needs.
+\end{comment}
+
+\begin{comment}
+
+Current work in labeled property graphs has recently moved to introducing \textit{paths} to the model
+as well as the labels and properties that have already been added to the basic graph model~\cite{angles2018g}.
+This prior work identifies five key features that are heavily utilized in searching such graphs: 
+\textit{reachability}, \textit{construction}, \textit{pattern matching}, \textit{shortest path search},
+and \textit{graph clustering}.  For file systems, we expect that some of these will be of less
+interest than others, but we think it premature to exclude any of these from a useful design, though we expect to 
+focus on those we view as providing the greatest utility for our prototype implementation work. Thus, we expect
+the greatest utility for file systems will be \textit{pattern matching} initially, though we find both
+\textit{reachability} and \textit{shortest path} potentially intriguing.
+
+Pattern matching makes the most sense in terms of searching for specific labels and properties of files --- this most closely
+matches with the types of searching that indexers are already performing.  Thus, from the perspective of novel new
+search models it is the least satisfying yet likely one that will still provide substantial utility.
+
+Reachability is intriguing because it meshes well with our model for temporal relationships, in which we define ``reachability''
+with respect temporal reachability.  POSIX co-location (e.g., part of the same directory) is another potential area, though
+we suspect there are further areas to explore, including similarity.  For example, similarity preserving hashing~\cite{masci2014multimodal}
+could be used to search for files that are similar, but not identical to one another.  This could be used to trace the evolution
+of files as they are copied and modified from one location to another as well as to identify files that are identical.  Similarly,
+finding the set of paths between two vertices could yield useful information about the linkage of files, something that we
+cannot easily reconstruct from current file systems.
+
+Shortest path is a classic search problem (e.g., Dijstra's Algorithm~\cite{dijkstra1959note}) as a means of finding the closest relationship
+between two files.  This could be combined with reachability to identify a \textit{sequence} of iterative steps as we move between
+similar files.  Another use would be to find a path between a directory and a file that provides access, e.g., for which the security label
+on all the edges permits access.  This works well with the ``open by inode number' problem, for example and may help us address
+the interesting question of how to perform POSIX-compatible security checks on files that are being opened by their identifier.
+\end{comment}
+
+\begin{comment}
+\subsection{POSIX}
+
+Our model permits support for POSIX file system semantics with respect to the file system
+name space.  While our model does not require an hierarchical layout, we can support
+such a system within this model.
+
+First, we assume there is an external mechanism for identifying a distinguished file that
+corresponds to the \textit{root} directory.  We added the \textit{contains} relationship
+to capture this form of relationship.  While we suggested the \textit{contained by} relationship
+(Table \ref{table:relationship-examples}), this is not a requirement for POSIX compatibility,
+though one of the authors has been asked for this feature numerous times in the past for
+existing POSIX file systems.
+
+Enumerating the contents of one of these \textit{directory} type files would enable
+enumeration of the directory in keeping with the POSIX model, by simply querying the
+edges capturing the \textit{contains} relationship.  A hard link from two directories
+to the same file is trivially supported.  Soft links are already a part of our model, so
+we can provide symbolic links as well.
+
+POXIS APIs that retrieve file properties, such as \textbf{stat}, are similarly converted
+into a call to retrieve properties of the file and then converting them into the
+expected native format.
+
+While our own graph file system does not inherently place any importance on names, this
+POSIX layer can store names as a property of the edge.  This is consistent with the way
+that file names now function --- they are an attribute of the directory entry that
+references the file, rather than an attribute of the file itself.
+\end{comment}
+
+\begin{comment}
+\subsection{Interactions}
+
+Eventually, we expect there will be challenges associated with the POSIX interface and the richer interface we offer.  We have already mentioned
+one such issue: security.  The POSIX specification expects a security check at each node along the path as part of an attempt to open or create
+a file.  Windows will enforce the same path walking security model but provides a work-around that allows skipping this~\cite{conover2006analysis}
+check in favor of performance.  The ability to perform such a security check at open time could be an interesting systems use of enhanced
+searchability.
+
+One area in which we can envision challenges is in preserving the labels and properties of files within our graph because standard utilities
+such as \textbf{cp} are ignorant of them and would simply copy the data contents of a file without copying the labels and properties.  We can
+certainly enhance our system utilities to be enlightened about these new features, but it will not resolve the problem for cases in which
+existing applications use standard POSIX systems calls to copy a file.
+
+In addition, the ability to create disconnected name spaces does not fit well within the POSIX model, though it is more like distinct file systems and thus
+likely does not break existing semantics.  Still, we expect that as we gain further experience with our graph file system and the graph
+features are exploited we will need to handle more interaction cases.
+\end{comment}
+
+\begin{comment}
+
+Our proposal is that file system name spaces evolve from \textit{trees} to \textit{graphs}.  Of course, a tree is simply a minimally connected graph.  This leads
+to our first question for our new file system model: \textit{should it be a connected graph?}  In fact, we observe that even our personal name space is a set of
+disjoint graphs --- there is one for each of our devices.  Thus, we observe that this question is already answered.  However, having answered it, we also
+observe the utility of actually creating connections across those name spaces.
+
+This becomes easier when we divorce the concept of \textit{storage} from the concept of \textit{name space}.  Our ideal name space can thus refer to files
+that are not part of the current device's name space.  We are not (yet) proposing how we add that information to the namespace, merely noting that it
+is a desired feature.
+
+One argument for allowing disjoint namespaces on our individual devices is to provide a simple model for namespace isolation --- files that need not be
+made visible outside some limited scope (e.g., the temporary working files of a particular application) can be in what is a localized name space; in some
+ways this is reminiscent of capabilities based file systems~\cite{needham1977cap}.  While an interesting area to explore further, we leave it open
+at the present time for our design.
+
+Our graph is essentially a \textit{relationship} graph, in which vertices represent what we usually think of as \textit{files}, and edges represent
+the \textit{relationships} between our vertices.  In an attempt to emphasize the generality of our vertices, we note they may be able to supply a byte
+stream of data --- a \textit{generator}, and they may be able to consume a byte stream of data --- a \textit{processor}; we leave it open if we wish
+to consider richer interfaces, such as \textit{insert}, such as we previously proposed~\cite{Seltzer2009}.  An individual vertex may be any subset
+of generator and processor and thus have read-write, read-only, and write-only vertices as suits the needs of the specific vertex.
+
+Vertices may have a set of \textit{attributes}.  Since our goal is to provide generality here, we would establish that each attribute consists of a
+\textit{domain} which identifies how to interpret the attribute, the \textit{attribute-name}, which specifies the name of the specific attribute
+within the given domain, and a \textit{value}.  Our system can then define a core set of attributes relevant to the file system domain; other domains
+can then be added by agreement of the domain creators and users without us enforcing any given structure.  While individual applications can then
+create labels within their own domain, our hope is that over time related applications will come to an agreement as to the meanings of attribute-names
+to enable sharing of properties.
+
+Our edges are labeled, weighted directional edges in a hypergraph: each label consists of a \textit{relationship} and a \textit{weight}.  Because our
+goal is not to strictly restrict the relationships, we suggest that a relationship itself consists of a \textit{domain} identifying how to interpret
+the relationship (presumably by agreement for those creating those relationships) and a domain-specific \textit{relationship-label}.  We can define
+a set of relationships that we will initially support: \textit{contains}, \textit{is contained by}, \textit{is related to}, etc.
+
+Thus, we now have enough structure for us to create a mapping from the existing POSIX file system interface, including its hierarchical name structure
+to be compatible with existing systems. 
+\end{comment}
+
+\subsection{Aspects of Implementation}
+
+In the absence of space to provide a full implementation, we offer a few
+strategies that make a graph file system both feasible and novel.
+The underlying storage structure for files is essentially an object store~\cite{factor2005object} and
+attribute storage is largely a solved problem
+(although the last time
+one of the authors said that, her colleague disagreed~\cite{mao2012cache}), so we
+focus on fast and efficient graph storage and query.
+
+Today's systems either provide graph storage~\cite{rudolf2013graph,webber2018programmatic,microsoft:cosmosdb} 
+or graph processing~\cite{shun2013ligra,gonzalez2014graphx,malewicz2010pregel,salihoglu2013gps,nguyen2013lightweight,low2014graphlab,kyrola2012graphchi}, 
+but a graph file system needs a high performance, space-efficient, mutable and queryable
+native graph representation.
+We have found that mutable compressed sparse row representations~\cite{macko2015llama}
+meet all these requirements (we used them as the query and storage mechanism in the
+SHEEP graph partitioner~\cite{margo2015scalable}).
+Just as high performance key/value stores are considered reasonable implementation
+strategies for attribute storage and management in file systems, similarly efficient
+structures supporting graph storage and management should be adopted in file systems
+as well.

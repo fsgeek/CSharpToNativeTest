@@ -1,0 +1,156 @@
+\chapter{Research Questions}
+\label{ch:research-questions}
+
+\begin{epigraph}
+    \textit{For every particular thing to have a name is impossible. --- First,
+        it is beyond the power of human capacity to frame and retain distinct
+        ideas of all the particular things we meet with: every bird and beast men
+        saw; every tree and plant that affected the senses, could not find a place
+        in the most capacious understanding.} --- \textbf{John Locke}, \textit{An Essay
+        Concerning Human Understanding}~\cite{locke1844locke}
+\end{epigraph}
+
+The goal of my research is to develop a framework for gathering and
+disseminating rich data tracking activity across a user's silos and devices to
+facilitate end-user \emph{finding}.  While the evaluation of these finding
+questions lies in the domain of HCI researchers, my research must enable
+the collection, aggregation, storage, and querying the data that these
+researchers can use to evaluate different finding approaches.  Thus, my research
+will answer the following questions:
+
+\begin{enumerate}
+    \item \label{rq:define-ac} \textbf{What data comprises activity context?} As
+          previously observed
+          (\autoref{ch:background:sec:useful-information-for-finding}) there is
+          a wealth of potential information that could be included in the activity
+          context.  This question asks: ``what data should be included in the activity
+          context?''
+
+    \item \label{rq:capture-ac} \textbf{How do we capture activity context?}
+          While there are numerous different potential sources for activity
+          information, how do we capture and store it?
+
+    \item \label{rq:rich-data} \textbf{How do we collect rich data (including
+              activity context) from multiple storage silos and make that rich data
+              accessible efficiently?}
+          We know from prior work that one can
+          capture \emph{all} state for a single computer system with
+          surprisingly moderate cost~\cite{devecsery2014eidetic}, but that
+          approach does not make the collected state easily available.
+          Thus, collecting and storing the rich data is not sufficient, we
+          also need to make it accessible to applications. How do we make it
+          available to applications in a manner whereby the benefits of better
+          findability outweigh any impact on application performance?
+
+    \item \label{rq:meta-data-query} \textbf{How do we facilitate query of this
+              rich meta-data?} It is important that both users and applications have a
+          mechanism via which they can exploit this extensive collection of rich
+          meta-data.  What does the query interface for this rich meta-data look like?
+
+    \item \label{rq:leverage-ac} \textbf{How can applications leverage this rich
+              meta-data?} Applications must programmatically find the documents with which
+          they interact.  Most applications use temporal relationships, such as
+          ``recently accessed documents,'' as a primary mechanism to present users
+          with a set of files they might wish to access.  When that fails, they fall
+          back to offering the user files in a directory or list that the application
+          deems `likely'.  This question asks: ``if an application has access to
+          activity context data, how can it use the information to give users a better
+          collection of candidate files from which to select?''
+
+    \item \label{rq:privacy} \textbf{How do we preserve the privacy of sensitive
+              meta-data?} In a model that incorporates extensive amounts of personally
+          identifiable information there is a very real risk that this information
+          will prove to be economically valuable to someone; how do we ensure that the
+          user retains ownership and control of that information so that it is only
+          released when they approve doing so?
+
+\end{enumerate}
+
+I intend to provide data that will allow other researchers to answer related
+questions such as:
+
+\begin{itemize}
+    \item What relationships are most valuable in helping users find data?
+    \item Does activity context provide better information for user search than
+          semantic information alone?
+    \item What interfaces best allow users to leverage rich meta-data search
+          capabilities?
+\end{itemize}
+
+The questions themselves that are core to my proposed thesis work revolve around
+exploring and broadening the of an \emph{activity context}. However, activity
+context by itself does not replace the other prior work that
+has added semantic understanding around files, e.g., semantic file systems,
+formal concept analysis, tag file systems, graph file systems, etc. Thus, my
+proposed system (\autoref{ch:architecture}) includes support for this prior work
+but extends it by augmenting previous mechanisms with this additional rich usage
+information that I call ``activity context.''
+
+\endinput
+
+The goal of my research is to explore a number of key research questions.  One
+of the complications involved in this work is that defending my thesis will best
+involve work by others.  Thus, in this section I identify key research
+questions; from these I then identify those that relate to those I propose
+constructing as part of my thesis.  The goal of the other questions then is to
+provide guidance as to what I envision as the usage model for this work.
+
+% Table generated by Excel2LaTeX from sheet 'Research Questions'
+
+\begin{enumerate}
+    \item\label{rq:events} \textbf{What events are useful in establishing relationships between
+        objects?}  Prior work has explored a few relationships.  For example, the
+    provenance guided search work identified \emph{causality} as being a better
+    predictor of a relationship than temporal locality.  However, modern
+    computer systems capture a vast array of information.  This provides us with
+    intriguing opportunities to consider what of just the currently captured
+    information is useful.  Beyond that, I propose there may be information that
+    we do not currently capture that would also be useful.  The function of this
+    research question then is to identify what information would be useful.
+    My expectation is that answering this research question is likely best done
+    in collaboration with researchers from other communities, such as HCI, in
+    order to identify specific events that turn out to be useful.
+
+    \item\label{rq:improve} \textbf{Does adding activity context improve associative access to
+        files?}  More specifically, prior work has identified that using extracted
+    semantic and specific tag information yield useful insight into file
+    associations.  While the purpose of my work is to provide the tools
+    necessary to answer this research question, I consider it to be beyond the
+    scope of the work I will do in support of my thesis.  Ideally, I would work
+    collaboratively with researchers in other fields better suited to evaluating
+    this, likely as part of the work involved in answering question
+    \ref{rq:events}.
+
+    \item \label{rq:existing-apps} \textbf{How can existing applications benefit from the availability of
+              activity context?} There are existing ideas in this space that have been
+          explored such as ``virtual directories.'' While interesting, I don't
+          consider this to be a core question to answer as part of my thesis.  I
+          suggest this would be a good project to work with another systems researcher
+          to explore in collaboration.
+
+    \item \label{rq:providing-ac} \textbf{How do we provide activity context to enable others to exploit
+              it to build better tools?}  This question presupposes that the answer to
+          question \ref{rq:improve} is yes.  Thus, assuming that we find activity
+          context does improve associative access to files, how do we provide access
+          to that information.  There is a body of existing work upon which to draw
+          for inspiration regarding meta-data queries of both static and dynamic
+          sources, but it seems likely there will be at least systems-specific issues around
+          processing a potentially high volume event stream efficiently.
+
+    \item \label{rq:privacy} \textbf{How can we provide distributed meta-data services while
+              preserving privacy?} Prior work in utilizing ``personal digital traces''
+          raised similar concerns and the approach they took --- to store the data on
+          the user's computer --- seems like the correct solution for the work that I
+          do for my thesis~\cite{vianna2019searching}.  However, I note that it seems
+          likely that this question is a logical follow-on if this system proves to be
+          useful because I can envision benefits of being able to share activity
+          context between multiple devices for a single user as well as the ability to
+          share activity context with other users with whom the owning user is
+          collaborating.  Thus, I do not propose fully addressing this question within the
+          context of the work for my thesis.
+
+\end{enumerate}
+
+I do not propose answering all of these research questions.  My goal in
+providing them is to lay the groundwork for understanding why the research I
+propose doing in support of my thesis could have substantial impact.

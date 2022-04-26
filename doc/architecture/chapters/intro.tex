@@ -1,0 +1,475 @@
+%% The following is a directive for TeXShop to indicate the main file
+%%!TEX root = ../diss.tex
+
+\chapter{Introduction}
+\label{ch:introduction}
+
+\section{Thesis Statement}
+\label{ch:introduction:sec:thesis-statement}
+
+%To improve the usefulness of naming systems within computer storage systems
+%software must evolve to provide flexible, scalable, and multi-silo management
+%of data object naming.
+
+\input{thesis.tex}
+
+I borrow the term \emph{pragmatics} from linguistics because this thesis is
+about \emph{naming context}.  In linguistics, \emph{pragmatics} is distinct from
+\emph{semantics}.  Semantics relates to \emph{meaning}.  However, meaning is
+often dependent upon the \emph{context} in which a name is being used.  For
+example, if I use the term \emph{my brother} then you understand that it refers
+to a different person than when \emph{you} say it --- unless we are also
+siblings, of course.  Prior work has studied file naming from the context of
+\emph{semantics}, looking for the absolute meaning of a given item.  Naming,
+however, often does not explicitly include the context necessary to understand
+the meaning of a given name.
+
+A simple example that Norm Hutchinson gave me during one of our early
+discussions: over the years, he has created a variety of python files called
+\texttt{test.py}.  If he wants to find a particular instance of one of those
+python files he cannot tell what it is based solely upon the name. What he does
+know is that if he uses the Linux \texttt{find} utility to find all of the files
+called \texttt{test.py} he may be able to discern the purpose of that file based
+upon other hints provided within the path to each instance of \texttt{test.py}
+that he finds.  Thus, my observation: our existing system requires humans embed
+naming context within the path and file name.  As I explain later, this is
+insufficient for our needs.
+
+I have done similar searches myself in the past.  I try hard not to resort to
+such searching because it ends up either finding \emph{nothing}, which
+frustrates me because I know that what I'm looking for exists, or it finds so
+many paths listed that the task of looking through the list is itself daunting
+--- a bit like asking Google ``What is the meaning of life?''  Google takes 0.52
+seconds to advise me that there are ``about 1,100,000,000'' results.
+
+The earlier work on \emph{semantic} file systems actually described techniques
+for winnowing this type of ``virtual directory'' down to something more
+manageable using exclusions --- reminiscent to modern day web searching where I
+might omit documents with particular terms.
+
+To the best of my knowledge, there is no prior work on \emph{pragmatic} file
+systems.  Despite this, the importance of \emph{context} when interpreting names
+is hardly a new idea - Saltzer discusses it as part of his treatise on object
+naming~\cite{Saltzer1978}, though context is often interpreted quite broadly.
+
+In addition, I am focused not on the organization of data within a single
+storage device, or even within a single computer, but rather the much broader
+definition proposed by Watson for a name: ``[t]he \emph{name} of a resource
+indicates what we seek...''~\cite{watson1981identifiers}.
+
+In \emph{semantic} file systems Gifford's focus was on improving understanding
+of what the file is based upon its \emph{contents}.  In \emph{pragmatic} file
+systems I expand on this by improving understanding of what the file is based
+upon the context in which it is used. That context is based upon observations
+\emph{outside} the file.
+
+\section{Motivation}
+\label{ch:introduction:sec:motivation}
+
+\begin{epigraph}
+    \textit{For every particular thing to have a name is impossible. --- First,
+        it is beyond the power of human capacity to frame and retain distinct
+        ideas of all the particular things we meet with: every bird and beast men
+        saw; every tree and plant that affected the senses, could not find a place
+        in the most capacious understanding.} --- \textbf{John Locke}, \textit{An Essay
+        Concerning Human Understanding}~\cite{locke1844locke}
+\end{epigraph}
+
+\reto{one could say: humans are not good at remembering numbers. Thus we have a telefone book, and lookup the number by name of the person.
+similarly: we don't remember the inode / IP, but its filename or dns.
+This requires the process of resolution
+(name, context) => obj/addr/...  [see Saltzer]
+At its core, this provides a level of indirection, decoupling the name and the address (uuid, ...). Serving two convenient purposes:
+- we can now use easily rememberable names, as opposed to inode numbers / phone numbers
+- Always pointing to the right address. e.g., you go to www.example.com and you will get directed to the service that is least loaded, or you dial "John Doe (home)" which dials the right phone number  (i.e., the object can move but is still accessible)
+- we can have multiple names for the same object. The phone number of Joseph and
+Joe are the same.
+}
+
+\emph{Naming} is a long-standing challenge in computer systems.  In the late
+1970s much of this work was summarized effectively by Saltzer in \emph{Naming
+    and Binding of Objects}~\cite{Saltzer1978} and expounded upon by Watson
+in the 1980s for distributed systems~\cite{watson1981identifiers}.  Much of the
+emphasis of this
+early work was on the naming required \emph{by} the computing system, though the
+need for a human-accessible naming system is also clearly pointed out yet mostly
+left for research.  Watson made a useful distinction that I have adopted:
+
+\vspace{0.5cm}
+
+\begin{tabular}{p{1.8cm}p{2cm}l}
+    \multicolumn{3}{l}{``The \emph{name} of a resource indicates what we
+    seek,''}                                                                                                         \\
+     & \multicolumn{2}{l}{an \emph{address} indicates where it is, and}                                              \\
+     &                                                                  & a \emph{route} tell us how to get there.''
+\end{tabular}
+
+\vspace{0.5cm}
+
+\emph{Naming} is an essential human task.  We use names to
+describe identity, relationship, and property.\reto{this one gets thrown in here without clearly saying what those are.
+    in my mental model, a name is only valid within a specified context.
+}
+
+Thus naming, whether in terms of computer systems or human usage, is quite
+broad. Naming can be quite concrete --- such as when we
+use a name as a means to establish \emph{identity}.  However, naming can be quite
+abstract, incorporating the concept of \emph{relationship}.  Often, naming is
+heavily dependent upon the \emph{context} of the name.  When I speak of ``my
+brother'' we understand that it is relative to \emph{me} --- the speaker.  This
+context is essential to understanding how to interpret the name ``brother''
+correctly.
+
+Much of computer naming was initially motivated by the desire to reuse code.
+Thus, early discussions about naming relate to how the pieces of a program are
+bound together to perform tasks.  This is clearly an important contribution: the
+ability to re-use code has enabled the rapid growth in computer use over the
+past 60 years. The need for human-usable naming was clearly established early,
+as well as the distinct nature of such naming versus the naming required by the
+computer system itself.  However, much of the early focus was on ensuring the
+needs of the computer system were met.  Thus, Watson's distinction between
+\emph{naming} and \emph{addressing} is useful because it separates \emph{what}
+something is from \emph{where} it is stored.  Watson identified a number of
+goals for naming systems, of which I pick those that are most relevant to my
+thesis
+
+\begin{itemize}
+    \item ``Support at least two levels of identifiers, \emph{one convenient for
+              people} and one convenient for machines.'' Much of the work we have done in
+          computer storage focuses on the needs of the computers themselves, not on
+          people.
+
+    \item ``Provide a system viewed as a global space of identified objects
+          rather than one viewed as a space of identified host computers containing
+          locally identified objects.'' Even today, computer storage systems fall down
+          in this area. Using ``cloud storage'' such as Dropbox or Google Drive, the
+          data can be searched within the confines of that silo. This is the modern
+          equivalent of the ``identified host computers'', which in this case I call
+          storage ``silos''.
+
+    \item ``Support relocation of objects.''  The point here is that the storage
+          location of something really doesn't relate to its name: the distinction
+          between \emph{name} and \emph{address}.  If I move to a new house, I do not
+          change my own name.
+
+    \item ``Support use of multiple copies of the same object.''  Replication,
+          at its finest, yet the ability to know when something is a \emph{copy} of
+          something else can be useful.
+
+    \item ``Allow multiple local user defined identifiers for the same object.''
+          This idea is an important one to consider: when I file my bank statements I
+          end up making copies of them, one I place by the month in which the
+          statement was sent, the other in an area for statements from that particular
+          bank. This type of multiple-use case is common and the existing model for
+          hard or soft links in file systems fail to provide sufficient flexibility
+          and ease-of-use.
+
+    \item ``Support two or more resources sharing or including as components
+          single instances of other objects...'' \tm{This is the idea of constructing
+              compounds I suppose.  I'm not convinced on this point yet.}
+
+\end{itemize}
+
+\reto{Ok, this is interesting: there are now multiple ways to lookup objects:
+    by "name" (e.g., path / uri)
+    by content (e.g., hash / grep)
+    by property (e.g., find -d...)
+    those queries are already supported in some form or another.
+    you can't really say
+    "find me something related to this"
+}
+
+In 1990 I attended a talk given at Transarc by Dave Gifford about his novel idea of adding
+\emph{semantic} capabilities to file systems.  Dr. Gifford's observation was
+that human naming did not fit especially well in the context of hierarchical
+organization structures.  Instead, he posited the use of \emph{semantic}
+information, generated by external agents (``transducers'') to create
+associative access.  At the time, I was deeply skeptical of what he was trying
+to accomplish yet over time I have come to appreciate the fundamental problem,
+which has only grown much more significant as the sheer amount of unstructured
+data that we generate continues to grow exponentially.
+
+``Associative access is designed to make it easier for users
+to share information by helping them discover and locate
+programs, documents, and other relevant objects. For example,
+files can be located based upon transducer generated
+attributes such as author, exported or imported procedures,
+words contained, type, and title.''~\cite{gifford1991semantic}
+
+Gifford's work has inspired quite a few works regarding variations of the
+semantic file system, but none of these ideas has been sufficiently persuasive.
+File systems have not evolved to improve the human-centric naming network that
+they provide.  The term ``naming network''
+
+In some way, the indexing systems offered on mainstream operating systems (e.g.,
+Spotlight on MacOS and Search on Windows, or Cerebro on Linux) attempts to
+achieve the goals of the semantic file system on top of the existing
+hierarchical file system.  While it offers some improvements that make it
+``easier for users to share information by helping them discover and locate
+programs, documents, and other relevant objects'' it only does so for a limited
+subset of the documents that are present on a user's computer.  If a user also
+exploits modern ``cloud storage'' they find that their local indexing solution
+does little to solve the real-world problem, in which data is stored and shared
+across a collection of distinct storage ``silos'', each of which might offer
+some search functionality but none of which provide the \emph{user} focused
+naming perspective that is so important for human users.
+
+Certainly part of the problem is that humans typically do not think in the
+structured way.  The Human-Computer Interface community was certainly observing
+how hierarchical folder structured, which is still the most common structure
+file file systems, does not work well for all people.  One of the key
+determinants they identified was ``spatial ability.''  This is one reason why
+the problem is not obvious to those in Computer Science: prior work has
+established that spacial ability and STEM performance are strongly
+correlated~\cite{doi:10.1177/0016986217722614}.  Thus, the very people that
+construct storage systems will not face the same challenge of using the existing
+model.
+
+However, even those with excellent spacial abilities generally seem to find that
+the ability to \emph{find what they seek} is increasingly complicated by the use
+of disjoint storage mechanisms.  More than once, while conversing with Margo
+Seltzer about this research area she would reach out to find a specific file,
+only to be forced to perform \emph{ad hoc} searches into various storage
+locations: her desktop computer, Google Drive, or e-mail.  Sometimes those
+searches were successful, sometimes they were not.
+
+Humans do not naturally conform their thinking to the rigid hierarchical
+structure of the initial namespaces created for them by the computer storage
+community.  The computer storage community never intended that hierarchical
+structure be the only organizational structure created for human-focused file
+naming. Saltzer viewed the ``naming network'' to burden human users when he
+noted ``One such scheme is to provide that each name that is not to be resolved
+in the working catalog carry with it the name of the context in which it should
+be resolved.  This approach forces back onto the user the responsibility to
+state explicitly, as part of each name, the name of the appropriate context.''
+Indeed, Saltzer points out that ``[a] naming network admits any arbitrary
+arrangement of catalogs, including what is sometimes called a
+\underline{recursive structure}.'' My observation from reading this is that he
+saw namespaces that were graphs and the choice of limiting to minimally
+connected graphs.
+
+In 1945 Vannevar Bush described the challenges to humans of finding things in a
+codified system of records, including those used by early computers:
+
+\begin{quotation}
+    Our ineptitude in getting at the record is largely
+    caused by the artificiality of systems of indexing. When data of any
+    sort are placed in storage, they are filed alphabetically or numerically, and
+    information is found (when it is) by tracing it down from subclass to
+    subclass. It can be in only one place, unless duplicates are used; one
+    has to have rules as to which path will locate it, and the rules are
+    cumbersome. Having found one item, moreover, one has to emerge from the
+    system and re-enter on a new path.
+
+    The human mind does not work that way. It operates by association. With one
+    item in its grasp, it snaps instantly to the next that is suggested by the
+    association of thoughts, in accordance with some intricate web of trails
+    carried by the cells of the brain. It has other characteristics, of course;
+    trails that are not frequently followed are prone to fade, items are not
+    fully permanent, memory is transitory. Yet the speed of action, the
+    intricacy of trails, the detail of mental pictures, is awe-inspiring beyond
+    all else in nature.
+\end{quotation}
+
+This is as true in 2021 as it was in 1945.  While preparing this proposal I
+spent time looking at the guides many libraries provided about the naming of
+files. I found a body of recommendations about file naming
+standards\footnote{Data Management for
+    Researchers~\cite{briney2015data}}
+\footnote{Smithsonian: \url{https://library.si.edu/sites/default/files/tutorial/pdf/filenamingorganizing20180227.pdf}}
+\footnote{Stanford: \url{https://library.stanford.edu/research/data-management-services/data-best-practices/best-practices-file-naming}}
+\footnote{NIST: \url{https://www.nist.gov/system/files/documents/pml/wmd/labmetrology/ElectronicFileOrganizationTips-2016-03.pdf}}.
+Harvard Data Management suggests~\footnote{\url{https://datamanagement.hms.harvard.edu/collect/file-naming-conventions}}:
+
+\begin{itemize}
+    \item Think about your files
+    \item Identify metadata (e.g., date, sample, experiment)
+    \item Abbreviate or encode metadata
+    \item Use versioning
+    \item Think about how you will search for your files
+    \item Deliberately separate metadata elements
+    \item Write down your naming conventions
+\end{itemize}
+
+\tm{Note that the footnotes aren't rendering cleanly.  I will need to clean this up.}
+
+Throughout these examples there are common themes: a name provides context for
+\emph{what} the given object represents. Uniformity of information is also
+important --- the ``naming convention'' permits not only identifying similarity
+but key elements of \emph{difference} between any two named things.
+
+\tm{It seems that this Harvard list is a serious indictment of the existing
+    system: it pushes the cognitive load onto the users, talks about meta-data ,
+    versioning, encoding, \emph{and} capturing the naming convention.}
+
+
+Recall Saltzer's comment: ``This approach forces back onto the user the
+responsibility to state explicitly, as part of each name, the name of the
+appropriate context.''  What we see reflected in these ``naming conventions'' is
+the result of how naming is limited in computer storage.
+
+Forcing human users to ensure they provide the ``appropriate context'' in the
+naming system was an important limitation.  Note that Saltzer says that this is
+\emph{one} such scheme.  He did not argue that it was the only scheme, nor even
+the best scheme.  Instead, it was the scheme ``good enough'' at the time.  He
+points out that additional research needs to be done to find better schemes.
+
+The \emph{purpose} of the file system was to serve as the provider of
+``human-oriented names''~\cite[Table III]{Saltzer1978}. Mogul observed that
+``Better file systems allow us to manage our files more effectively, solve
+problems that cannot now be efficiently solved, and build better software.''
+Gifford observed: ``a semantic file system can provide associative
+attribute-based access to the contents of an information storage system with the
+help of file type specific transducers... The results to date are consistent
+with our thesis that semantic file systems present a more effectrive storage
+abstraction than do traditional tree structured file systems for information
+sharing...''
+
+Saltzer challenged us with general naming but set it aside for future research.
+Mogul captured the idea that \emph{properties} could be used to store additional
+meta-data about files.  Gifford explored the idea that information about what a
+file represents could be extracted and used to dynamically organize files based
+upon semantic content of the files themselves.
+
+Thus the point of my thesis: adding the \emph{activity context} to the
+body of information that we use for organizing files will yield more effective
+management, which in turn will improve human productivity and collaboration.
+While I discuss more carefully defining ``activity context'' later in this
+document, for purposes of this discussion it is sufficient to consider it to be
+information about what else was going on at the time a file was being created or
+used: the programs running, other files that were being created or consumed, the
+location of the computer at the time, etc.
+
+\endinput
+
+%% This is older text.  There is still considerable useful information here, but
+%% I am thinking it needs to go elsewhere.
+
+\endinput
+
+
+One of the most important abilities of modern computers is their ability to
+augment human memory.  One of the greatest challenges in using modern computers
+to augment human memory is the propensity to save essentially everything.
+Certainly there is an aspect of the ``fear of missing out'' if material is not
+saved, but there is also the reality that technology makes the cost of saving
+information very close to zero.  This is quite different than written documents:
+books, letters, mementos, records, compact discs, and eight track tapes all
+require physical storage.  Further, they tend to degrade over time and become
+lost. Humans have fought against this natural tendency to forget in a variety of
+ways: iambic pentameter to record the heroic efforts of greek heroes, monks
+toiling away to create duplicate copies of important texts, the creation of
+ink rubbings in Asia, turning to movable type and then automation into the
+printing press.  Modern computer systems provide rapid local storage, combined
+with automatic replication of information in a resilient way, including
+geo-replication and even recording in highly durable media such as quartz glass.
+
+% It is interesting to note that printing was an Eastern invention - China 206
+% BC to 220 AD Han dynasty.  It was Western augmentation that moved to using
+% metal and then mechanization.
+
+As our augmented memory has grown, the challenge of being able to locate
+specific information within that memory has similarly grown.  Small collections
+gave way to great libraries, which required robust indexing systems to permit
+finding useful information.  The relatively recent invention of the Internet has
+also brought with it a new indexing model of this information.  Now, we
+routinely use the verb "to google" to mean to search for information on the
+Internet.
+
+Searching for information on the internet is related to a specific problem:
+finding \emph{an} answer to a particular search query or question.  For many
+problems this is sufficient, but for those seeing specific information, such as
+a human user attempting to find a document she created six months prior, the
+search engine falls woefully short.  In this case it is \emph{the} answer that
+is being sought.
+
+Storage systems mostly organize data in a hierarchical fashion that dates from
+the 1950s and became part of the modern computer operating systems model in the
+1960s as seen in the publications about Multics from 1965 \tm{It might be time
+    to start citing things here - this is the Daley I/O paper, not the more famous
+    overview paper.} Data sharing over a network --- the ``network file system'' or
+``distributed file system'' began appearing in the 1970s.  Total data storage
+capacity continues to expand rapidly.  In 2011 the estimated data
+storage capacity in the \emph{world} was
+295EB\footnote{\url{https://www.zdnet.com/article/what-is-the-worlds-data-storage-capacity/}}.
+At the end of 2020, Forbes estimated that 1ZB of
+hard disk drive storage alone was shipped in
+2020\footnote{\url{https://www.forbes.com/sites/tomcoughlin/2020/12/18/digital-storage-projections-for-2021-part-1/}}.
+New storage technologies continue to emerge and promise greater amounts of
+information storage:  DNA data storage
+technology\footnote{\url{https://www.scientificamerican.com/article/dna-data-storage-is-closer-than-you-think/}},
+carbon nanotube persistent
+memory\footnote{\url{http://people.eecs.berkeley.edu/~kubitron/cs262/handouts/papers/Gervasi-Nantero.pdf}},
+and
+glass\footnote{\url{https://searchstorage.techtarget.com/feature/An-overview-of-Microsoft-Project-Silica-and-its-archive-use}}.
+Thus, it is unlikely the trend towards storing ever greater amounts of
+information will diminish in the forseeable future.
+
+Storage systems are challenged by the need to meet a broad range of needs. Large
+data sets typically involve using highly specialized storage systems.
+According to CERN, the experiments they conduct include 90PB of data per year
+from the Large Hadron Collector (LHC) and an additional 25PB of data from other
+non-LHC experiments. Similarly, genomics research routinely must handle numerous
+multi-gigabyte files as part of typical genomic
+research~\cite{todesco2020massive}. Intel's DAOS architecture is specifically
+designed for these types of large, complex storage
+situations~\footnote{\url{https://daos-stack.github.io/}}.
+
+Large datasets are often used collaboratively: CERN projects often involved
+dozens of researchers from all over the world; NASA data that was ``big'' when
+collected in previous decades is still used today to find novel astronomical
+activity, plus the collection of much larger modern data sets, with a need
+to preserve that data so it can be used for future
+research~\footnote{\url{https://bigdata-madesimple.com/how-does-nasa-use-big-data/}}.
+
+Storage systems, however, are organized as distinct \textit{silos}.  This
+organizational scheme makes sense to the storage developer: Google Drive and
+Microsoft OneDrive are distinct ``storage silos'' because they are developed by
+distinct entities.  This, however, does not reflect the real way in which those
+using the data \emph{use} these storage silos.  Often, the choice of storage
+silos is driven by external requirements: large data sets are stored in storage
+silos optimized for those data sets, for example. Papers written by researchers
+using those data sets would \textit{not} be stored in the same storage silo.
+This raises one of the fundamental questions motivating this thesis proposal:
+how do we associate related data stored in unrelated storage silos?
+
+One challenge here is that the commonly used model for ``finding a specific
+file'' is based upon a name. Names, in turn, often embed \emph{location}
+and \emph{semantic} information.  Thus, the data notebook that someone builds to
+extract information may end up stored inside the same silo as the data itself
+because that is required to maintain the locality of the analysis to the data
+itself.  When the results of tha analysis are written up, it may be stored in an
+online collaborative system, such as
+Overleaf~\footnote{\url{https://overleaf.com}}, because it is geared towards
+collaborate creation of work intended for publication.
+
+This problem is compounded by the passage of time.  Governance requests for
+information, such as under the General Data Protection
+Regulation~\footnote{\url{https://gdpr-info.eu/}}, often do not appear until
+months or years after the original information was created.  Information spread
+across multiple storage systems presents a challenge in locating required data
+and may involve considerable ``brute force'' analysis to find relevant
+information.  This in turn can amplify costs associated with using some storage
+silos that charge based upon data access.  Archivists seeking to understand data
+analysis done years or decades earlier similarly must struggle to find the
+pieces tying disparate work together.
+
+In this thesis I propose separating storage \emph{location} from \emph{naming},
+with an explicit goal of using naming in a human-usage focused model rather than
+a storage optimized model.  I explore the specifics of both the human-focused
+naming model as well as the storage focused naming model more thoroughly in
+\autoref{ch:model} as part of formulating my own proposed model.
+
+A clear separation of location and name mitigates the conflation of location and
+naming in current storage systems; supporting a richer human-usage focused naming model
+yields a more effective human-usable system; and separating meta-data from
+storage permits greater flexibility in identifying dynamic context-sensitive
+association between data objects:
+paper, notebook, spreadsheet, e-mail, object, or file.
+
+\tm{Some of this text should move to \autoref{ch:model}, since
+    it explains the rationale for the model.}
+
+\endinput
+
+Any text after an \endinput is ignored.

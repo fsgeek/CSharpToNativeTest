@@ -1,0 +1,68 @@
+This is BibTeX, Version 0.99d (TeX Live 2018/W32TeX)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: notdead.aux
+The style file: IEEEtranSN.bst
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Database file #1: notdead.bib
+-- IEEEtranSN.bst version 1.14 (2015/08/26) by Michael Shell.
+-- http://www.michaelshell.org/tex/ieeetran/bibtex/
+-- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
+** Sorting Natbib version - not for normal IEEE work.
+Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
+Reallocated global_strs (elt_size=20001) to 20 items from 10.
+Reallocated glb_str_end (elt_size=4) to 20 items from 10.
+Warning--empty journal in appuswamy2014building
+Warning--empty journal in custer1994inside
+Warning--empty journal in Ghemawat2003
+Warning--empty journal in Jones2016
+Warning--empty booktitle in kyrola2012graphchi
+Warning--empty journal in Suguna2015
+Warning--empty journal in Up2016
+
+Done.
+You've used 98 entries,
+            5264 wiz_defined-function locations,
+            1560 strings with 27763 characters,
+and the built_in function-call counts, 97167 in all, are:
+= -- 9010
+> -- 3577
+< -- 585
++ -- 1509
+- -- 903
+* -- 5562
+:= -- 14385
+add.period$ -- 235
+call.type$ -- 98
+change.case$ -- 500
+chr.to.int$ -- 1367
+cite$ -- 203
+duplicate$ -- 5843
+empty$ -- 6791
+format.name$ -- 1131
+if$ -- 21924
+int.to.chr$ -- 1
+int.to.str$ -- 1
+missing$ -- 946
+newline$ -- 356
+num.names$ -- 392
+pop$ -- 2869
+preamble$ -- 1
+purify$ -- 394
+quote$ -- 2
+skip$ -- 7062
+stack$ -- 0
+substring$ -- 3297
+swap$ -- 4050
+text.length$ -- 113
+text.prefix$ -- 0
+top$ -- 6
+type$ -- 2341
+warning$ -- 7
+while$ -- 537
+width$ -- 0
+write$ -- 1169
+(There were 7 warnings)

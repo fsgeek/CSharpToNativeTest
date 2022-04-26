@@ -1,0 +1,1097 @@
+\chapter{Background}
+\label{ch:background}
+
+\tm{Please note that this is a \textbf{work in progress} and I am providing this
+    draft with this section partially written because I seek feedback on the overall
+    structure and model that I present.  While this section will change in
+    subsequent drafts, I do not expect its content to materially change the model
+    that I present in \autoref{ch:model}.}
+
+The prior work of Saltzer and Watson establish that the purpose of file systems
+is to serve the naming needs of
+\emph{users}~\cite{Saltzer1978,watson1981identifiers}.   However, the background
+literature on file systems can be broadly broken up into two categories:
+
+\begin{enumerate}
+    \item \textbf{Storage Management} --- much of the prior work related to file
+          systems focuses on the management of file data.  For physical media file
+          systems --- those file systems that manage some sort of media, whether it is
+          magnetic, optical, or solid state --- the concerns are about efficient use
+          of the media itself.  For distributed (``network'') file systems, much of
+          the prior work focuses on efficient protocols for providing access to file
+          system data over a network.
+
+    \item \textbf{Naming} --- a small amount of the prior work related to file
+          systems focuses on the organization of naming.  There is some overlap
+          between early storage management and naming literature.  Similarly,
+          distributed file systems had to consider naming as well.
+
+\end{enumerate}
+
+I review this prior work in the subsequent sections
+(\autoref{ch:background:sec:storage} and \autoref{ch:background:sec:naming}) and
+then analyze these in the context of \system.  I then provide a brief review of
+relevant linguistics literature pertinent to my thesis by reviewing the
+linguistic field of \emph{semantics} and \emph{pragmatics}
+(\autoref{ch:background:sec:linguistics}). Finally, I look at
+the challenges that are not addressed in prior work that are necessary for me to
+evaluate my thesis (\autoref{ch:background:sec:challenges}).
+
+\section{Storage Management}
+\label{ch:background:sec:storage}
+
+Most of the research literature about media file systems involves management of how
+data should be organized on the given media. While not central to my own thesis,
+it is useful to understand that file systems research continues to be an active
+and ongoing research area, but it is \emph{not} related to naming, and that work
+really has little direct bearing on the naming aspects of file systems.
+
+\tm{Multics}
+\tm{TENEX}
+\tm{BSD FFS}
+\tm{Cedar}
+\tm{LFS}
+\tm{}
+
+
+One of the earliest papers on file systems, ERMA,
+The Multics file system was described by Daley in 1965~\cite{daley1965general},
+and while it clearly lays out the hierarchical name space, it also provides
+insight into very early file systems development, with important considerations
+like parity checking, overflow sending, and the "printer bit and column
+counter".
+
+By 1965 media file systems development
+
+
+\section{Naming}
+\label{ch:background:sec:naming}
+
+% \tm{1945 - Memex}
+
+In 1945 Vannevar Bush described the challenges to humans of finding things in a
+codified system of records, including those used by early computers:
+
+\begin{quotation}
+    Our ineptitude in getting at the record is largely
+    caused by the artificiality of systems of indexing. When data of any
+    sort are placed in storage, they are filed alphabetically or numerically, and
+    information is found (when it is) by tracing it down from subclass to
+    subclass. It can be in only one place, unless duplicates are used; one
+    has to have rules as to which path will locate it, and the rules are
+    cumbersome. Having found one item, moreover, one has to emerge from the
+    system and re-enter on a new path.
+
+    The human mind does not work that way. It operates by association. With one
+    item in its grasp, it snaps instantly to the next that is suggested by the
+    association of thoughts, in accordance with some intricate web of trails
+    carried by the cells of the brain. It has other characteristics, of course;
+    trails that are not frequently followed are prone to fade, items are not
+    fully permanent, memory is transitory. Yet the speed of action, the
+    intricacy of trails, the detail of mental pictures, is awe-inspiring beyond
+    all else in nature.
+\end{quotation}
+
+This is as true in 2021 as it was in 1945.  While preparing this proposal I
+spent time looking at the guides many libraries provided about the naming of
+files. I found a body of recommendations about file naming
+standards\footnote{Data Management for
+    Researchers~\cite{briney2015data}}
+\footnote{Smithsonian: \url{https://library.si.edu/sites/default/files/tutorial/pdf/filenamingorganizing20180227.pdf}}
+\footnote{Stanford: \url{https://library.stanford.edu/research/data-management-services/data-best-practices/best-practices-file-naming}}
+\footnote{NIST: \url{https://www.nist.gov/system/files/documents/pml/wmd/labmetrology/ElectronicFileOrganizationTips-2016-03.pdf}}.
+Harvard Data Management suggests~\footnote{\url{https://datamanagement.hms.harvard.edu/collect/file-naming-conventions}}:
+
+\begin{itemize}
+    \item Think about your files
+    \item Identify metadata (e.g., date, sample, experiment)
+    \item Abbreviate or encode metadata
+    \item Use versioning
+    \item Think about how you will search for your files
+    \item Deliberately separate metadata elements
+    \item Write down your naming conventions
+\end{itemize}
+
+\tm{Note that the footnotes aren't rendering cleanly.  I will need to clean this up.}
+
+Throughout these examples there are common themes: a name provides context for
+\emph{what} the given object represents. Uniformity of information is also
+important --- the ``naming convention'' permits not only identifying similarity
+but key elements of \emph{difference} between any two named things.
+
+\tm{It seems that this Harvard list is a serious indictment of the existing
+    system: it pushes the cognitive load onto the users, talks about meta-data ,
+    versioning, encoding, \emph{and} capturing the naming convention.}
+
+
+
+
+Bush's observation here was about
+the importance of developing storage systems that enabled human cognition by
+forming an extended memory.  What is remarkable about this early work is how
+well Bush captured the basic human need for such a storage system and how it
+related to human cognition and associative thinking.  I note that we still do
+not have any system that is as functional as Bush's Memex, though there are
+aspects of the modern world wide web that are reminiscent of some of the
+concepts he first described.
+
+While I do not claim Bush's 1945 Atlantic article was file systems
+research, it is useful to understand the perspective of work that
+followed~\cite{bush1945we}.
+
+% \tm{1956 - ERMA}
+
+One of the earliest file system papers of which I am aware was
+ERMA~\cite{barnard1958}.  This paper was more focused on documenting their
+design process, but as part of this work they described the hierarchical
+structure of files.  The diagrams clearly show the "folder/file" metaphor that
+survives to this day.
+
+\tm{1964 - A File Structure for the Complex, the Changing and the Indeterminate}
+
+Nelson builds upon Bush's Memex description as he explores ``[t]he kinds of file
+structures required if we are to use the computer for personal files and ad an
+adjunct to creativity\ldots''  He points out the challenges inherent in the
+task: ``They need to provide the capacity for intricate and idiosyncratic
+arrangements, totally modifiable, undecided alternatives, and thorough internal
+documentations.''
+
+Nelson's work is usually cited as inspiration for the world wide web and its use
+of \emph{hyperlinks} to associate related content together, yet this work was
+primarily focused on how personal file information should be organized within a
+computer system.  Key ideas here include the \emph{dynamic} nature of such
+organization (``[i]t was also intended that the system would allow index
+manipulations which we may call \underline{dynamci outlining} (or
+\underline{dynamic indexing}).'')  Another important aspect of this work was his
+repudiation of hierarchical organization: ``[n]o hierarchical file relations
+were to be built in; the system would hold any shape imposed on
+it.''~\cite{nelson19654}
+
+\tm{1965 - Multics}
+
+In 1965 the ``Fall Joint Computer Conference'' was dominated by papers about
+General Electric's new Multics operating system.  One of those papers was
+specific to the file system~\cite{daley1965general}.  From a naming perspective
+the key observation was the use of the hierarchical file system structure,
+clearly described and highly reminiscent of the hierarchical file system that
+has been adopted first by UNIX and then enshrined in the POSIX interface.  One
+observation I have with respect to this work is that while the initially propose
+the hierarchical file system, the paper admits that this isn't sufficiently
+descriptive and introduces the additional concept of a \emph{link}. This serves
+as a good example of how the issues of storage efficiency (e.g., not wanting to
+have duplicate copies of the file stored on disk) impacted naming (where the
+fact that an object has multiple names need not be tied to the actual manner in
+which this is implemented.)
+
+\tm{This raises the question about mutability.  If you change the \emph{file} do
+    you preserve the name or do you break it?  That's a really interesting question
+    and I don't think anyone will be happy with pretty much any answer.  It's also
+    the source of one of the real frustrations in modern computing, namely the use
+    of shared libraries with the same \emph{name} but subtly different
+    \emph{implementation}.  Hence we end up with \emph{libfoo.so} and
+    \emph{libfoo.6.so} and \emph{libfoo.6.4.so}.  In Windows this became ``DLL
+    hell'' and has lead to solutions like "side-by-side" installations of commonly
+    used shared libraries.  There's a really difficult question lurking beneath this
+    for naming: does the name specify something specific or something general?  This
+    is the \emph{binding} problem that Saltzer refers to as well.
+}
+
+\tm{TENEX}
+
+At the Fall Joint Computer Conference in 1972 Murphy presented a paper about the
+storage organization of TENEX, including its naming scheme.  ``A powerful and versatile
+directory and file naming facility is provided in which
+a particular file is identified by a fixed-depth path which
+includes device, directory name, file name, extension,
+and version.''~\cite{murphy1972storage}
+
+\tm{UNIX}
+
+The 1974 Symposium on Operating Systems Principles included papers that
+ultimately led to both of the primary ``families'' of operating systems that we
+use today.  One of those introduced the UNIX operating system and that work
+presented the model of ``everything is a file'' and the hierarchical name space
+organization of those files~\cite{unix}.  Intriguingly, the need to add
+additional contextual information was recognized even then: ``Besides the system
+proper, the major programs available under UNIX are: ... and permuted index program.''
+
+\tm{CAP}
+
+The Cambridge Capability Protection operating system included a novel model for
+using capabilities to protect files.  The namespace that CAP presented is
+interesting in that it did consider non-hierarchical name spaces~\cite{needham1977cap}: ``By handling
+directory capabilities in the same way as store capabilities we allow not only
+hierarchical directories but also shared directories --- the structure can form
+an arbitrary directed graph, which may even be cyclic.''  They also described
+the concept of \emph{dynamic} directories: ``By allowing dynamic creation of
+directories, we allow the manufacture of directories or of complex structures
+of directories separate from the main filing system, accessible only to certain
+programs (this is used for the password file, for example).''
+
+\tm{NFS}
+
+As we build communications networks to share information between computers the
+idea of sharing files between computers quickly emerged.  Sun Microsystems'
+Network File System (NFS) was not the first network file system but it is
+certainly one of the most widely used and it continues to be used
+today.~\cite{nfs}  It extended the hierarchical file system so that it
+incorporated the name spaces of a remote computer system into the local file
+system. While NFS provided subtly different behavior than a local file system,
+it was ``close enough'' that in the absence of failures it ``just worked.''
+
+\tm{AFS}
+
+The Information Technology Center at Carnegie-Mellon University (CMU) was responsible
+for the realization of a system of network attached computer workstations for
+use in the CMU environment. Mahadev Satyanarayanan and his resarch group were
+responsible for developing the Andrew File System (AFS), which was subsequently
+commercialized by Transarc in the late 1990s.  AFS remains in use today.  AFS
+was contemporaneous with NFS, but offered significantly different functionality,
+including a \emph{global} name space, federated security (via MIT's Kerberos),
+and a separate service that was responsible for resolving the global namespace
+across various clients~\cite{howard1988scale}.
+
+\tm{Universal Directory Service}
+
+The concept of distributed name or directory services is one that is not new.
+In 1985 Lantz provided a description of a ``Universal Directory Service'' that
+is similar to some of the work that I anticipate while evaluating my own thesis.
+This paper describes their services as offering the following
+capabilities~\cite{10.1145/12481.12483}:
+\begin{itemize}
+    \item ``can span a heterogenous internetwork of existing naming domains;
+    \item ``allows us to name, locate, and discover how to manipulate objects
+          (including files, processes, mailboxes, people, and services);
+    \item ``provides dynamic binding and context mechanisms; and
+    \item ``can be integrated into most existing systems as a ``value-added''
+          feature.''
+\end{itemize}
+
+While similar conceptually to the domain name service (DNS) that is used for
+naming in the internet, it is considerably more general.  Intriguingly, while
+there is subsequent work that cites to Lantz's work, I could
+not find any later work that extended it.
+
+\tm{Properties}
+The idea of extended attribute information being associated with a file is one
+that emerged in the 1980s.  Mogul's 1986 treatise ``Representing Information
+About Files'' does an excellent job of summarizing the research up to that
+point, including an explanation of the history regarding ``Leaf'' a protocol
+that while developed at XEROX PARC for the Alto was only memorialized by him and
+Brian Reid in 1981.  That appears to have been motivation for the creation of
+what we now call ``extended attributes'', though Mogul refers to them as ``file
+properties''~\cite{mogul1986representing}. Mogul's work provides considerable
+insight into how file properties could be implemented, both by applications (as
+part of the file itself) as well as within file system meta-data.  We actually
+supported properties in Episode~\cite{chutani1992episode}.  An important argument Mogul
+makes is that \emph{naming} should be separated from \emph{storage}:
+
+\begin{quotation}
+
+    The old monolithic system model usually implied a tight coupling between file system and directory
+    system; in many cases the two are indistinguishable. While this approach might improve performance
+    slightly, one of the recognized virtues of the client-server model is that it encourages separation of function.
+    Separating file system and directory system into two distinct services (which might nevertheless interact as
+    clients of each other) provides several benefits:
+    \begin{itemize}
+        \item \textbf{Modularity}: with attendant benefits of a cleaner service model, cleaner implementations, and
+              the flexibility to substitute new implementations of one service without affecting the other.
+
+              Modularity has additional value: it is easier to distribute specialized services than to build a
+              generalized distributed system. For example, LOCUS uses its knowledge of the special
+              semantics of directories to recover them after a partition; this cannot be done for files in
+              general [Popek 81].
+
+        \item \textbf{Crossing file system boundaries}: an integrated directory system can only store references to
+              files in its associated file system. In a heterogeneous distributed system, we would like to
+              construct a unified name space covering all file servers in the environment. Why should we
+              prohibit users from storing in the same directory references to files stored by two distinct file
+              servers? The Universal Directory System [Lantz 85] is an example of an approach to this
+              question.
+
+        \item \textbf{Non-file referents}: Directory systems can and should be used as general name-binding agents;
+              they need not only refer to files. In fact, directories have been used to name non-file objects
+              even in Unix (where devices appear in the file system name space). By separating directory
+              from file service and giving non-file referents full citizenship in directory bindings, we can
+              gain useful generality.
+    \end{itemize}
+
+    Not everyone agrees that directory service and file service should be separate; for example, the V-system
+    takes the opposite point of view [Cheriton 84]. We prefer separation because it
+    leads to a simpler model.
+
+\end{quotation}
+
+His definition of a file is useful as well: ``\emph{a \emph{file} is a named
+    object that stores an arbitrary amount of data for an arbitrarily long time.}''
+
+\begin{quotation}
+    The Alto and WFS were research projects. Other groups within Xerox were working on commercial
+    products, the Star professional workstation in particular. The original design for the Star file system [Dalal
+            86] was tightly integrated with application-level functions. It was then realized that clearer separation of
+    file service and application would yield a more open, flexible system, but the resulting file system retained
+    some features of Star that were found to be generally useful. One of these features was support for
+    extensible attributes, including attribute-based search.
+\end{quotation}
+
+My general sense remains that Mogul's work is the most closely related model of
+the work I propose doing as part of this thesis.
+
+\tm{Semantic}
+
+Gifford introduced the concept of a \emph{semantic} file system at SOSP in
+1991~\cite{gifford1991semantic}.  I reproduce the abstract from his paper to
+provide the basic idea of his work.  While I \emph{started} from considering
+semantic file systems as part of my PhD, my own work has moved beyond the model
+of Gifford and is complementary to Gifford's own work.
+
+\begin{quotation}
+    A semantic file system is an information storage system that
+    provides flexible associative access to the system's contents
+    by automatically extracting attributes from files with file
+    type specific transducers. Associative access is provided by a
+    conservative extension to existing tree-structured file system
+    protocols, and by protocols that are designed specifically for
+    content based access. Compatibility with existing file system
+    protocols is provided by introducing the concept of a
+    virtual directory. Virtual directory names are interpreted as
+    queries, and thus provide flexible associative access to files
+    and directories in a manner compatible with existing software.
+    Rapid attribute-based access to file system contents
+    is implemented by automatic extraction and indexing of key
+    properties of file system objects. The automatic indexing of
+    files and directories is called "semantic" because user programmable
+    transducers use information about the semantics
+    of updated file system objects to extract the properties for
+    indexing. Experimental results from a semantic file system
+    implementation support the thesis that semantic file systems
+    present a more effective storage abstraction than do traditional
+    tree structured file systems for information sharing
+    and command level programming.
+\end{quotation}
+
+A key point here is that semantics are defined based upon the \emph{content} of
+the file itself. This is certainly useful but different than the model I
+propose, which would introduce \emph{pragmatics}.  Pragmatics are defined based
+upon the \emph{context} of how the given file is used.
+
+Another insightul source of information about semantic file systems is from
+Martin's PhD thesis~\cite{martin2008}.  He utilizes \emph{Formal Concept
+    Analysis} as a mechanism for improving semantic file systems; his work continued
+until a few years ago~\footnote{http://www.libferris.com}.  Some of this serves
+as a caution about how challenging it is to build useful systems that augment
+the file system namespace.
+
+\tm{Tags}
+
+The concept of using \emph{tags} on files is related to the earlier work on
+semantics.  The distinction appears to be that tags were initially designed to
+be added by users, though the possibility of combining transducer generated
+tags, as in the semantic file systems work, with user created tags is certainly
+not excluded~\cite{tagfs}.  Indeed, the Human-Computer Interface (HCI) community
+has observed that ``[U]sers are unlikely to use metadata.  Even when the tagging
+is somethign as convenient as voice tagging, users are not likely to make the
+time investment required to assign metadata to
+files.''~\cite{10.1145/642611.642682}  Thus, while it might be useful to allow
+human driven tagging, it is unrealistic to consider it to be generally useful.
+
+\tm{Layered}
+
+In my own past work, we implemented a layered log-structured technique within a
+single file that permitted us to add additional meta-data to files.  For
+example, we were able to add NTFS features to FAT32 files on Windows, with a
+file system filter driver responsible for interpreting the additional meta-data
+and presenting it to the native operating system.
+
+\tm{Graph}
+
+\tm{360}
+
+\tm{DelveFS}
+
+Key take-away here (for me) was the use of pub/sub systems to provide
+notification.  This dovetails nicely into the strong dynamic nature of naming
+systems, since they have to be responsive.
+
+\section{Linguistics}
+\label{ch:background:sec:linguistics}
+
+\tm{This is where I explain how linguistics describes semantics and pragmatics
+    and tie them together with the relevant portions of my thesis.
+}
+
+\section{Human-Computer Interface (HCI)}
+
+There is a rich body of literature about various ways of presenting file
+information to human users.  Various approaches to this problem have been
+considered, including: temporal organization, virtual directories, attribute/tag
+organization, and even a table-top model~\cite{collins2007tabletop}.  The
+literature seeems to be rather clear on the limitations of the hierarchical file
+system for human usage.  Intriguingly, HCI researchers have argued that the
+evolution of file systems up to the point of creating hiearchical name spaces
+with links with the evolution of databases and to expand their abilities the
+\emph{file browser} should evolve to support dynamic interaction on par with
+dynamic data interaction in a relational database
+works~\cite{marsden2003improving}. This body of prior work has identified that
+one key challenge is the sheer
+magnitude of how much data is being presented.  Thus, it is not useful: ``If we
+were to visualoise all files in this list, as in the email client, the list
+would be too long to afford rapid scanning...''
+
+My reading of this prior work is that we need to support more dynamic naming and
+naming support, the ability to use transducers to add key meta-data based upon
+content and the ability to allow humans to add tags.
+
+At the same time, the importance of hierarchical organization is increasingly
+less useful.  While search is useful, particularly when combined with filters
+(e.g., faceted search) it also is insufficient to the task.  The associative
+data model, such as used in the table-top models~\cite{collins2007tabletop}, is
+surprisingly powerful for collaborative work.  No single mechanism satisfies all
+these needs; a robust system must enable multiple usage modalities.
+
+\section{Challenges}
+\label{ch:background:sec:challenges}
+
+\tm{My concern with this section is that it may be premature --- until I
+    introduce the model, identify the research questions to be explored, and the
+    artifact(s) I propose to build to explore those research questions this section
+    may be ``too soon''.
+}
+
+
+\section{Related Work}
+\tm{Note: this text was moved from ``related work'' and needs to be incorporated into this section.}
+
+Ways to organize data within a storage silo have been extensively
+studied from multiple perspectives.  That there are so many different approaches
+to evaluating the optimal way to organize things is a testament to both the
+importance and complexity involved in approaching this topic.  This section will
+consider the following related work:
+\begin{itemize}
+    \item The \textit{storage} perspective, which is primarily rooted in the
+          systems perspective.  Storage in this context includes file systems and
+          databases, each of which then has multiple different manifestations.
+
+    \item The \textit{provenance} perspective, which is related to systems but
+          focuses on creating a context of explainability that is distinct from
+          storage.
+
+    \item The \textit{human-computer interface} (HCI) perspective, which is related to
+          how humans organize and find information within storage systems. There are a
+          number of distinct perspectives to this work including: hieararchical
+          data organization, personal information management, enhanced search, and
+          cognitive data organization.
+\end{itemize}
+
+Each of these perspectives is complementary and assist in better understanding
+the problem: systems focuses on being able to efficiently and reliably store and
+recover information though often it is agnostic to the specifics of the
+information; provenance focuses on accountability and explainability; and HCI
+focuses on the human facing problems that need to be solved and tends to ignore
+how those solutions are implemented.
+
+\cite{mashwani2019360,9229638,vef2020delvefs,dourish2003the,harrison1996re,barreau1995finding,dourish1999getting,placeless-tois,giffordSFS,plan9,inversion,smartstore,tagfs,gfs,provsearch,uprove2,pindex,page1999pagerank,nfs,metastorage,howard1988scale,afs,Adya:2003:Farsite,unix,scfs,federatedMetaData,federatedACL,benet2014ipfs,guo2012burrito,mazurek2014toward,li2013horus,adya2002farsite,provprimer,camflow}
+
+\nocite{*}
+
+\section{Storage}
+\label{ch:related-work:sec:storage}
+
+Much of storage work is dominated by the realities of how media and networks
+function, with a goal towards increasing both capacity and performance.  The
+basic model of data organization within storage systems tends to separate into
+\emph{structured} data --- typically what is found in databases --- and
+\emph{unstrutured} data --- typically what is found in file systems or object
+stores.
+
+\tm{Describe structured data: why do people use databases, what are the
+    strengths and weaknesses.  How does this relate to data organiztion?
+}
+
+\tm{Describe unstructured data: why do people use file systems or object stores,
+    what are the strengths and weaknesses?  How does this relate to data
+    organization?
+}
+
+\tm{Describe the work that has been done in semantic file systems, metadata
+    augmentation, and non-hierarchical organization structure (e.g., Ground and
+    Placeless).
+}
+
+\tm{This is a fairly large quotation from the Placeless Documents Project
+    Archive that should probably be edited down, but for the moment I want to leave
+    it here because I think the insight provides is quite useful.
+}
+
+From the Placeless Documents Project
+Archive~\footnote{https://web.archive.org/web/20020210170621/http://www.parc.xerox.com/csl/projects/placeless/}:
+
+\begin{quotation}
+
+    Placeless Documents are documents that are organized and managed according
+    to their properties, rather than according to their location. Document
+    properties can be things you already know about your documents, like that
+    they're published, or notes, or about the budget,or drafts, or source code,
+    or important, or shared with your colleagues, or from your manager, or big,
+    or from the Web, or... whatever suits you. Document properties can also be
+    things that you want to be true about your documents, like that they are
+    backed up, or replicated on your laptop, or can be purchased for a small
+    fee. These latter properties carry the code to implement or interface with
+    the desired functionality.  Document properties are statements about your
+    documents that make sense to you, and affect what you're going to do with
+    the documents.
+
+    What does it mean?
+
+    We live and work in an information-filled world. The project focuses on helping people cope with the large and diverse information spaces that are part of life in the networked world. Our approach is to provide information consumers with a unifying model for organizing and manipulating their information.
+
+    Much of the information that we commonly use is in the form of documents, both physical and electronic. In fact, the use of electronic documents on our computer desktops is pervasive, and even though they unify much of desktop computing, the document metaphor falls short of providing an accessible and readily understood way to interact with all forms of information, whether electronic or physical. Instead, we resort to specialized applications for much of our computer-based work. Electronic documents are managed through different systems like mail, WWW, and file systems. Similarly, the many devices we use in the course of our work (including fax machines, scanners, televisions, VCRs, telephones) manipulate and store information, yet they do not integrate seamlessly with the rest of our on-line information.
+
+    Furthermore, the means available for individuals or groups to organize and customize their information spaces are extremely poor and driven mostly by storage and distribution models, not user needs. The most common model for information organization is hierarchical. The use of folders as a fundamental organizing principle, and the restriction that documents (mail messages, files, URLs, etc.) appear in only one folder at a time, force users to create strict categorizations, resulting in inflexible organizations that tend to persist over time even though their needs evolve. Similarly, customization of the organization and the behavior of information according to individual requirements is cumbersome, if not impossible. Access to a shared document that one individual deems as corresponding to the budget and another project cannot be easily tailored for both specialized functional requirements are equally hard to achieve. If a user can express that a document is read-only, and that it is a Word document, why cant heexpress that updated copies should be faxed to a colleague once a week?
+
+    This project is about removing these hurdles by using a novel infrastructure and proving its benefits through applications that exploit its capabilities. We plan not only to change the way people interact with their currently segregated world of documents, but we plan to exploit a single concept the document and its properties to allow users to interact with arbitrary information.
+
+    Our vision is one of customizable, context-aware management of integrated information spaces, which:
+
+    \begin{itemize}
+
+        \item integrate information components from many sources: repositories (WWW, mail, file systems), devices (scanners, video-cameras, television, phone), and dynamic processes (workflow, source code management systems, search engines, and dynamic document content),
+        \item allow customizable organization of the information based on properties of that information, e.g., budget related, read at home, shared with John, and From: petersen@parc.xerox.com,
+        \item allow information properties to be arbitrary objects specified through many different mechanisms: explicitly by the users themselves, captured by physical context sensors, inferred from usage, automatically generated by content analysis, etc.
+        \item allow information properties to be active and carry behaviors to automate information work, enabling functionality like fax to John at 5pm each day, translate to English, notarized, backed-up in Utah for safety, etc.
+        \item scale to sizes anywhere between an individual and the enterprise,
+        \item are available at all locations required by the users, and
+        \item protect the privacy and intellectual property of users.
+
+              In this world the focus is on information, customization, and functionality that
+              extends beyond the abilities of monolithic applications. Essentially,
+              information carries the behaviors and semantics needed to operate on it.
+              Information is independent of location and becomes responsive to the
+              environments it is used in and the contexts of individual users, and it is
+              managed independently by both its consumers and providers.
+    \end{itemize}
+\end{quotation}
+
+\tm{The big hole that I can see is their comment that they want to prove ``its
+    benefits through applications that exploit its capabilities.''  The
+}
+
+\section{Provenance}
+\label{ch:related-work:sec:provenance}
+
+\tm{Explain provenance.  It is a more recent area of study, but it also captures
+    more of the kinds of information that will be useful to me.
+}
+
+\section{Human-Computer Interface}
+\label{ch:related-work:sec:hci}
+
+The traditional primary organizational model provided to users has been the
+file/folder metaphor\tm{Need citation to 1965 Daley and the 1956 storage
+    papers}, which was itself derived from physical filing cabinets.  However,
+electronic storage is not bound by the same restrictions as a physical filing
+cabinet, as can be seen even in early work \tm{Again, this is Daley} where the
+model added \emph{links}; the closest equivalent to this in filing cabinets
+would be to make duplicate copies of a document --- I have seen exactly this
+routinely practiced by bookkeeping and accounting professional, whether using
+physical or electronic filing systems.  This works because the objects are
+generally \emph{immutable}, but for electronic storage systems without
+deduplication it is not particularly space efficient.
+
+The Human-Computer Interface community has been studying human-centered data
+organization models for decades.  For example, the HCI community observed that
+hierarchical file structure is challenging for users with low spatial
+abilities~\cite{vicente1988accommodating}. This suggests why storage developers
+would not even see there is a problem here: the study of computer science
+correlates well with the development of spatial
+abilities~\cite{parkinson2018spatial}. In my own discussions with even senior
+computer scientists it is the introduction of \emph{silos} that seems to make
+the hierarchical abstraction break. ``Did I store that in Dropbox, or Google
+Drive, or was it on my laptop or my desktop computer?''
+
+The wealth of research here is astonishing, yet does not appear to influence the
+design of storage systems to exploit the results of that research.  Indeed, the
+systems community seems to be focused on a \emph{search based} solution while
+the HCI community research suggests that search is \emph{not} preferred by users
+--- instead, users want to \emph{navigate}:
+
+\begin{quotation}
+    \emph{When retrieving a file the user needs to choose between folder
+        based navigation and query based search. There are obvious
+        intuitive advantages of search for both retrieval and organization.
+        Search seems to be more flexible and efficient for
+        retrieval. It is flexible because it does not depend on users
+        remembering the correct storage location; instead, in their
+        query users can specify any file attribute they happen to
+        remember...}
+
+    \emph{In fact, regardless of search engine quality,
+        people consistently use search only as a ‘last resort’ for that
+        minority of cases where they cannot remember file
+        locations...}~\cite{bergman2019search}
+
+\end{quotation}
+
+Thus, from an HCI perspective it would seem that one potential research
+direction would be to consider potential interfaces that mimic navigation over a
+search interface.
+
+For example, recent work around data curation explores the idea of a ``data
+dashboard'' since the first step of curation is finding specific data to
+curate~\cite{Vitale_2020}. This work builds upon prior research showing that
+when presenting data to users it is important to ignore storage silo boundaries.
+Indeed, my reading of this work is that it presents what seems to be navigation
+even though it is implemented using a search mechanism.  Equally important, this
+work also points to the benefits of not changing the \emph{location} of data,
+but rather allowing construction of useful relationships via metadata. Thus,
+this work supports my ideas of ignoring silo boundaries and providing metadata
+for use by a similar tool.  What it does not explore is a way for data storage
+to provide enhanced metadata, dynamic update, and notification of changes, which
+are important elements to making such a dashboard more useful for data
+visualization.
+
+
+
+
+\endinput
+
+\reto{I feel like a lot of Challenges goes here... }
+
+\begin{epigraph}
+    \textit{Paradigm paralysis refers to the refusal or inability to think or see
+        outside or beyond the current framework or way of thinking or seeing or
+        perceiving things.  Paradigm paralysis is often used to indicate a general
+        lack of cognitive flexibility and adaptability of thinking.} --- The Oxford
+    Review Encyclopedia of Terms (2021).
+\end{epigraph}
+
+Computer storage systems continue to evolve and change at an increasing rate.
+The difference between file systems, which provide the basic abstraction of
+unstructured data, and database systems, which provide the basic abstraction of
+structured data, is now filled with a growing array of \emph{semi-structured}
+mechanisms including: key-value stores, object stores, document stores, no-SQL
+databases, data warehouses, and data lakes.
+
+Each new mechanism invented for storing data creates a new ``silo'' of
+that specific storage system.  Each new storage system comes with its own
+semantics and meta-data, and seldom with any explicit way of tying related
+information together across such silos. Storage silos are often designed with
+specific usage patterns in mind.  For example:
+
+\reto{I'd go with categories here instead of products. as there are often
+    multiple different solutions within the same category.
+}
+
+\begin{description}
+    \item[\ac{HDFS}] --- Hadoop was created to solve the problem of large,
+        dynamically written write-once files that are typical of machine data
+        captured from multiple sources for additional analysis.
+
+    \item[Google Drive] --- Google uses a common storage mechanism for its various
+        services including e-mail, documents, spreadsheets, photos, and videos. It
+        allows collaborate work, both by sharing access to the object as well as
+        providing tools for simultaneous editing between human collaborators.
+
+    \item[Intel DAOS]
+        --- Intel's solution for large parallel \ac{HPC} storage
+        needs that splits meta-data and data, with meta-data stored in persistent
+        memory and data stored on \ac{NVMe} devices~\footnote{\url{https://www.intel.com/content/www/us/en/high-performance-computing/daos-high-performance-storage-brief.html}}.
+
+    \item[Qumulo] --- Seattle-based start-up company that provides a large data
+        storage management product that is used in specialized big-data industries.
+        For example, Qumulo combines both local and cloud storage to provide video
+        post-production work in which file sizes are quite large due to the size of
+        high resolution video files. They claim to support secure storage of
+        petabytes of file data across multiple tiers of storage.
+\end{description}
+
+\tm{I'm not sure these examples are specific enough.}
+
+Each of these storage products attempts to address specific storage needs; each
+new product creates a new storage silo.  A human user that can limit themselves
+to using a single storage silo can exploit the functionality of that specific
+silo and simplifies the challenging task of finding disparate but related
+content spread across storage silos.
+
+The proliferation of storage silos exacerbates the easy ability of humans to
+navigate their own storage to find a specific file.  One of our own \ac{HCI}
+researchers told me that they found their ability to find things on their own
+computer broke when they added multiple distinct hard disks~\footnote{Private
+    conversation with Joanna McGrenere at UBC CS-50 reception.} The challenge of
+finding a specific file or set of files is one that consistently resonates with
+many of those with whom I have discussed my research, both inside and outside
+the computer science field.
+
+The most commonly presented model of naming files (or objects) within a storage
+silo is the hierarchical namespace.  The hierarchical namespace confounds the
+storage \emph{location} with the information \emph{relationship}.  Note that
+location here is not relative to the logical namespace of the storage silo, not
+the physical storage device.
+
+\reto{the challenges section provides quite a broad overview of how things are right now.
+    I'm not sure if those are the challenges you will be facing with your thesis, or whether these are general challenges.
+    Given your thesis statement,
+    shouldn't there be something like a problem statement (or challenges that makes the thesis statement hard)
+    I'd recommend to identify say 3-5 challenges and try to express them in one sentence each.
+    each sentence then is the \subsection{} heading. where there is maybe a paragraph or two worth of information backing up the challenge/problem.
+    ideally, your wock packages will correspond to one challenge/probleme each.
+    (maybe those 3-5 challenges are in fact the research questions you plan to answer)
+}
+
+Ordinary applications familiar with using hierarchical file systems expect
+related objects, of whatever type, to be in or close to the same directory.  The
+hierarchical file system model has been highly successful for more than a
+half-century, though that success is from the perspective of the storage
+community.  The \ac{HCI} community has been pointing out that this model is
+deficient for many users.
+
+Storage silos are not a new invention.  The problem of cross-silo management,
+including naming is not a new problem.  UNIX addressed multiple silos using
+``mount points''.  A \emph{mount point} is a location in an hierarchical name
+space where another namespace is logically connected to the existing namespace.
+For example, UNIX mounts a new file system instance on top of an existing
+directory.  On the Linux system where I am writing this document there are 33
+distinct namespaces mounted on top of the base file system namespace --- the
+``root'' namespace that starts at "/".  This model has served well as evidenced
+by the fact that all mainstream consumer operating systems at present (Linux,
+MacOS X, and Windows) support mount points.
+
+NFS on UNIX is implemented using explicit mount points, much like media file
+system instances while AFS used a global namespace mechanism to connect its
+silos (``volumes'') together so that users were given a single consistent
+namespace. Converting the hierarchical name of internet services has been used
+to create internet-based namespaces, such as using \ac{WebDAV}, which converts
+the internet \texttt{GET/PUT} model into an
+hierarchical file systems namespace model.  Amazon's AWS S3 service provides an
+object store model that is accessed using HTTP GET/PUT operations as well. This
+can be accessed using the hierarchical storage model using any one of the
+numerous "S3" FUSE file system implementations on \url{github.com}.  These FUSE
+file system implementations of S3 exist not because they are fast or efficient
+but because supporting the hierarchical model understood by existing
+applications makes them \emph{usable} by existing applications.
+
+The hierarchical name space is definitely powerful: it is a specific
+construction of individual name space silos that are composed into a single
+uniform namespace. However, the benefits of this single namespace have always
+been limited: they tend to follow the \emph{computer} and not the \emph{user}.
+Plan 9 was one of the few systems that focused on personal name spaces,
+introducing key ideas such as context defined names --- such as the platform
+architecture of the computer on which a program is currently running and
+\emph{unions} in which multiple namespaces are not joined via a mount point but
+rather via a merge of multiple namespaces mounted at the same location.
+Xerox's Placeless research project was a system where documents ``are organized
+and managed according to their properties, rather than according to their
+location.''~\footnote{https://web.archive.org/web/20020210170621/http://www.parc.xerox.com/csl/projects/placeless/}
+
+In the past two decades the complex multi-silo storage environment has exploded:
+\begin{description}
+    \item[WebDAV] --- the ability to map internet web servers into the
+        hierarchical file system;
+    \item[Dropbox] --- maintaining a mapping between a public internet remote
+        storage solution and a portion of the local hierarchical namespace on
+        existing storage across multiple devices;
+
+\end{description}
+
+
+\tm{This should come from the existing text.  It should explain \textit{how} we
+    got to this point.
+}
+
+\section{Linguistics}
+\label{ch:background:sec:linguistics}
+
+\tm{An interesting way to look at this is from the \emph{linguistic}
+    perspective.  Much of the prior work relates to semantics but in fact what I'm
+    suggesting is that we also consider \emph{pragmatics}. Wikipedia defines this
+    as: ``In linguistics and related fields, pragmatics is the study of how context
+    contributes to meaning. Pragmatics encompasses phenomena including implicature,
+    speech acts, relevance and conversation. Theories of pragmatics go
+    hand-in-hand with theories of semantics, which studies aspects of meaning which
+    are grammatically or lexically encoded. The ability to understand another
+    speaker's intended meaning is called pragmatic competence. Pragmatics
+    emerged as its own subfield in the 1950s after the pioneering work of J.L.
+    Austin and Paul Grice.''  This actually seems to capture some of what we are
+    trying to do quite well: semantics have been studied in terms of computer
+    storage, but not pragmatic linguistics.
+}
+
+\begin{quotation}
+    Pragmatics is a field of linguistics concerned with what a speaker implies
+    and a listener infers based on contributing factors like the situational
+    context, the individuals’ mental states, the preceding dialogue, and other
+    elements.
+\end{quotation}
+
+\url{https://www.masterclass.com/articles/pragmatics-in-linguistics-guide}
+
+\tm{Important take-away here is that Pragmatics is distinct from Semantics
+    because it relates to how context affects the meaning of language.  This is
+    actually quite close to what we are trying to do: to capture \emph{context} so
+    we understand the meaning of the language we are using to describe things
+    relative to that context.  However, what we are doing isn't a good mesh with
+    pragmatics or computational pragmatics (yes, it exists) because that seems
+    more focused on the question of using computational mechanisms for
+    understanding pragmatics.
+    \url{https://www.oxfordbibliographies.com/view/document/obo-9780199772810/obo-9780199772810-0264.xml}
+    is interesting in that it really hits home on the dynamic nature of meaning.
+}
+
+\begin{quotation}
+    Pragmatics as a branch of linguistics can be characterized as the study of
+    the relations between linguistic properties of utterances on the one hand,
+    and aspects of the context in which a given utterance is used on the other.
+    Computational pragmatics is pragmatics with computational means, which
+    include models of dialogue management processes, collections of language use
+    data, annotation schemes and standards, software tools for corpus creation,
+    annotation and exploration, process models of language generation and
+    interpretation, context representations, and inference methods for
+    context-dependent utterance generation and interpretation processes. The
+    linguistic side of the relations that are studied in pragmatics is formed
+    primarily by utterances in a conversation or sentences in a written text. In
+    the case of written text the context side consists of the surrounding text
+    and the setting in which the text is meant to function. In spoken or
+    multimodal dialogue, the context of an utterance is formed by what has been
+    said before and the interactive setting, but additionally by other
+    perceptual, social, and mutual epistemic information (see Context Modeling).
+    Much of this information is dynamic, as it changes during a dialogue and,
+    more importantly, as a result of the dialogue, since the participants in a
+    conversation influence each other’s state of information when they
+    understand each other. Dialogue contexts are thus updated continuously as an
+    effect of communication. Central to computational pragmatics is the
+    development and use of computational tools and models for studying the
+    relations between utterances and their context of use. Essential for
+    understanding these relations are the use of inference and the description
+    of language in terms of actions that are inspired by the context and that
+    are intended to change the context. This bibliography therefore focuses on
+    publications concerned with the computational modeling of dialogue in terms
+    of communicative actions including the use of inference for utterance
+    interpretation. It also considers the more static analysis of discourse
+    coherence and semantic relations in text, and concludes with references to
+    recent activities concerning the construction and use of resources in
+    computational pragmatics, in particular annotation schemes, annotated
+    corpora, and tools for corpus construction and use. The popularity of
+    probabilistic approaches to natural language processing can also be seen in
+    studies of pragmatic aspects of language use, although these approaches are
+    so far not as important as in some other areas of language processing. The
+    so-called rational speech acts (RSA) model treats language use as a
+    recursive process in which probabilistic speaker and listener agents reason
+    about each other’s intentions to enrich the literal semantics of their
+    language along broadly Gricean lines. The core references for this approach
+    are also included in this biography under Inference in Language Processing.
+\end{quotation}
+
+\tm{Good stuff here, which resonates with what I've been talking about.  Context
+    isn't static, though semantics are static.
+}
+
+
+
+Computer storage focuses on \emph{content}, which is one form of
+\emph{identity} such as is found in ``content addressing'' where the specific
+identity of a file is described using a hash value computed from the content of
+an object.  Some storage systems provide the ability to encode a limited amount
+of information about relationships and properties.  \emph{Relationships} in
+file systems are typically expressed using directories (or folders) and
+\emph{context} is captured via a name.\reto{does it make sense to talk about an ever growing pile of files?
+    somehow I feel like this is where the systems aspect comes into place:
+    - humans have  a limited working set.
+    - crawling through tons of files across different silos is impractical.
+    - search is fuzzy and may not provide  the right results, nor work cross silo.
+}
+\reto{context is another thing. also: I wouldn't say that context is the
+    name. }\tm{I disagree with Reto on this point: when we have hierarchical
+    names, we embed the context in the hierarchical name \emph{because} that's
+    the only way we have of capturing it.  Indeed, as Reto pointed out earlier,
+    names have meaning within a particular context.  So... where do we
+    \emph{get} this context.}
+
+
+\reto{does it make sense to talk about an ever growing pile of files?
+    somehow I feel like this is where the systems aspect comes into place:
+    - humans have  a limited working set.
+    - crawling through tons of files across different silos is impractical.
+    - search is fuzzy and may not provide  the right results, nor work cross silo.
+}\tm{I had text in at some point about the growing size and the problems
+    with it.  The proliferation of silos is yet another issue, such as what is
+    happening with in-memory compute, each of which ends up looking like its own
+    silo.
+}
+
+The goal of making computer storage more flexible is not a new one.  Memex was
+first proposed in 1945 by describing how computers might help human users by
+serving as ``augmented memory''~\cite{bush1945we}.\reto{what does it do?}  Computer storage has evolved
+dramatically in the 76 years since yet our storage systems have failed to
+progress towards, let alone realize Memex's associative relationship
+model.\reto{maybe say what the assoc relation ship model actually provides....}
+
+\reto{mention the "search" and "lookup" of the right files again here? it appears in the abstract, but maybe could be a little bit expanded here?
+    distinction between mete-data / content}
+\tm{In fact, my original goal was to \emph{lead} with the thesis statement and
+    then build on that.  Then I tried to add a small body of text to introduce the
+    topic.  If that body of text is going to grow, I should move all of that after
+    the thesis statement.}
+
+\section{Naming}
+\label{ch:background:sec:naming}
+%\section{Why naming is a Computer Systems problem}
+%\label{ch:introduction:sec:systems-problem}
+
+
+\MIS{This feels like a classic related work paragraph, but I don't know where it
+    fits in your story line.
+}
+Media file systems have long been organized using a simple internal key-value
+store.  The BSD UNIX Fast File System used an ``index node'' (inode) as a
+description of a data object, such as a file or directory~\cite{mckusick1984a}.  These nodes were
+indexed using an identifier, which acts as a simple key.  The NTFS file system
+is structured similarly~\cite{custer1994inside}.  Recent work explored the idea
+of separating the namespace from storage with an emphasis on high performance
+solid-state storage (SSD) devices~\cite{koo2021modernizing}.  This echos earlier
+work suggesting using object storage devices (OSD) for file systems
+implementations~\cite{seltzer2009hierarchical}.
+
+Beyond separating naming from storage, there is also a trend to separate
+meta-data from storage as well.  One early example of this is
+Lustre~\cite{braam2019lustre}, with more recent work including Ceph and
+Gluster~\cite{noronha2008imca,weil2006ceph}.  Each of these distributed file
+systems separates the service of data from meta-data, which allows data paths to
+focus on performance, including the use of parallel data paths.  Meta-data does
+not benefit from high-performance parallel I/O paths and instead benefits from
+low latency random access. This separation does not improve naming support
+because that is not the goal of any of these systems.
+
+Intel's DAOS system uses Intel DC Persistent Memory for meta-data and \ac{NVMe}
+for data. DAOS supports two naming models: one is a POSIX-compatible
+hierarchical name space, and the other is a key-value store interface. Storage
+pools are accessed using one or the other of these interfaces but not both.
+
+In a hierarchical name space the fully qualified path corresponds to the
+\emph{logical} location of the file, that is the location of this file in the
+namespace itself. In most file systems that logical location corresponds to a
+specific file system instance and thus defines the storage device(s) on which
+that file is stored.  Meta-data associated with that file is interpreted by the
+file system to determine how to retrieve the data.  For a media file system that
+usually corresponds to the address of the location(s) of the file data on the
+corresponding media.  For a network file system that usually corresponds to the
+network address used to request the correct file data from the computer storage
+system where the data is actually stored.
+
+Separating the file system meta-data from the file data is known to be
+beneficial.~\cite{kawai2011a}  This approach logically makes sense when
+considered in the multi-silo context as well, since a human user looking for
+something actually does not care \textit{where} that the
+thing is located they care \emph{what} the thing is.
+
+This raises an intriguing question, one that is at the heart of my own research:
+\emph{what is the purpose of naming?}  Applications are quite happy to use names
+that are meaningless to humans, such as content hashes, UUIDs, or randomly
+generated string names, such as are used for temporary application files.
+Indeed, if an application knows that a name has a fixed format, the knowledge of
+that fixed format can be used to simplify the implementation or to separate
+application named files from other files.
+
+Humans use file names to provide \emph{meaning} as to what is in the named
+object.  Librarians assisting people in organizing data routinely suggest
+embedding contextual information in the file names; directories are then used to
+create additional organizational structure (or ``context''). There are numerous
+limitations to this approach, however, because humans do not organize things in
+the same fashion and even the same human does not organize things the same over
+time. This is such a common phenomenon even the popular press pokes fun at it
+(\autoref{fig:xkcd:1459}.)
+
+The inability to find specific things is \textit{not} unique to computer data storage.
+Indeed the current situation for organizing digital data seems to be descended
+from the organizational structure of a library or a file cabinet, despite the
+physical limitations of organizing paper files that are not constraints for
+computer storage.  For example, when I am organizing my long play record
+collection I have to chose one primary ``key'' to use, such as the time when the
+album was released.  However, digital storage does not have this same
+restriction - I can easily ask that they be presented to me by genre, artist,
+album title, or even instrument type. Further, I can change my organizational
+scheme dynamically.  Both Bell Lab's Plan 9~\cite{plan9} and Xerox Placeless
+Documents~\cite{dourish1999getting}
+observed that there is a dynamic nature to how information is organized.  The
+hierarchical name space is basically static, like my album collection is static:
+I can choose a different organizational scheme but to do so I have to physically
+move them around.
+
+Indeed, the system we have evolved works \emph{in spite} of the obvious
+artificial limitations imposed by decades old decisions~\cite{dourish2003the}.  Rather than being
+a deep insight that the current system works because it is the best of all
+possible models, it is a testament to human ingenuity and a tolerance for
+primitive, sub-standard systems.
+
+There are a body of recommendations about file naming
+standards\footnote{Data Management for
+    Researchers~\cite{briney2015data}}
+\footnote{Smithsonian: \url{https://library.si.edu/sites/default/files/tutorial/pdf/filenamingorganizing20180227.pdf}}
+\footnote{Stanford: \url{https://library.stanford.edu/research/data-management-services/data-best-practices/best-practices-file-naming}}
+\footnote{NIST: \url{https://www.nist.gov/system/files/documents/pml/wmd/labmetrology/ElectronicFileOrganizationTips-2016-03.pdf}}.
+Harvard Data Management suggests~\footnote{\url{https://datamanagement.hms.harvard.edu/collect/file-naming-conventions}}:
+
+\begin{itemize}
+    \item Think about your files
+    \item Identify metadata (e.g., date, sample, experiment)
+    \item Abbreviate or encode metadata
+    \item Use versioning
+    \item Think about how you will search for your files
+    \item Deliberately separate metadata elements
+    \item Write down your naming conventions
+\end{itemize}
+
+Thus, there are common themes: a name provides context for \emph{what} the given
+thing represents. Uniformity of information is also important --- the ``naming
+convention'' permits not only identifying similarity but key elements of
+\emph{difference} between any two named things.  Thus, to return to the original
+question: ``what is the purpose of naming?''
+
+\tm{It seems that this Harvard list is a serious indictment of the existing
+    system: it pushes the cognitive load onto the users, talks about meta-data ,
+    versioning, encoding, \emph{and} capturing the naming convention.}
+
+It seems clear that human naming is
+not the same as data storage naming, though we often treat them as the
+same.  This can be seen in the data storage tendency to either use names that
+are entirely about locating a specific object, such as is the case with a
+key-value store, for example, or it combines location with identity, such as is
+typified by the Uniform Resource Identifier (URI)~\cite{berners-lee1998uniform}.
+
+Thus, it would seem that naming is about:
+
+\begin{description}
+    \item[Identity] --- the name of a thing should be sufficient to verify that
+        it is the specific thing we seek.  An example of this is biometric data for
+        humans or a cryptographic hash for a storage object;
+    \item[Location] --- the name of a thing could provide information that
+        directly or indirectly specifies where it is located.  A human example is
+        how an identity card might specify a current residential address.  A data
+        storage example is the U.S. Library of Congress Classification System, which
+        can be used to find a particular work within very large bodies of work even
+        though books are typically not thought of as a storage media;
+    \item[Relationships]  --- the concept that one thing can be derived from
+        another, whether in a direct form, such as a version of the same logical
+        thing, or in a more indirect form, such as a provenance relationship showing
+        that one thing was derived from another thing by applying some set of
+        transformations to it;
+    \item[Characteristics] --- this relates to something that is a property of
+        the thing.  For humans this might be the date of birth (``creation date''),
+        height, weight, eye color, etc.  For storage objects this might include
+        timestamps, size, data type;
+    \item[Context] --- at some some level, we often rely upon names to provide
+        us with \emph{context}.  For humans, we assume that people with the same
+        family name are likely to be members of the same family, even though
+        ``\persa Smith'' is distinguished from ``\persb Smith''.
+\end{description}
+
+When considered from this perspective, it seems clear why ``naming is hard'' ---
+it plays multiple distinct roles, sometimes overlapping, sometimes interfering.
+These challenges are not well-served by existing naming support in computer
+storage systems.
+
+\tm{I feel that I should capture the dynamic nature of naming, which really does
+    differ from the traditional static model of it.
+}
+
+\reto{Overall, I feel like the challenges are quite an overview of related work. I would try to focus on what challenges/problems arise when you try to desgin and implement your system?
+    Challenge a) Multiple silos with different characteristics; and Challenge b) capturing activities, ... (or is that gone)? }

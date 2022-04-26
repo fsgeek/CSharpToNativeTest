@@ -1,0 +1,58 @@
+%% The following is a directive for TeXShop to indicate the main file
+%%!TEX root = diss.tex
+
+\chapter{Abstract}
+
+\tm{This needs to be re-written to conform to the new story.}
+
+Modern computer storage systems have evolved from\reto{I expect a from ...
+    to}\tm{It does have a from/to structure but apparently it isn't clear enough.} a simple model in which names denoted
+the information necessary to know both \textit{where} a file was stored as well
+as \textit{what} the file contains.\reto{maybe want to use "path" here?
+    I'm not so sure, if I follow the "what the file contains" aspect here.
+    One possible approach would be to use the path as an example that "related" files are having a common path prefix i.e. they are in the same directory.
+    Convoluting the location and relationship.
+    with path you may be able to do the path => uri transition when moving to other storage silos
+}
+\tm{I would argue that using the path focused model is too narrow.  We
+    definitely have name spaces that do not use paths (e.g., S3, which is an object
+    store).  Assuming that the only thing we have is a path is a bit limiting.
+}
+As computer storage systems have evolved we
+have seen an increase in the diverse functional behavior offered for storing
+files.  This has led to a situation in which users use distinct storage silos.
+Each of these storage silos uses its own naming scheme, provides support for
+specific usage, and has its own unique meta-data support.
+
+The size, type, location, and capabilities of storage silos continues to
+proliferate.  Storage silos can be local to a computer, shared with other local computers,
+form geo-replicated distributed storage, consist of object storage or
+traditional hierarchical file organization.  Non-traditional storage systems
+have emerged through the use of collaborative tools such as Teams, Slack, and
+Discord, each of which creates another location for storing in\-for\-ma\-tion shared
+between human users.\reto{template error?}\tm{This seems to be an issue with
+    hyphenation.  I normally don't try to address this early on unless it is
+    interfering with the understanding.  I have added soft hyphens in the word so
+    hopefully \LaTeX will hyphenate it properly.}
+
+These storage silos do not provide mechanisms for tracking how information is
+stored across these various silos.  This means is a user trying to locate a
+document she saved while collaborating with a colleague will need to search
+through each of these storage silos that she routinely uses: was the document
+attached as an e-mail, sent via a collaboration service, stored in a shared
+cloud storage location will have a difficult time locating that document six
+months later. This problem is only exacerbated as documents migrate because the
+version she does find might not be the correct one.
+
+This work proposes to develop a model to separate naming from location, which
+enables the construction of dynamic cross-silo human usable name\-spaces and show
+how that model extends the utility of computer storage to better meet the needs of
+human users.
+
+% Consider placing version information if you circulate multiple drafts
+\vfill
+\begin{center}
+    \begin{sf}
+        \fbox{Revision: \today}
+    \end{sf}
+\end{center}

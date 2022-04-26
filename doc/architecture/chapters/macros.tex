@@ -1,0 +1,114 @@
+% This file provides examples of some useful macros for typesetting
+% dissertations.  None of the macros defined here are necessary beyond
+% for the template documentation, so feel free to change, remove, and add
+% your own definitions.
+%
+% We recommend that you define macros to separate the semantics
+% of the things you write from how they are presented.  For example,
+% you'll see definitions below for a macro \file{}: by using
+% \file{} consistently in the text, we can change how filenames
+% are typeset simply by changing the definition of \file{} in
+% this file.
+%
+%% The following is a directive for TeXShop to indicate the main file
+%%!TEX root = ../diss.tex
+
+\newcommand{\NA}{\textsc{n/a}}	% for "not applicable"
+\newcommand{\eg}{e.g.,\ }	% proper form of examples (\eg a, b, c)
+\newcommand{\ie}{i.e.,\ }	% proper form for that is (\ie a, b, c)
+\newcommand{\etal}{\emph{et al}}
+
+% Some useful macros for typesetting terms.
+\newcommand{\file}[1]{\texttt{#1}}
+\newcommand{\class}[1]{\texttt{#1}}
+\newcommand{\latexpackage}[1]{\href{http://www.ctan.org/macros/latex/contrib/#1}{\texttt{#1}}}
+\newcommand{\latexmiscpackage}[1]{\href{http://www.ctan.org/macros/latex/contrib/misc/#1.sty}{\texttt{#1}}}
+\newcommand{\env}[1]{\texttt{#1}}
+\newcommand{\BibTeX}{Bib\TeX}
+
+% Define a command \doi{} to typeset a digital object identifier (DOI).
+% Note: if the following definition raise an error, then you likely
+% have an ancient version of url.sty.  Either find a more recent version
+% (3.1 or later work fine) and simply copy it into this directory,  or
+% comment out the following two lines and uncomment the third.
+\DeclareUrlCommand\DOI{}
+\newcommand{\doi}[1]{\href{http://dx.doi.org/#1}{\DOI{doi:#1}}}
+%\newcommand{\doi}[1]{\href{http://dx.doi.org/#1}{doi:#1}}
+
+% Useful macro to reference an online document with a hyperlink
+% as well with the URL explicitly listed in a footnote
+% #1: the URL
+% #2: the anchoring text
+\newcommand{\webref}[2]{\href{#1}{#2}\footnote{\url{#1}}}
+
+% epigraph is a nice environment for typesetting quotations
+\makeatletter
+\newenvironment{epigraph}{%%
+	\begin{flushright}
+		\begin{minipage}{\columnwidth-0.75in}
+			\begin{flushright}
+				\@ifundefined{singlespacing}{}{\singlespacing}%
+				}{
+			\end{flushright}
+		\end{minipage}
+	\end{flushright}}
+\makeatother
+
+% \FIXME{} is a useful macro for noting things needing to be changed.
+% The following definition will also output a warning to the console
+\newcommand{\FIXME}[1]{\typeout{**FIXME** #1}\textbf{[FIXME: #1]}}
+
+% Replaceable names
+%\newcommand{\system}[0]{\emph{Kwishut}\xspace}
+\newcommand{\system}[0]{\emph{Indaleko}\xspace}
+% QI'tu'naS - Klingon for "pragmatics" - I'm saving that for the final version.
+% qaywI' - Klingon for "finding" - another option for final version.
+% Talal - Vulcan for "finding" - yet another option.
+
+\newcommand{\systemone}[0]{\emph{Topish}\xspace}
+% Topish is Uzbek for "Finding"
+%\newcommand{\systemtwo}[0]{\emph{\textmacedonian{Наоѓање}}\xspace}
+% Pronunciation: Naoǵanje.
+%\newcommand{\systemtwo}[0]{\emph{\textmacedonian{Naīdi}}\xspace}
+% Naīdi ("Find") in Macedonian.
+\newcommand{\systemtwo}[0]{\emph{\textmacedonian{Находка}}\xspace}
+% Pronunciation: Nakhodka
+
+% Gender neutral names (though very European)
+%\newcommand{\persa}[0]{Addison\xspace}
+\newcommand{\persa}[0]{Aki\xspace} % Japanese, gender neutral, means "autumn"
+
+%\newcommand{\persb}[0]{Bailey\xspace}
+\newcommand{\persb}[0]{Dagon\xspace} % Biblical name meaning "fish"
+
+%\newcommand{\persc}[0]{Cameron\xspace}
+\newcommand{\persc}[0]{Fenix\xspace} % Greek Isles, means "dark red"
+
+%\newcommand{\persd}[0]{Dana\xspace}
+\newcommand{\persd}[0]{Hao\xspace} % Vietnamese, means "good/perfect"
+
+%\newcommand{\perse}[0]{Evan\xspace}
+\newcommand{\perse}[0]{Waneta\xspace} % Native American roots, "shape shifter, charger"
+
+%\newcommand{\persf}[0]{Quinn\xspace}
+\newcommand{\persf}[0]{Skylar\xspace} % allegedly American roots, meaning "scholar"
+
+%\newcommand{\persg}[0]{Reese\xspace}
+\newcommand{\persg}[0]{Zene\xspace} % "beautiful" based on African culture supposedly.
+
+% use cases
+\newcommand{\usecaseactivitycontext}[0]{\textsc{ac\-tiv\-ity con\-text}\xspace}
+\newcommand{\usecasedatarelationship}[0]{\textsc{data re\-la\-tion\-ships}\xspace}
+\newcommand{\usecasecrosssilosearch}[0]{\textsc{cross-silo search}\xspace}
+\newcommand{\usecasenotifications}[0]{\textsc{no\-ti\-fi\-ca\-tions}\xspace}
+\newcommand{\usecasepersnamespace}[0]{\textsc{per\-son\-al\-ized name\-space}\xspace}
+
+% terminology
+%Copy: bit-for-bit identical
+\newcommand{\doccopy}[0]{copy\xspace}
+%  derivation: the semantics change
+\newcommand{\docderivation}[0]{derivation\xspace}
+% conversion: semantically identical but not Bit-for-Bit
+\newcommand{\docconversion}[0]{conversion\xspace}
+
+% END

@@ -1,0 +1,96 @@
+%!TEX TS-program = lualatex
+%!TEX encoding = UTF-8 Unicode
+
+% I use LuaLaTex by default so that I get full UTF-8 support, which simplifies
+% when using mixed language.
+
+\documentclass[sigconf,anonymous,review]{acmart}
+\setcopyright{none}  % suppress copyright generation
+\usepackage{lipsum}
+
+
+\author{Tony Mason}
+
+\title{Indaleko}
+\subtitle{Enabling Activity Context}
+
+% These are marks for inserting comments. Feel free to edit as needed!
+\newcommand{\nb}[2]{{\yellowbox{#1}\triangles{#2}}}
+\newcommand{\nbc}[3]{
+ {\colorbox{#3}{\bfseries\sffamily\scriptsize\textcolor{white}{#1}}}
+ {\textcolor{#3}{\sf\small$\blacktriangleright$\textit{#2}$\blacktriangleleft$}}}
+\newcommand{\version}{\emph{\scriptsize\id}}
+\newcommand{\ugh}[1]{#1} % please rephrase
+\newcommand{\ins}[1]{#1} % please insert
+\newcommand{\del}[1]{} % please delete
+\newcommand{\chg}[2]{#2} % please change
+\renewcommand{\nb}[2]{\nbc{#1}{#2}{orange}}
+
+% Tony
+\definecolor{tmcolor}{rgb}{0.5,0,0.5}
+\newcommand\tm[1]{\nbc{TM}{#1}{tmcolor}}
+
+% Margo
+\definecolor{miscolor}{rgb}{0.4,0.6,0.2}
+\newcommand\MIS[1]{\nbc{MIS}{#1}{miscolor}}
+
+% Ada
+\definecolor{adacolor}{rgb}{1.0, 0.5, 0.5}
+\newcommand\ada[1]{\nbc{AG}{#1}{adacolor}}
+
+% Sasha
+\definecolor{sfcolor}{rgb}{0.2,0.0,0.5}
+\newcommand\sasha[1]{\nbc{SF}{#1}{sfcolor}}
+
+\begin{document}
+
+
+\begin{abstract}
+    Our ability to find digital data is reaching a tipping point: brute force
+    search techniques are inefficient and searching multiple storage locations
+    to find related objects is challenging.  Prior research found using
+    contextual clues facilitates finding specific digital objects. Despite
+    modern systems collecting vast amounts of contextual information, our
+    systems do not provide an efficient mechanism for using that information to
+    facilitate more efficient \emph{finding} of digital objects.
+
+    \emph{Indaleko} is our system for collecting, storing, and
+    disseminating contextual information we call \emph{activity context} to
+    facilitate finding groups of related digital objects regardless of where
+    those objects are stored.  We find \emph{Indaleko} is a viable way to
+    provide \emph{activity context} and enabling its use by other services and
+    applications.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+\lipsum[1]
+
+\section{Background}
+
+\lipsum[2]
+
+\section{Architecture}
+
+\lipsum[3]
+
+\section{Evaluation}
+
+\lipsum[4]
+
+\section{Discussion}
+
+\lipsum[5]
+
+\section{Conclusion}
+
+\lipsum[6]
+
+\nocite{*}
+\clearpage
+
+\bibliography{bib/Indaleko.bib}
+
+\end{document}
+

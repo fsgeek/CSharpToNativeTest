@@ -1,0 +1,118 @@
+\section{Why we need \system}
+\label{sec:use-cases}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table*}[!th]
+    {\renewcommand{\arraystretch}{1.3} %<- modify value to suit your needs
+    \begin{tabular}{p{0.11\textwidth}p{0.4\textwidth}p{0.425\textwidth}}
+         \hline
+        \textbf{Feature} & \textbf{Existing Technologies} & \textbf{No Solution} \\
+        \hline
+        \usecaseactivitycontext &
+        timestamps and geo-location, image recognition, browsing history, ticketing systems, application-specific solutions like Burrito~\cite{guo2012burrito}. &
+        Link related activity across apps, record  browsing history and chat conversations relevant to the creation of the data object, storing it in ways that are secure and compact.   
+        \\ 
+        %
+        \usecasecrosssilosearch &
+        Search by name, creator, content across silos, 
+        app-specific searches (e.g., Spotlight) &
+        Unified search across all kinds of storage, including file systems, object stores, apps and devices 
+        \\ 
+        %
+        \usecasedatarelationship &
+        De-duplication of documents, versioning of specific files, git ancestor relation &
+        Explicit notion of data identity, tracking different versions across different silos as data is transformed 
+        \\ 
+        %
+        \usecasenotifications &
+        File watchers (INotify), synchronization status, manually inspecting modified time&
+        Ability to subscribe to specific changes on attributes
+        \\
+        %
+        \usecasepersnamespace &
+        Hierarchy plus hard/soft links. Use of tags. &
+        Creating personalized namespaces with with flexible data organization and views 
+        \\
+         \hline
+    \end{tabular}
+    }
+    \caption{Use-case driven functional requirements.}
+    \label{tab:usecases}
+\end{table*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%Each storage silo provides a specific set of features facilitating certain use-case scenarios, for example, the local disk provides offline access to data, while cloud-based solutions allow users to collaboratively work on a shared document.
+
+We identified five categories of information that are necessary to facilitate the integration of semantically meaningful naming with user activity context.
+Unfortunately, to varying degrees, these features cannot be provided by today's storage system architecture.
+We introduce these categories, summarize them in table~\autoref{tab:usecases},
+and then present use cases demonstrating how they facilitate data management.
+
+\subsection{Feature Wish List}
+\label{sec:features}
+\noindent\textbf{Activity Context: }
+As Burrito demonstrated~\cite{guo2012burrito}, the \emph{context} in which data were accessed or created is often a useful attribute on which users wish to search, e.g., ``\emph{I'm looking for the document I was editing while emailing \persa about their favorite wines}.''
+To the best of our knowledge, there is no modern system that supports queries using rich context across applications. 
+We might be able to use timestamps or application-specific tags or history information in queries, but it is laborious, if not impossible, to intersect data from multiple applications and/or multiple silos.
+
+\noindent\textbf{Cross-Silo Search: }
+Users share documents in myriad ways: via messaging applications, on cloud storage services, and via online applications. Users should not need to remember which mechanism was used to share a particular document and should have some easy way of organizing and searching through a collection of such distributed documents.
+
+\noindent\textbf{Data Relationships: }
+Documents can be related in arbitrary ways. This relationship information can be used to facilitate and enable better search results. So far, we have identified three specific relationships that are particularly important: 
+
+\noindent\emph{1) copy} is a bit-for-bit identical replica of some data, in other words two items with different names store the same data.
+% Deduplication functionality in storage systems frequently takes advantage of the prevalence of copies to reduce storage consumption. However, knowing that two items with different names are, in fact, the same is also valuable information for users.
+
+\noindent \emph{2) conversion} is a reversible, repeatable transformation that changes the representation of data, without changing its semantics, e.g., converting a CSV file into JSON.
+
+\noindent \emph{3) derivation} refers to data that has been computationally derived from another object by altering its content, e.g., adding a row to a spreadsheet.
+
+While storage systems can recognize copies, they cannot distinguish conversions from derivations. However, from a user's perspective, these operations are quite different: a conversion can be repeated, which is not necessarily true of a derivation.
+                                              
+\noindent\textbf{Notifications:}
+Users frequently want to be notified when documents change, and many storage services offer this functionality.
+However, users might also want notification when data on which they directly or indirectly depend changes. This requires both a notification system and an awareness of the data relationship between different objects.
+
+\noindent\textbf{Personalized Namespaces:}
+Users have different preferences and mental models to organize their documents, a source of conflict in a multi-user setting. We need a way to provide each user the ability to personalize their document structure.
+
+\subsection{Use Cases}
+The following use cases illustrate how the features described above arise in common place activities.
+
+\noindent\textbf{Data Processing:~}
+\persa and \persc are preparing a report summarizing their work on a data analysis project for a customer.
+\persc sends an email to \persa containing a CSV file with original data.
+\persa opens this document in Excel, formats and filters it, adds additional data from a corporate storage silo,
+and then returns the Excel document to \persc on Slack.
+\persc is away from their desk when it arrives, so they open it on their phone, uploading it to a cloud drive.
+\persc then sends the link to \persa for editing with update notifications.
+Finally, \persc sends a PDF of the report to the compliance officer who promptly asks, ``Where did this data come from?''
+
+\noindent\textit{Feature Analysis:~}
+This use case highlights the need for 1) \usecasedatarelationship, as it has instances of copies, conversions and derivations, 2) \usecasecrosssilosearch, as these items are located in multiple silos and accessed by multiple devices, and 3) \usecasenotifications, as update notifications need to be distributed to designated users.
+
+\noindent\textbf{Delete Request:~}
+Some time later, the compliance officer requests that all documents containing a customer's data must be deleted. 
+To help with finding all relevant customer data, \persb joins the project and examines the report and requests the original data from which it was produced. 
+\persa remembers that they gave the original data to \persc shortly after collecting it, but does not remember the name, location, or even how the relevant files were transmitted. Thus, \persa has to manually search possible locations and applications, sendsing references to documents to \persb, who then starts organizing these files to methodically identify the ones that might contain the customer's data. In the process, many of the other team members' references to the documents stop working.
+
+\noindent\textit{Analysis:~}
+This use case illustrates the need for 1) \usecaseactivitycontext to capture data that has been collected while 
+interacting with the customer, 2) \usecasedatarelationship to identify related documents, 3) \usecasecrosssilosearch to easily locate relevant documents across data silos, and 4) \usecasepersnamespace to 
+create a individual data organization.
+
+% \noindent\textbf{Security and Privacy:~}
+% \persg, an investigative journalist who routinely receives sensitive information from third parties, is investigating the company from the prior use cases.
+% \persg needs to be able store and access sensitive information, including information about the activity context of various e-mails, documents, pictures, and audio and video files.
+% While \persg ensures that these data are encrypted, they need to also ensure that they can both find information and ensure that meta-data associated with those files is both usable and properly protected across silos.
+
+% \noindent\textit{Feature Analysis:~}
+% This case requires both \usecasecrosssilosearch and
+% \usecaseactivitycontext to allow \persg to gather information obtained from specific meetings or at a given time/place.
+% While \persg must protect their sources, they must also be able to associate evidence with those sources to make judgement calls about their validity, so we must design security and privacy policies for attributes that accomplish both.
+
+\subsection{From Use Cases to Architecture}
+Each use case and feature class suggests capabilities that are unavailable today.
+In~\autoref{tab:usecases} we identify existing technology that can be brought to bear on the problem while teasing apart the precise details that are missing.
+Repeatedly, we find that critical information necessary to provide a feature is unavailable, that providing such information is non-trivial, and that obtaining it creates a collection of privacy challenges.

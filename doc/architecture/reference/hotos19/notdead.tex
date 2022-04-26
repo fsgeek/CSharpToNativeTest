@@ -1,0 +1,457 @@
+\pdfminorversion=7
+\documentclass[sigconf,10pt,noacm]{acmart}
+\usepackage{geometry}
+\geometry{reset, twoside=true, head=13pt,
+     paperwidth=8.5in, paperheight=11in,
+     includeheadfoot, columnsep=2pc,
+     top=57pt, bottom=73pt, inner=72pt, outer=72pt,
+     marginparwidth=2pc,heightrounded
+     }
+
+\usepackage[utf8]{inputenc}
+%\usepackage{fontspec} % This line only for XeLaTeX and LuaLaTeX
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.16}
+\usepackage{tikz}
+
+
+\usepackage{booktabs} % For formal tables
+\usepackage{balance}       % to better equalize the last page
+% Load basic packages
+\usepackage{balance}       % to better equalize the last page
+%\usepackage{graphics}      % for EPS, load graphicx instead 
+\usepackage{graphicx}
+%\usepackage[T1]{fontenc}   % for umlauts and other diaeresis
+%\usepackage{txfonts}
+%\usepackage{mathptmx}
+%\usepackage[pdflang={en-US}]{hyperref}
+\usepackage{hyperref}
+%\usepackage{color}
+\usepackage{textcomp}
+\usepackage{blindtext}
+\usepackage{subcaption}
+\usepackage{dblfloatfix}
+\usepackage{adjustbox}
+
+\usepackage{booktabs}
+\usepackage{multirow}
+% \usepackage{lscape}
+% If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
+\usepackage{siunitx}
+%\usepackage{pgfplotstable}
+% Some optional stuff you might like/need.
+\usepackage{microtype}        % Improved Tracking and Kerning
+\usepackage[all]{hypcap}    % Fixes bug in hyperref caption linking
+\usepackage{ccicons}          % Cite your images correctly!
+% \usepackage[utf8]{inputenc} % for a UTF8 editor only
+
+% If you want to use todo notes, marginpars etc. during creation of
+% your draft document, you have to enable the "chi_draft" option for
+% the document class. To do this, change the very first line to:
+% "\documentclass[chi_draft]{sigchi}". You can then place todo notes
+% by using the "\todo{...}"  command. Make sure to disable the draft
+% option again before submitting your final document.
+%\usepackage{todonotes}
+%\usepackage{draftwatermark}
+%\SetWatermarkScale{5}
+
+\usepackage{graphicx}
+\usepackage{type1cm}
+\usepackage{eso-pic}
+\usepackage{lipsum}
+
+% Paper metadata (use plain text, for PDF inclusion and later
+% re-using, if desired).  Use \emtpyauthor when submitting for review
+% so you remain anonymous.
+
+% Copyright
+\setcopyright{none}
+%\setcopyright{acmcopyright}
+%\setcopyright{acmlicensed}
+%\setcopyright{rightsretained}
+%\setcopyright{usgov}
+%\setcopyright{usgovmixed}
+%\setcopyright{cagov}
+%\setcopyright{cagovmixed}
+
+
+%\copyrightyear{2019} 
+%\acmYear{2019} 
+%\setcopyright{rightsretained}
+%\acmConference[HotOS XVII]{The 17th Workshop on Hot Topics in Operating Systems (HOTOS)}{May 12-15, 2019}{Bertinoro, Italy}
+%\acmBooktitle{Proceedings of the 17th Workshop on Hot Topics in Operating Systems (HOTOS '19), May 12-15, 2019, Bertinoro, Italy}
+%\acmPrice{15.00}
+%\acmDOI{10.475/123_4}
+%\acmISBN{123-4567-24-567/08/06}
+\acmConference{}
+\acmBooktitle{}
+\acmPrice{}
+\acmDOI{}
+\acmISBN{}
+\acmYear{}
+
+% These commands are optional
+%\acmBooktitle{Transactions of the ACM Woodstock conference}
+%\editor{Jennifer B. Sartor}
+%\editor{Theo D'Hondt}
+%\editor{Wolfgang De Meuter}
+
+\pagestyle{plain}
+\settopmatter{printacmref=false}
+%\settopmatter{printfolios=false}
+%\setlength {\marginparwidth}{2cm}
+\renewcommand\footnotetextcopyrightpermission[1]{} % removes footnote with conference information in first column
+
+\setlength{\textfloatsep}{10pt plus 1.0pt minus 2.0pt}
+\setlength{\intextsep}{6pt plus 2.0pt minus 2.0pt}
+
+\begin{document}
+\title{Not Dead Yet}
+\subtitle{Hierarchical File Systems Won't Die}
+
+\author{Tony Mason}
+\orcid{0000-0002-0651-5019}
+\affiliation{%
+  \institution{The University of British Columbia}
+}
+\email{fsgeek@cs.ubc.ca}
+
+\author{Margo Seltzer}
+\affiliation{%
+\institution{The University of British Columbia}
+%\city{Atlanta}
+%\state{Georgia}
+%\country{US}
+}
+\email{mseltzer@cs.ubc.ca}
+
+% The default list of authors is too long for headers.
+\renewcommand{\shortauthors}{T. Mason et al.}
+
+%
+% Generated this code.  Should review it
+%
+\begin{comment}
+\begin{CCSXML}
+  <ccs2012>
+  <concept>
+  <concept_id>10003456.10003457.10003527.10003531.10003533</concept_id>
+  <concept_desc>Social and professional topics~Computer science education</concept_desc>
+  <concept_significance>300</concept_significance>
+  </concept>
+  <concept>
+  <concept_id>10003456.10003457.10003527.10003531.10003533.10011595</concept_id>
+  <concept_desc>Social and professional topics~CS1</concept_desc>
+  <concept_significance>300</concept_significance>
+  </concept>
+  <concept>
+  <concept_id>10003456.10003457.10003527.10003540</concept_id>
+  <concept_desc>Social and professional topics~Student assessment</concept_desc>
+  <concept_significance>300</concept_significance>
+  </concept>
+  </ccs2012>
+  
+\end{CCSXML}
+
+\ccsdesc[300]{Social and professional topics~Computer science education}
+\ccsdesc[300]{Social and professional topics~CS1}
+\ccsdesc[300]{Social and professional topics~Student assessment}
+\end{comment}
+
+\begin{comment}
+\keywords{Graph File System}
+\end{comment}
+
+\makeatletter
+\def\@copyrightspace{\relax}
+\makeatother
+
+\maketitle
+
+\balance
+
+\input{macros}
+
+\input{abstract.tex}
+
+\begin{comment}
+  Margo comments from our January 11 meeting.
+
+  Introduction: we have hieararchy but we need graph storage.  We see this as far back as Multics, where they have hard links,
+  and UNIX, where they add symlinks [though I don't think symlinks showed up in 1974, but they did eventually.]
+
+  The goal was to mirror the physical world of how filing systems worked [cabinets, drawers, folders, documents.  But this
+  ignores the fact that libraries add cross-references - a separate name space of indices that help us find things.  And
+  how documents refer to other documents, creating a "web of references".  This is not a new observation and includes
+  memex and intelligent document editing systems.]
+
+  Look at storage versus namespace: how tightly coupled are they?
+  Paradigm shift: the web started with a more hierarchical model but moved to a graph model.  It also introduced
+  the search based metaphor. As the web has grown, this perspective has permeated all of data storage, as we
+  can see by the rampant popularity of key-value stores, object caches, etc.
+
+  Namespace
+
+  * Ignored by most users
+  * Evolved from the web perspective
+  * Those of us in "the field" still fall back to brute force search with find and grep -R
+
+  File systems search and web search have merged into things like Dropbox, Google Drive, One Drive, and Git.
+
+  "One author spent 20 minutes trying to find a document trying to find data from the previous work.  Had to
+  search computer, Google Drive, dropbox, various repositories, etc."  Ultimately found that the data wasn't
+  in any of those places and managed to get it from a co-author.
+
+  Question: is this a systems problem or an HCI problem?
+
+  Systems problem: data objects related via an extensible set of complex relationships that the system does
+  nothing to facilitate.
+
+  This suggests a graph structure.  Our current data storage and name space layers do not support this well.
+
+  The HCI aspect of this is how to exploit a richer structure, so now we have a chicken and egg problem. Thus,
+  we ask the question: "how should we rethink the file system to permit capturing a richer set of relationships?
+
+  Alternatives become Background
+    * Semantic file systems
+    * Tagging (old, manual)
+    * Tagging (new, automated/AI driven)
+    * Databases
+
+  We argue that it requires a custom, specialized database for our domain problem (e.g., relationship enhanced
+  file systems).
+
+  Limit BG to one page.
+
+  ** maybe put Alternatives/Background AFTER our proposal ***
+
+  Our proposal should be ~ 2 pages.
+
+    * Envision your file system as a social graph for this discussion - a "social network file system"
+    * Characteristics of data (what something "is") - one kind of relationship.
+    * Social network: has people, groups, organizations)
+    * File system: blob store, chunks of data
+    * Shared "attributes" are one form of relationship (mapping social network to file system)
+    
+    What does the facebook architecture look like?  A SQL database (MySQL) with a cache (Tau)
+
+    Why not use this as our architecture?  The analogy is not perfect.  Objects have a fixed schema in
+    the database world but files do not.  Files vary in all sorts of ways and typically have an internal
+    (private) schema.  They have a potentially broader range of attributes, though often we embed these
+    in the name now (extension).  File systems typically store sizes, dates, and lengths.  Thus, we argue
+    that we already have a partially mapped schema, but it is a rigid one.
+
+    Proposed architecture:
+      * storage - this is SOLVED for our purposes, regardless of whether the storage layer is a traditional
+        HFS, a blob store, a document database, local or remote to the device.
+
+      * relationships -
+        - how do we store them?
+        - how do we represent them?
+        - how do we process them?
+
+        PRESENTATION of these to users is an HCI problem.
+        IMPLEMENTATION of these features is a systems problem.
+
+    Q: why not a graph database?  Observation: in fact, we're a user of the graph database, but we aren't
+       a graph database for the same reason a file system isn't a relational database: our needs are more
+       simpler, so we can focus on optimizing performance for our use cases.
+
+       Our blobs (files) are potentially quite large.
+       Our relationships are ...
+
+  Need to include the Burrito (Guo) reference.  Margo thought he had a more recent paper as well in the area,
+  I need to look.
+
+  Note: provenance is one type of relationship.
+
+  We need a table of relationships.  This is demonstrative, not definitive.
+
+  How do we achieve metadata efficiency?  Clustering?  Storage locality and clustering?
+
+  Review: Plan 9, which had per-user and per-process namespaces.
+
+  We must be able to uniquely identify a file [need to define uniquely identify].
+
+  A "re-find" with a nice API
+
+  A cache of recent files.
+
+  Names may be ephemeral, since users cannot remember that much.
+
+  Build our model from here.
+
+  We could add a container on top that elevates this relationship above all others - the hierarchical model.
+
+  Concrete proposal for graph FS.
+
+\end{comment}
+
+\input{intro.tex}
+
+\input{graph.tex}
+
+\input{search.tex}
+
+\input{alternatives.tex}
+
+\input{conclusion.tex}
+
+%\input{notes.tex}
+
+\clearpage
+\pagebreak
+
+% I add a table of nocites here to get a list of all the papers in the bibtex
+% comment out to only use the references in the paper itself.
+\begin{comment}
+\nocite{daley1965general}
+\nocite{koetsier2013digg}
+\nocite{ritchie1973unix}
+\nocite{wilkes1964programmer}
+\nocite{reinsel2018data}
+\nocite{macdonald1956datafile}
+\nocite{halasz1982analogy}
+\nocite{shapiro1964extracting}
+\nocite{microsoft:data-add-in}
+\nocite{apple:spotlight-extensions}
+\nocite{chou2015findfs}
+\nocite{vicente1988accommodating}
+\nocite{marsden2003improving}
+\nocite{jones2005don}
+\nocite{karger2006data}
+\nocite{ma2009file}
+\nocite{jensen2010life}
+\nocite{karlson2011version}
+\nocite{odom2012lost}
+\nocite{Thereska2013}
+\nocite{harper2013file}
+\nocite{mendez2012linked}
+\nocite{bothorel2015clustering}
+\nocite{huo2016mbfs}
+\nocite{jayalakshmi2016semantic}
+\nocite{carvalho2016finding}
+\nocite{gao2016implicit}
+\nocite{hua2016real}
+\nocite{di2017gfs}
+\nocite{lindley2018exploring}
+\nocite{khan2018forgotten}
+\nocite{vitale2018hoarding}
+\nocite{laursen2014}
+\nocite{boardman2003too}
+\nocite{nayuki2017}
+\nocite{martin2004formal}
+\nocite{martin2008}
+\nocite{martin2014}
+\nocite{soules2004toward}
+\nocite{gifford1991semantic}
+\nocite{corbato1965introduction}
+\nocite{Faubel2008}
+\nocite{harlan2011joinfs}
+\nocite{Jan2011}
+\nocite{Soules2004}
+\nocite{Suguna2015}
+\nocite{Andrews2012}
+\nocite{Eck2011}
+\nocite{Hua2010}
+\nocite{Joshi}
+\nocite{Mander1992}
+\nocite{Martin2004}
+\nocite{ngo2007integrating}
+\nocite{Omvlee2009}
+\nocite{wang2003managing}
+\nocite{Seltzer2009}
+\nocite{Shah2007}
+\nocite{Up2016}
+\nocite{gopal1999integrating}
+\nocite{Martin2005}
+\nocite{Reiser2016Name}
+\nocite{Benefits2016}
+\nocite{Codocedo2015}
+\nocite{Ghemawat2003}
+\nocite{Jones2016}
+\nocite{Mahalingam2003}
+\nocite{Os2016}
+\nocite{Parker-Wood2014}
+\nocite{Prabhakaran2005}
+\nocite{Schandl2009}
+\nocite{cellier2008formal}
+\nocite{strong2013semantic}
+\nocite{Xu2014}
+\nocite{olson1993design}
+\nocite{Leung2009}
+\nocite{Schandl2009a}
+\nocite{Shah2006}
+\nocite{Wiki2016}
+\nocite{vicente1987assaying}
+\nocite{malone1983people}
+\nocite{terrizzano2015data}
+\nocite{watson2017exploring}
+\nocite{mogul1986representing}
+\nocite{GuoBurrito2012}
+\nocite{macko2015llama}
+\nocite{margo2015scalable}
+\nocite{macko2013performance}
+\nocite{aws:s3:object:tagging}
+\nocite{balabine1999file}
+\nocite{stonebraker1994mariposa}
+\nocite{balabine2002database}
+\nocite{xu2003towards}
+\nocite{kashyap2004file}
+\nocite{ames2006lifs}
+\nocite{koren2007searching}
+\nocite{huang2012just}
+\nocite{xu2009semantic}
+\nocite{murphy2002design}
+\nocite{leung2009magellan}
+\nocite{frieder2012hierarchical}
+\nocite{bush1945we}
+\nocite{whang1991multilevel}
+\nocite{kumar1997browsing}
+\nocite{van2003beamtrees}
+\nocite{dumais2016stuff}
+\nocite{soules2003can}
+\nocite{maccormick2004boxwood}
+\nocite{marchionini2006exploratory}
+\nocite{brandt2009fusing}
+\nocite{leung2009spyglass}
+\nocite{ren2013tablefs}
+\nocite{niazi2017hopsfs}
+\nocite{van2011efficient}
+\nocite{215e74710c2245a59b2ce117f9e74cd7}
+\nocite{appuswamy2014building}
+\nocite{Harlan2011}
+\nocite{Min2015}
+\nocite{Open2016}
+%\nocite{SemFS2016}
+\nocite{Chou2015}
+\nocite{Ngo2015}
+%\nocite{Regatta2016}
+\nocite{Gopal}
+\nocite{Beydoun2009}
+\nocite{Gifford2006}
+\nocite{Hyvonen2004}
+\nocite{Siekmann}
+\nocite{Strong}
+%\nocite{Dantalian2016}
+\nocite{Escriva2015}
+\nocite{Agee2016}
+\nocite{Gifford1991}
+\nocite{Guide2016}
+\nocite{Liu2006}
+\nocite{needham1977cap}
+\nocite{arenas2016faceted}
+\nocite{tunkelang2009faceted}
+\nocite{hearst2006design}
+\nocite{arenas2016faceted}
+\nocite{klungre2018evaluating}
+\nocite{walton2015searching}
+\nocite{walton2017looking}
+\nocite{cleverley2015retrieving}
+\nocite{huurdeman2016active}
+\end{comment}
+
+\bibliographystyle{IEEEtranSN}
+\bibliography{notdead} 
+
+\end{document}

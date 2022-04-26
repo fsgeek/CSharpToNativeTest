@@ -1,0 +1,68 @@
+\section{Introduction}\label{sec:intro}
+Modern file systems continue to visualize their data in the way they have done for more than a half-century: 
+combining directories in a hierarchical file organization. 
+Directories are used to group related files but this organization's purpose is to simplify search. 
+Directory names provide a common property used to locate these related files. 
+An hierarchical name based organization works for human users to perform search and navigation when there is
+a small number of files per directory, use unique names with contextual meaning, and can recall those names.
+
+Much has changed since we adopted this design: most data now does not reside on local file systems.
+Instead data is distributed across a myriad of services, e.g., Dropbox, Google docs, Amazon S3, Microsoft OneDrive, github, 
+as well as attached to communication mechanisms and applications (e.g., email, chat, Slack, overleaf). 
+Today, just like local file systems, each of these storage solutions provides its own organization and naming mechanisms, 
+most with the classic hierarchical structure, either as part of their model, or via a layered namespace provider.
+Local namespaces have now grown to an extent that they are not realistically searchable.  
+When we consider non-local namespaces, we amplify the need to perform multiple searches, usually done
+iteratively, in serial fashion by the human user trying to find a specific file or set of files.
+Storage silos that do not provide an hierarchical namespace either are not easily searched or provide their own
+unique search interface, further exacerbating the problem of \textit{finding} a specific item~\cite{bergman2019factors}. 
+Thus accurately remembering and associating complete paths with the contents of the files becomes humanly
+impossible, making search a repetitive, time consuming, and frustrating affair.
+
+Apart from a frustrating search, organizing large collections of files is equally hard. The burden
+of organizing these vast file collections uniquely in a hierarchical organization across 
+disconnected storage silos lies with the humans that stored the files. \textit{Furthermore, the only
+reason for this organization burden is to enable prospective future search and navigation for specific
+files that are important amidst a sea of files best forgotten.}  Of course, the challenge is knowing
+\textit{now} which files will be important \textit{in the future}.
+Thus, we need to evolve our storage systems to permit search and navigation across all storage silos: 
+local, disconnected, and distributed.
+
+In an hierarchical organization, directories provide organization of files and thus become the basis of file search.
+Without directories, files need explicit attributes that can be searched for file retrieval. Such attributes
+can be stored as metadata where the files reside, created explicitly by users or by applications built
+to add useful information based upon provenance and file content.
+Such a system can interface with a file data visualizer that presents personalized user name spaces and
+responds to user behavior.  The goal is to enable the user to focus on the \textit{context} and 
+\textit{meaning} of files, while the system enables the file data visualizer to present the customized
+user namespace.
+
+An ecosystem of novel data visualizers and tools to augment existing file attribute information, combined
+with a global namespace service supporting disparate storage silos and enabling storage of existing and
+novel file attributes makes it possible to address the human needs for unified search and navigation.
+This is a natural progression to meet user needs in a future where the number of storage silos and 
+the number of files that are stored keeping growing. 
+
+We propose building Nirvana, a system focused on providing file namespace services that support a personal global namespace and enable
+novel new visualizations of file data that relies upon Nirvana's capabilities.
+As part of our early validation of this we build a proof-of-concept navigation tool.
+This tool relied on using existing and potentially new file properties to present a personalized user-based namespace.
+On prelimnary examination, we found them a promising solution to today's multi-silo reality.\footnote{We have omitted a link to our demonstration video for purposes of maintaining the blind nature of this submission; we will include that link in a final paper.} 
+
+% (TM) I think that this is a bit weak, so I've omitted it at this point.
+% We hope to conduct future research to see it implemented.
+    
+In the next section, we highlight prior work that either addresses similar issues or presents building blocks upon which a solution might be developed. Then, we propose an architecture for the construction and maintenance of personal, multi-silo namespaces. Based on this proposed architecture, we then identify and discuss the research challenges that must be addressed to realize such a vision. Finally, we wrap up with some suggested next steps.
+
+
+
+
+
+
+
+
+
+
+
+
+
