@@ -7,11 +7,14 @@
 \documentclass[sigconf,anonymous,review]{acmart}
 \setcopyright{none}  % suppress copyright generation
 \usepackage{lipsum}
+\usepackage{xspace}
 
+%% Change this to change the name of the system
+\newcommand{\system}[0]{\emph{Kwisatz}\xspace}
 
 \author{Tony Mason}
 
-\title{Indaleko}
+\title{\system}
 \subtitle{Enabling Activity Context}
 
 % These are marks for inserting comments. Feel free to edit as needed!
@@ -54,10 +57,10 @@
     systems do not provide an efficient mechanism for using that information to
     facilitate more efficient \emph{finding} of digital objects.
 
-    \emph{Indaleko} is our system for collecting, storing, and
+    \emph{\system} is our system for collecting, storing, and
     disseminating contextual information we call \emph{activity context} to
     facilitate finding groups of related digital objects regardless of where
-    those objects are stored.  We find \emph{Indaleko} is a viable way to
+    those objects are stored.  We find \emph{\system} is a viable way to
     provide \emph{activity context} and enabling its use by other services and
     applications.
 \end{abstract}
@@ -65,32 +68,292 @@
 \maketitle
 
 \section{Introduction}
-\lipsum[1]
+
+\tm{TBD}
 
 \section{Background}
 
-\lipsum[2]
+\tm{TBD}
 
-\section{Architecture}
+\section{Architecture}\label{sec:Architecture}
 
-\lipsum[3]
+\system is logically composed of three major components, each of which is an
+essential portion of providing the end-to-end systems level support for
+capturing, storing, and utilizing \emph{activity data}.  Each of these
+components consists of various smaller components assembled together to provide
+the necessary services.
 
-\section{Evaluation}
+In this section, I lay out the basic architecture of these components.  In
+subsequent sections, I will drill down into this architecture and identify key
+aspects of the system design. In constructing this architecture, I have
+attempted to broadly address what I consider to be the key aspects of these
+components, including defining terminology and identifying potential use cases
+that may be relevant.  Frequently, I will suggest potential implementations that
+would fit within this architecture: there is no expectation that I will
+implement even a majority of these potential implementations.  Rather, the goal
+of using broad considerations is to assist in ensuring the system architecture
+is reasonably flexible. Ultimately, my goal is to demonstrate the architecture
+is itself viable as a system service.
 
-\lipsum[4]
+\begin{figure}
+    \caption{\system Architecture Diagram}\label{fig:architecture}
+    \textbf{TODO}
+\end{figure}
 
-\section{Discussion}
+\begin{description}
+    \item[Ingestion] --- the activity data that are presented by various
+        services within the system needs to support a rich and robust model in which
+        captured data may be converted into a common form that permits
+        utilization. \S \ref{sec:Architecture:Ingestion}
+    \item[Storage] --- raw activity data, along with extrapolated activity
+        meta-data, need to be stored in a format that is scalable and efficient as
+        well as supporting a robust utilization model. \S \ref{sec:Architecture:Storage}
+    \item[Utilization] --- to realize the benefits of activity data, the system
+        must have a useful model for using the activity data. \S \ref{sec:Architecture:Utilization}
 
-\lipsum[5]
+\end{description}
+
+\subsection{Ingestion}\label{sec:Architecture:Ingestion}
+
+Activity data can arise from a variety of sources.  For example, because my
+primary focus is on utilizing activity data to better inform logical data
+organization, I view data storage as being a key source of such information.
+Indeed, much of the prior work in this area has focused on utilizing information
+about data, including:
+
+\begin{description}
+    \item[File Names] --- the \emph{file name} is a time honored way to embed
+    information about the file itself.  For example, in
+    \emph{Burrito}~\cite{guo2012burrito} the observation is that we capture
+    parameter information within the file name.  This is because it is the
+    \emph{only} way to safely capture this information in a way that is broadly
+    viable across file systems.
+
+    \item[Extended Attributes] --- the \emph{extended attribute} is a mechanism
+    that provided a way for applications to create additional meta-data using an
+    attribute/key model~\cite{mogul1986representing}.  File systems that support extended attributes maintain
+    them as meta-data of the file itself.  Unfortunately, extended attributes
+    suffer from two limitations: (1) file systems that do support them provide
+    no mechanism for associating files based upon the extended attributes; (2)
+    there is no uniform support or implementation of extended attributes.
+
+    \item[File Meta-data] --- most file systems support at least a minimal
+    subset of meta-data elements, specifically timestamps and size. There is a
+    lack of uniformity of other attributes: POSIX file systems typically support
+    ``mode'' bits that represent access permissions as well as potentially other
+    behaviors, as well as an access time, modification time, and change time.
+    Creation timestamps are often maintained by file systems as well.  A number
+    of UNIX-like file systems maintain a creation timestamp.  Windows includes
+    the \emph{creation} time of the file and that has been adopted by a number
+    of UNIX-derived file systems, including ext4, jfs, and btrfs.  Recent
+    changes in Linux include a new system call, \textbf{statx} that permits
+    applications to retrieve this information programmatically.
+
+    \item[Directories] --- the traditional hierarchical file system provides a
+    mechanism for composing groups of files into a \emph{directory}, which is a
+    set of files.  Some file systems restrict a file to being a member of a
+    single directory, while others allow a file to be a member of multiple
+    directories. The Mutics file system included the ability to create links to
+    files.  Modern file systems may implement links as either direct references
+    from the directory to the file (``hard links'') or indirect references from
+    an entry in the directory to the file (``soft links.'')  They have somewhat
+    different semantics.
+
+    \item[Views] --- in semantic file systems~\cite{gifford1991semantic} there
+    is less emphasis on reference counted relationships (e.g., hard links) or
+    even persistence and more emphasis on creating logical groups (``virtual
+    directories'') of files based upon some criteria.
+
+\end{description}
+
+\system does not seek to \emph{replace} any of these existing file storage
+mechanisms.  Instead, it focuses on providing rich support for meta-data
+\emph{about} digital objects, which includes files but should not be limited
+strictly to files.
+
+Meta-data is not strictly limited to the data that is available from the file
+system itself.  Further, meta-data may be about digital objects that
+\emph{existed} at some point in time but no longer exist: this is a reality of
+separating the storage from the meta-data service. Instead of focusing on
+maintaining a strongly referenced model, I instead adopt the model of the
+Internet, which means that meta-data may reference digital objects that no
+longer exist.  Applications that use \system should be aware that the underlying
+data could cease to exist and act accordingly.
+
+Other potential sources of meta-data are quite broad and include:
+
+\begin{description}
+    \item[Semantic transducers] --- the term \emph{transducer} was first
+    introduced as part of semantic file systems~\cite{gifford1991semantic}.  The
+    basic idea was that active components would \emph{extract} semantic
+    information from the contents of a file and then use it for indexing.
+    Indeed, modern indexers work on this basic principle, without making any
+    changes to the file system.
+
+    \item[Content classifiers] --- one common use for machine learning is to
+    identify the content of specific files, such as images or videos, to
+    determine if the given file contains specific content: a cat, for example.
+    Such classifiers can be more targeted, such as finding pictures of a
+    specific person, or containing a \emph{particular} cat.  This information
+    can then be used to cluster files together, such as the ``video reels'' that
+    some service providers now give us on our personal devices.
+
+    \item[Hashing] --- a \emph{hash} can be computed on a given file to
+    determine if the contents of said file has changed.  For example, this can
+    be used by ``cloud storage'' providers to determine if a given file has
+    already been uploaded.  Hashing can also be used to determine when files
+    have changed.
+
+    \item[Metrics] --- one common approach to information is to establish the
+    logical proximity of the files, whether based upon the \emph{content} of the
+    file, or the \emph{meta-data} of the file.  For example, plagiarism tools
+    like MOSS look for structural similarity (versus simpler textual similarity)
+    by comparing the abstract syntax trees of code.  This generates a measure of
+    similarity.  The \emph{value} of the metric is not material to this project,
+    but the \emph{use} of metrics is because it allows us to create a logical
+    distance between the objects.  This can, in turn, be used to \emph{cluster}
+    objects that are ``close to'' each other.
+
+    \item[Environment] --- our devices maintain multiple sources of
+    environmental information.  For example, location information (\emph{GIS})
+    identifies where a device is located at a given time.  Increasingly, our
+    devices track other aspects of the environment, including the ambient
+    temperature, our vital measurements such as heart rate and blood pressure,
+    and even more detailed health information including data from pace makers,
+    insulin pumps, and menstrual cycle trackers.  The data from these is likely
+    useful in creating associations between extrinsic events and human storage
+    usage.
+
+    \item[Social] --- our devices routinely track our social activity: with whom
+    we are interacting via text, chat, e-mail, and video call, for example.
+    Frequently, as part of this we share information --- information that is
+    subsequently stored, modified, and re-shared onwards.  This type of activity
+    data can be used to help us identify where information came from, what other
+    digital objects were accessed as a result, and establishing data
+    relationships based upon usage patterns.  Web sites visited, Reddit posts
+    liked, Discord messages exchanged, music listened to, purchases made, and
+    even games played can all be used to construct associative relationships
+    that make sense to human users.
+
+\end{description}
+
+In general, activity data can be \emph{intrinsic} to the digital object, such as
+information based upon its semantic content, it's length, and contents as well
+as \emph{extrinsic} to the digital object, such as what applications were used
+to access it, where things were done, with whom, etc. The \system architecture
+is influenced by my desire to ensure support for a broad range of activity data
+sources.
+
+In \S \ref{sec:ingestion} I delve into greater detail about handling activity
+data.
+
+\subsection{Storage}\label{sec:Architecture:Storage}
+
+The choice of storage models, while important, is unlikely to give rise to
+significant research questions at this juncture: as we begin to understand the
+nature of the activity data we anticipate collecting, it is distinctly possible
+that new challenges will emerge.  However, we have an extensive body of
+knowledge on how to handle high data rates (``drinking from the fire hose'') as
+well as scaling approaches for managing potentially large bodies of data.
+
+Thus, while the architecture is fairly neutral with respect to the details here,
+I anticipate the initial implementation of this will utilize ``reasonable''
+limitations on activity data sources (e.g., curation to avoid excessive data
+loads).
+
+An important aspect of the architecture is to propose a model for the data
+format that I propose using.  This data format must be able to:
+
+\begin{itemize}
+    \item Identify the \emph{source} of the activity data.  This permits
+    interpretation of the captured data by any transducer familiar with the data
+    generated by the given source.
+
+    \item Specify the \emph{version} of the activity data.  My own review of
+    numerous data sources suggests that it is common for many of them to change
+    the format of the data over time; typically this \emph{extends} the data
+    format (common for systems-related activity data sources, for example) but
+    sometimes it involves significant restructuring of the data that is
+    available (common for web-based activity data sources.)  By including a
+    version, a transducer can determine if it understand the format of this data
+    and permits evolution.
+
+    \item Provide an ordering of the activity data.  Typically this would be
+    a ``timestamp,'' though there is no reason this needs to be a timestamp
+    relative to any other data source.  Further, when there are multiple
+    providers of information, the interpretation of this Lamport clock is
+    ultimately determined by the transducer. This \emph{allows} both system
+    relative and universal clocks but does not dictate their presence nor
+    disallow clocks that are shared between activity data providers.
+
+    \item A list of \emph{attributes}.  These are in the format of ``extended
+    attributes,'' with both an identifier as well as a value.  This permits
+    attributes that can be the same across sources, as well as allow the same
+    ``attribute'' to have different meanings for different sources.  This is
+    neither required nor prohibited within the \system architecture.  This
+    ability provides very broad support for activity data, as well as \emph{post
+    hoc} supplementation by transducers.
+
+    \item The \emph{raw data} originally captured by the activity data provider.
+    This allows the capture of information without requiring interpretation at
+    the time it is captured. In cases where there is no additional raw data,
+    this can remain empty.  Note that this is \emph{not} anticipated as being an
+    area in which to store the digital object's data.
+
+\end{itemize}
+
+As a concrete example, I have implemented an activity data provider that scans
+and captures the change data from the NTFS USN Journal on a Windows 11 computer.
+The raw data is captured, and then certain elements of the data can be
+augmented.  For instance, the raw data provides a \emph{file id} that is used to
+obtain the name of the file.  Similarly, the raw data also provides a
+\emph{directory id} that is used to obtain the path of the containing directory.
+This is relative to the NTFS volume (which does \emph{not} include a drive
+letter.)  Thus, the transducer for this can utilize the \emph{volume id} to map
+to the current drive letter, making this name available for ordinary Windows
+applications (which tend to use drive letters, even though they aren't visible
+to the NTFS file system controlling a given volume.)
+
+Subsequent to this, I envision a separate transducer that can be used to compute
+the hash value of the file's contents.  That hash value could then be
+incorporated into the attributes list of the corresponding change journal record
+(assuming the file has not changed by the time the hash value has been computed,
+of course.)
+
+This data format can then be easily captured as a JSON expression, which can
+then be used to store the relevant data in a database (e.g., DynamoDB or
+MongoDB, for example.)
+
+\subsection{Utilization}\label{sec:Architecture:Utilization}
+
+\section{Ingestion}
+\label{sec:ingestion}
+
+\subsection{Use Cases}
+
+\subsection{Evaluation}
+
+\section{Storage}
+\label{sec:storage}
+
+\subsection{Use Cases}
+
+\subsection{Evaluation}
+
+\section{Utilization}
+\label{sec:utilization}
+
+\subsection{Use Cases}
+
+\subsection{Evaluation}
 
 \section{Conclusion}
-
-\lipsum[6]
 
 \nocite{*}
 \clearpage
 
-\bibliography{bib/Indaleko.bib}
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{bib/indaleko.bib}
 
 \end{document}
 
