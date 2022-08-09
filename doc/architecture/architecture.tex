@@ -322,19 +322,214 @@ of course.)
 
 This data format can then be easily captured as a JSON expression, which can
 then be used to store the relevant data in a database (e.g., DynamoDB or
-MongoDB, for example.)
+MongoDB, for example.)  This decouples the specific details of how the data is
+stored from the format required of the data gathering elements.
 
-\subsection{Utilization}\label{sec:Architecture:Utilization}
+I discuss this in greater detail in \S \ref{sec:storage}.
+
+\subsection{Utilization}
+\label{sec:Architecture:Utilization}
+
+It is essential to have a model for utilizing activity data in order to realize
+its potential.  The \system architecture is generalized with an eye towards
+permitting a range of potential use cases.
+
+Underlying the structure of the data are elements that I anticipate will be used
+to establish relationships.  For example, the \emph{metric} concept described
+earlier (\S \ref{sec:Architecture:Ingestion}) naturally fits with data
+clustering mechanisms.  This is consistent with a \emph{graph} representation in
+which the edges correspond to some relationship and the weight of the edge
+corresponds to a metric. Similarly, it can be useful to add labels to the data,
+in order to understand specific characteristics of that information.  The
+emphasis on using graph modeled storage (\S \ref{sec:Architecture:Storage}) is
+also consistent with this.  Thus, the logical way to utilize this information is
+to focus on exploiting the inherent graph structure of the data.
+
+Given this model of exploring graph data, it makes sense to then consider using
+an existing graph query language --- reserving the right to limit its use to
+some subset as part of the exploratory work I am doing.  One motivation for this
+would be that such languages \emph{already} work with commonly used graph
+databases and thus leverage prior work in using graph structured information
+effectively.
+
+I discuss this in greater detail in \S \ref{sec:utilization}.
 
 \section{Ingestion}
 \label{sec:ingestion}
 
 \subsection{Use Cases}
 
+Data ingestion sources consist of both primary sources as well as transducers.
+A \emph{primary source} is a component that provides some sort of useful
+information related to events of interest.  Potential examples of activity event
+data would include:
+
+\begin{itemize}
+    \item NTFS USN Journal --- the Windows NTFS file system provides a curated
+    list of activities on the file system.  This information is sufficient to
+    build workable data replication components (e.g., the \emph{File Replication
+    Service} that was added in Windows 2000 to replicate policy files used by
+    group policy across domain controllers,) indexing services, and other
+    components interested in identifying file state changes.  The volume of data
+    from this service is related to the level of activity on the volume.  USN
+    Journal data gathering is \emph{enabled} on the Windows system volume, but
+    may be enabled on any NTFS volume. I chose this because it is a format with
+    which I am familiar and provides a volume of information that can be
+    reasonably handled.
+
+    \item Event Tracing for Windows (ETW)
+    \item Enhanced Berkeley Packet Filter (eBPF)
+    \item Dropbox API
+    \item Google API
+    \item Microsoft Graph API
+    \item Location capture
+    \item Meetings
+    \item Environmental Factors
+\end{itemize}
+
+One of the challenges associated with these APIs are that they each differ in
+how they are accessed and what information they provide.
+
+An alternative option is to \emph{poll} for this data as a means of detecting
+changes.  While this seems a reasonable fallback option, it has significantly
+higher resource utilization requirements since it involves substantially higher
+levels of network traffic.  Thus, we do not consider this to be a reasonable
+primary method.
+
+To facilitate our initial work, we have focused on capturing data from several
+different storage sources: device local storage, Dropbox, and Google Drive.  The
+first is tied to the specific test platform and the others are web-based and
+thus more or less platform agnostic.  Dropbox combines cloud based storage with
+local caching while Google Drive is a pure cloud solution that does not
+traditionally mirror storage to the local drive.
+
+\tm{One possibility would then be to build a Google Drive service that works
+more like Dropbox perhaps. Intriguing idea, but likely a distraction.}
+
+\begin{figure}
+    \centering
+    \caption{Google Drive API Web Hook}\label{fig:google-web-hook}
+    \begin{tabular}{c}
+        \includegraphics[width=0.45\textwidth]{figures/google-cloud-monitor.png}
+    \end{tabular}
+\end{figure}
+
+For this work we chose to support Windows 11.  We monitored the system drive
+using the Update Sequence Number (USN) Journal support provided by the NTFS File
+system~\cite{huang2012research}.  This system provides a curated view of file
+system activity on drives where the USN journal has been enabled. By default the
+USN journal is enabled on the system drive and may be optionally enabled on
+other drives.  This is a publicly documented API, has good performance, and
+provides a curated level of information that provides benefit without being
+``too broad.''
+
+Similarly, we used a standard Dropbox installation (Version 154.4.5353).
+Because Dropbox has an active agent on the local computer, we were able to
+monitor changes made to the Dropbox contents via a public API that Dropbox
+documents. \tm{Add reference to the API.}
+
+Google Drive differs from Dropbox in that it does not rely upon a local agent on
+the computer system.  Thus, we needed to construct a separate agent that
+utilizes credentials and a callback registration mechanism so that Google Drive
+will send notifications of events to the external service.  We show a simple
+diagram of this arrangement in Figure \ref{fig:google-web-hook}. The Google
+Drive Web API is a publicly documented API provided by Google.  The API between
+the Web Hook and the local system on which we are storing activity information
+is technically private. Our implementation of this was simple and merely used an
+authenticated channel from the client to the Web Hook service on which to
+receive notifications relayed from Google Drive via the Web Hook service.
+
+\subsection{Considerations}
+
+In my analysis of these various activity data sources, I have observed that:
+
+\begin{itemize}
+    \item It is broadly useful to have \emph{curation} over the data source.
+    One of the challenges of reading from a ``fire hose'' is that the
+    ``signal-to-noise'' ratio can be low.  Instead, the emphasis should be on
+    capturing discrete events that are useful.
+
+    \item To use labels to identify the specifics of particular relationships
+    and properties to capture information that is useful to
+\end{itemize}
+
 \subsection{Evaluation}
 
 \section{Storage}
 \label{sec:storage}
+
+A ``labeled property graph'' includes:
+
+\begin{description}
+    \item[node] --- in traditional mathematical graph descriptions this is the
+    \emph{vertex}.  For my work this corresponds to a digital object, such as a
+    file in a file system, a value in a key/value store, etc. Nodes within my/
+    system have \emph{structure} because it must codify ``where'' the actual
+    digital object is located in addition to the other information needed.  For
+    practical purposes I think of the ``location'' as being a uniform resource
+    identifier (\href{https://datatracker.ietf.org/doc/html/rfc8820}{URI}.)  The
+    benefit of this paradigm is that it relies upon an existing standard for
+    identifying objects, which is sufficient for my work.
+
+    \item[relationship] --- in traditional mathematical graph descriptions this
+    is the \emph{edge} that connects a pair of vertices.
+
+    \item[identifier] --- this identifies the graph element (node or relationship).
+
+    \item[label] --- this is a descriptive property related to the node or
+    relationship.  For example, a label might identify that a node is a
+    \emph{file} versus a \emph{value} in a key/value store.  Similarly, a label
+    associated with a relationship would establish \emph{what} type of
+    relationship this represents, such as a \emph{derived from} or a
+    \emph{contained by} relationship.
+
+    \item[property] --- this is essentially a key/value pair, where the key
+    represents the property and the value represents the data associated with
+    that property.  My goal is to permit some structure to a property, so that
+    it may have a version associated with it, permitting more flexible upgrades
+    to the format of the data.
+
+\end{description}
+
+I choose this model because it best fits the data I propose collecting, where
+activity information is a type of \emph{node} and the associations between nodes
+for storage elements and nodes for activity can form a relationship.
+
+Since my goal is to find associations via contextual information, my work
+describes both activity \emph{events} and activity \emph{contexts}.  An activity
+\emph{event} is a node that an activity provider inserts to represent an
+activity.  An activity \emph{context} is created on demand and forms a
+relationship with some set of activity events.
+
+Thus, the expectation is that we can retrieve the most recent instance of an
+activity event of interest (where I leave defining \emph{of interest} to be
+determined.)  For a simple demonstration, it likely makes sense to simply have a
+list of the ``most recently added'' instance for each activity provider and
+simply form the activity context by associating it.  As the number of activity
+providers increases, further work will likely be needed to enable scaling.
+
+Thus, an \emph{activity context} can be associated with other objects.  This
+will permit us to subsequently examine the context of operations that were
+ongoing at the time of interesting events.
+
+This leads to a number of interesting questions to explore:
+
+\begin{itemize}
+    \item Does it make sense to maintain temporal relationships in this fashion;
+    in other words, does the newest activity context point back to the previous
+    activity context, or do the activity events point back to the older activity
+    event?
+
+    \item Should an activity context be something added implicitly (e.g., each
+    time one creates a \emph{data} node, should the system automatically
+    associate an activity context with it,) or explicitly (e.g., only when
+    performed by an external agent.)
+
+    \item How do we garbage collect this information?  That's not likely an
+    important question to answer for prototypes, but it will become an important
+    question as systems such as this emerge.
+
+\end{itemize}
 
 \subsection{Use Cases}
 
@@ -348,6 +543,12 @@ MongoDB, for example.)
 \subsection{Evaluation}
 
 \section{Conclusion}
+
+\tm{The idea that using behavioral advertising information could be beneficial
+to file search would potentially be of interest to aggregation companies
+because it would encourage use of these tools willingly: a ``free'' service
+subsidized by advertising.}
+
 
 \nocite{*}
 \clearpage
