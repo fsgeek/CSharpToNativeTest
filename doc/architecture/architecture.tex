@@ -357,54 +357,80 @@ I discuss this in greater detail in \S \ref{sec:utilization}.
 \section{Ingestion}
 \label{sec:ingestion}
 
-\subsection{Use Cases}
+There is no single mechanism for retrieving activity data because each source
+for such data provides it in multiple different ways.  Thus, for the purposes of
+our analysis we found it useful to categorize data sources based upon how we
+retrieved the information.  Thus, one of the jobs of an ingestion agent is to
+retrieve the data and then put it into our common format, which will permit us
+to use that information for subsequent processing and analysis.
 
-Data ingestion sources consist of both primary sources as well as transducers.
-A \emph{primary source} is a component that provides some sort of useful
-information related to events of interest.  Potential examples of activity event
-data would include:
+\subsection{Models}\label{sec:ingestion:models}
 
-\begin{itemize}
-    \item NTFS USN Journal --- the Windows NTFS file system provides a curated
-    list of activities on the file system.  This information is sufficient to
-    build workable data replication components (e.g., the \emph{File Replication
-    Service} that was added in Windows 2000 to replicate policy files used by
-    group policy across domain controllers,) indexing services, and other
-    components interested in identifying file state changes.  The volume of data
-    from this service is related to the level of activity on the volume.  USN
-    Journal data gathering is \emph{enabled} on the Windows system volume, but
-    may be enabled on any NTFS volume. I chose this because it is a format with
-    which I am familiar and provides a volume of information that can be
-    reasonably handled.
+In our work we have found multiple ways that activity data can be retrieved:
 
-    \item Event Tracing for Windows (ETW)
-    \item Enhanced Berkeley Packet Filter (eBPF)
-    \item Dropbox API
-    \item Google API
-    \item Microsoft Graph API
-    \item Location capture
-    \item Meetings
-    \item Environmental Factors
-\end{itemize}
+\begin{description}
+    \item[Systems API] --- one common approach for retrieving activity data is
+    via an operating system defined application programming interface (API).
+    For example, the eBPF mechanism commonly found in several operating systems
+    represents a general mechanism for retrieving activity data from a variety
+    of sources.  To that extent it provides a general extensible framework for
+    activity data, with the format of the data being returned dependent upon its
+    source.  Similarly Microsoft Windows has an operating system mechanism known
+    as \emph{Event Tracing for Windows} that is used extensively by Microsoft to
+    provide detailed activity data for essentially all portions of their
+    operating system.  A more focused interface on Windows is the USN Journal,
+    which is supported by the NTFS file system.  Each of these provides a
+    specific interface for retrieving data that is directly visible to the local
+    system.
 
-One of the challenges associated with these APIs are that they each differ in
-how they are accessed and what information they provide.
+    \item[Web APIs] --- another common approach is to provide web interfaces to
+    service providers that can be used to retrieve information, including
+    activity data.  Such web APIs may be directly accessible on the local system
+    or may involve contacting a remote service provider.  In each of these cases
+    an agent can capture this data and store the relevant activity data in our
+    common database. The specific details of the web API vary by provider.
+    For example, the Dropbox service on a local system supports querying for changes via a
+    web API against the local system.  The Github API includes the ability to
+    query for events on a polling basis.
 
-An alternative option is to \emph{poll} for this data as a means of detecting
-changes.  While this seems a reasonable fallback option, it has significantly
-higher resource utilization requirements since it involves substantially higher
-levels of network traffic.  Thus, we do not consider this to be a reasonable
-primary method.
+    \item[Web hooks] --- some web services do not provide a direct event query
+    interface and instead require creation of an intermediate agent via a
+    registered web hook.  In such a case, the web service provider is given the
+    address of a distinct publicly available web service which is invoked
+    periodically with event information. Because the web hook must be publicly
+    available an agent collecting data from such a service requires both a local
+    agent on the machine where the activity data is being recorded as well as a
+    public agent on an internet facing public machine.
 
-To facilitate our initial work, we have focused on capturing data from several
-different storage sources: device local storage, Dropbox, and Google Drive.  The
-first is tied to the specific test platform and the others are web-based and
-thus more or less platform agnostic.  Dropbox combines cloud based storage with
-local caching while Google Drive is a pure cloud solution that does not
-traditionally mirror storage to the local drive.
+    \item[Manual Scanning] --- some services do not provide any simple mechanism
+    for detecting activity data directly.  In such a case it is possible to
+    construct an activity agent that manually scans for changes.  One example if
+    this would be the \emph{rclone} facility which uses brute force scanning of
+    a storage location to determine ``what has changed'' and then uses that
+    information to synchronize copies of that data on a secondary copy.  While
+    simple, this approach is well-known and can be used when building a activity
+    data gathering agent.
+\end{description}
 
-\tm{One possibility would then be to build a Google Drive service that works
-more like Dropbox perhaps. Intriguing idea, but likely a distraction.}
+These various techniques are all \emph{possible} but have potentially radically
+different performance characteristics that may limit their utility.  Thus, we
+wanted to construct at least one example of each in order to better understand
+the viability of using activity data collection agents for each of these classes
+of service.
+
+In some cases we found it was possible to create indirect monitoring mechanisms.
+For example, one service we commonly use --- \emph{Overleaf} --- does not have a
+web monitoring API.  However, it \emph{does} integrate with Github repositories
+and thus we can simulate tracking Overleaf change data by using the Github APIs.
+
+Another approach, which we did not explore for this work, would be to use API
+aggregation services such as \href{https://zappier.com}{Zappier}.  Such
+aggregation sites combine web APIs and may be a fruitful way to extract
+additional activity data from a broad range of sources.
+
+We chose a single example of each of these types of activity data retrieval.
+This allows us to explore the space broadly and gain further insight into the
+viability of using such sources.
 
 \begin{figure}
     \centering
@@ -414,34 +440,35 @@ more like Dropbox perhaps. Intriguing idea, but likely a distraction.}
     \end{tabular}
 \end{figure}
 
-For this work we chose to support Windows 11.  We monitored the system drive
-using the Update Sequence Number (USN) Journal support provided by the NTFS File
-system~\cite{huang2012research}.  This system provides a curated view of file
-system activity on drives where the USN journal has been enabled. By default the
-USN journal is enabled on the system drive and may be optionally enabled on
-other drives.  This is a publicly documented API, has good performance, and
-provides a curated level of information that provides benefit without being
-``too broad.''
+\begin{itemize}
+    \item For our systems API example we chose to use the Update Sequence Number
+    (USN) Journal support provided by the NTFS File system in
+    Windows~\cite{huang2012research}.  This system provides a curated view of
+    file system activity on drives where the USN journal has been enabled. By
+    default the USN journal is enabled on the system drive and may be optionally
+    enabled on other drives.  This is a publicly documented API, has good
+    performance, and provides a curated level of information that provides
+    benefit without being ``too broad.''
+    \item For our Web API example we use the Dropbox cloud storage
+    system.  This relies upon a local service on a specific computer.  This
+    service can be used to monitor activity on the Dropbox system.  We used a
+    standard Dropbox installation on Windows, Version 154.4.5353. \tm{Add
+    citation for Dropbox?}
+    \item For our Web Hook example we use the Google Drive API.  To do this we
+    constructed a public facing web service that we could
+    register with Google to receive changes (the ``web hook'').  We also
+    constructed a local service that could run on a desktop computer to obtain
+    the necessary credentials and provide them to Google as well as gather up
+    data from our public facing web service.  We show a simple diagram of this
+    arrangement in Figure \ref{fig:google-web-hook}. Our implementation was
+    simple and relied upon pre-installed certificates between client and webhook
+    to provide cross-system authentication.
+    \item For our manual scanning example, we chose to use \tm{TBD}.
 
-Similarly, we used a standard Dropbox installation (Version 154.4.5353).
-Because Dropbox has an active agent on the local computer, we were able to
-monitor changes made to the Dropbox contents via a public API that Dropbox
-documents. \tm{Add reference to the API.}
+\end{itemize}
 
-Google Drive differs from Dropbox in that it does not rely upon a local agent on
-the computer system.  Thus, we needed to construct a separate agent that
-utilizes credentials and a callback registration mechanism so that Google Drive
-will send notifications of events to the external service.  We show a simple
-diagram of this arrangement in Figure \ref{fig:google-web-hook}. The Google
-Drive Web API is a publicly documented API provided by Google.  The API between
-the Web Hook and the local system on which we are storing activity information
-is technically private. Our implementation of this was simple and merely used an
-authenticated channel from the client to the Web Hook service on which to
-receive notifications relayed from Google Drive via the Web Hook service.
-
-\subsection{Considerations}
-
-In my analysis of these various activity data sources, I have observed that:
+While building the various activity data collection agents we made a number of
+observations around potential challenges to constructing such agents:
 
 \begin{itemize}
     \item It is broadly useful to have \emph{curation} over the data source.
@@ -450,10 +477,32 @@ In my analysis of these various activity data sources, I have observed that:
     capturing discrete events that are useful.
 
     \item To use labels to identify the specifics of particular relationships
-    and properties to capture information that is useful to
+    and properties to capture information that can be used later requires a
+    level of understanding of what the data source provides and how that
+    compares with other data sources.  For example, timestamps might be
+    collected using a different interpretation of time zero so to use this
+    information requires some means of comparing such cross-domain values.
+    Similarly, in a system where multiple objects are grouped together via the
+    naming system (e.g., files within a directory) it is useful to capture that
+    relationship when the activity agent is recording information.
+
+    \item \tm{TBD}
 \end{itemize}
 
 \subsection{Evaluation}
+
+Our evaluation of these activity data collection agents involves considering
+several key factors:
+
+\begin{itemize}
+    \item The time and complexity of the code needed to implement the agent.
+    \item The amount of data the agent generates per unit time.
+    \item The performance impact of the agents on the system.
+    \item \tm{TBD}
+\end{itemize}
+
+\tm{So, the point here is to provide a straight-forward framework for evaluating
+the overhead associated with these activities as part of the evaluation.}
 
 \section{Storage}
 \label{sec:storage}
@@ -491,15 +540,30 @@ A ``labeled property graph'' includes:
 
 \end{description}
 
-I choose this model because it best fits the data I propose collecting, where
-activity information is a type of \emph{node} and the associations between nodes
-for storage elements and nodes for activity can form a relationship.
+I choose this model because it fits the data we collect and permits exploration
+of augmenting the model with distinct agents capable of adding specific property
+information as well as relationships.
 
-Since my goal is to find associations via contextual information, my work
-describes both activity \emph{events} and activity \emph{contexts}.  An activity
-\emph{event} is a node that an activity provider inserts to represent an
-activity.  An activity \emph{context} is created on demand and forms a
-relationship with some set of activity events.
+Thus, \emph{nodes} in this model represent data objects and activity events.
+This can be used to create different types of relationships.  For example,
+\emph{causal} relationships would show a flow from one data object to a second
+data object based upon an activity event that ``explains'' that transformation.
+This would be a way to capture \emph{provenance} information.  However, the
+model is not limited to this type of relationship.  For example, data objects
+created when the same web page was being accessed could be identified by using
+an activity event node representing the web page access.  This sort of
+contextual relationship is useful for finding related data objects that are not
+causally linked.  This might occur, for example, when writing code.  A developer
+could be shown other files they created when looking at the same page, allowing
+them to find that prior work.
+
+Because our goal is to find assocations via explicit and inferred contextual
+information, we describe activity \emph{events} and \emph{contexts}.  An
+activity \emph{event} is a node that an activity provider inserts to represent
+some specific information about \emph{what} happened.  An activity
+\emph{context} is created on demand and associates a set of activity events with
+another object (e.g., a data object).  For a data object, this creates a
+relationship between the object and potentially related activity events.
 
 Thus, the expectation is that we can retrieve the most recent instance of an
 activity event of interest (where I leave defining \emph{of interest} to be
@@ -532,6 +596,27 @@ This leads to a number of interesting questions to explore:
 \end{itemize}
 
 \subsection{Use Cases}
+
+While we expect numerous potential uses of activity context to be found, we have
+identified three interesting cases that we have used to drive our own
+exploration of activity context.
+
+\begin{description}
+    \item[Search] --- search services are ubiquitous in storage
+    solutions.  Prior work has clearly identified that activity context
+    information can be used to improve search
+    outcomes~\cite{vianna2019searching}.  Further, the ability to search across
+    distinct storage domains provides benefits to users over the iterative
+    search mechanisms they typically use.
+    \item[Data Browser] --- our group did preliminary experimentation with an
+    alternative file browser that worked using associations, rather than
+    limiting themselves to hierarchical structure.  This is also reminiscent of
+    work done in the Human-Computer Interface (HCI) community regarding
+    collaborative non-hierarchical data organization
+    tools~\cite{collins2007tabletop}.  Our richer contextual environment is one
+    that supports further exploration of alternative data visualization techniques.
+    \item[TBD] --- \tm{Need to find some other good use case here.}
+\end{description}
 
 \subsection{Evaluation}
 
