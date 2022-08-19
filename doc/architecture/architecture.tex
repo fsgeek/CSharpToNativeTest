@@ -620,8 +620,24 @@ exploration of activity context.
 
 \subsection{Evaluation}
 
+We evaluate the resource consumption requirements of our storage of this data.
+To do so we consider:
+
+\begin{itemize}
+    \item The rate at which activity data is added to the database, including
+    any additional overhead associated with our databases.
+    \item The processor utilization for storing this data.
+    \item \tm{TBD}
+\end{itemize}
+
+
 \section{Utilization}
 \label{sec:utilization}
+
+While prior work~\cite{vianna2019searching} has established benefits of using
+activity context for improving search, we have restricted our initial
+implementation to capturing a subset of the data suggested by previous work.
+Thus, we need to demonstrate that even this subset provides general utility.
 
 \subsection{Use Cases}
 
