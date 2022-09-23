@@ -7,7 +7,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Serilog;
 using System.Diagnostics;
-using USNJournal;
 
 
 //
@@ -585,58 +584,6 @@ namespace USNJournal
         //      FSCTL_READ_FILE_USN_DATA
         //      FSCTL_ENUM_USN_DATA
         //
-        public struct FILE_ID_128
-        {
-            [StructLayout(LayoutKind.Explicit, Pack = 0)]
-            private unsafe struct _FILE_ID_128
-            {
-                [FieldOffset(0)] public fixed byte Data[16];
-                [FieldOffset(0)] public UInt64 LowPart;  // little endian
-                [FieldOffset(8)] public UInt64 HighPart;
-            }
-
-            private _FILE_ID_128 _fileId = new _FILE_ID_128();
-
-            public UInt64 LowPart { get { return _fileId.LowPart; } }
-            public UInt64 HighPart { get { return _fileId.HighPart; } }
-            [JsonIgnore]
-            public byte[] Data
-            {
-                get
-                {
-                    byte[] d = new byte[16];
-                    for (int i = 0; i < 16; i++)
-                    {
-                        unsafe
-                        {
-                            d[i] = _fileId.Data[i];
-                        }
-                    }
-                    return d;
-                }
-            }
-
-            public override string? ToString()
-            {
-                string? str = null;
-
-                str = $"{HighPart:X}:{LowPart:X}";
-                return str;
-            }
-
-            public static implicit operator FILE_ID_128(UInt64 SmallFid)
-            {
-                FILE_ID_128 fid = new FILE_ID_128();
-
-                fid._fileId = new _FILE_ID_128();
-                fid._fileId.LowPart = SmallFid;
-                fid._fileId.HighPart = 0;
-
-                return fid;
-            }
-
-        }
-
         [StructLayout(LayoutKind.Explicit, Pack = 0)]
         private struct _USN_RECORD_EXTENT
         {
@@ -683,10 +630,6 @@ namespace USNJournal
 
             private string? _FileName;
 
-            // Technically, I am not using GUIDs here, they
-            // just happen to be the right size - 128 bits
-            // I might want to see if there is a 128 bit
-            // file identifier somewhere in C#.
             [StructLayout(LayoutKind.Explicit, Pack = 0)]
             private struct USN_RECORD_V3
             {
@@ -924,8 +867,8 @@ namespace USNJournal
 
             private void UnpackV3(IntPtr Buffer)
             {
-                FILE_ID_128 fid= Marshal.PtrToStructure<FILE_ID_128>(Buffer);
-                FILE_ID_128 pfid = Marshal.PtrToStructure<FILE_ID_128>(Buffer + 16);
+                FILE_ID_128 fid = new FILE_ID_128(Marshal.PtrToStructure<_FILE_ID_128>(Buffer));
+                FILE_ID_128 pfid = new FILE_ID_128(Marshal.PtrToStructure<FILE_ID_128>(Buffer + 16));
                 Log.Debug($"fid is {fid}");
                 Log.Debug($"pfid is {pfid}");
                 recordV3 = Marshal.PtrToStructure<USN_RECORD_V3>(Buffer);

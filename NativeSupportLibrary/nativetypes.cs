@@ -5,6 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.VisualBasic;
+using static NativeSupportLibrary.FILE_ID_BOTH_DIR_INFORMATION;
+using static NativeSupportLibrary.FILE_ID_EXTD_BOTH_DIR_INFORMATION;
 
 namespace NativeSupportLibrary
 {
@@ -104,7 +108,14 @@ namespace NativeSupportLibrary
         FileKnownFolderInformation = 76,                     // 76
     }
 
-#endregion
+    public enum DIRECTORY_NOTIFY_INFORMATION_CLASS
+    {
+        DirectoryNotifyInformation = 1,
+        DirectoryNotifyExtendedInformation, // 2
+        DirectoryNotifyFullInformation,     // 3
+    }
+
+    #endregion
 
 
     public class FILE_ATTRIBUTES
@@ -173,7 +184,7 @@ namespace NativeSupportLibrary
             return new SHARE_ACCESS(Sharing);
         }
 
-        public SHARE_ACCESS(UInt32 Sharing=0)
+        public SHARE_ACCESS(UInt32 Sharing = 0)
         {
             _ShareAccess = Sharing;
         }
@@ -182,12 +193,12 @@ namespace NativeSupportLibrary
     public class CREATE_DISPOSITION
     {
 
-        public const UInt32 FILE_SUPERSEDE                  = (UInt32) 0x00000000;
-        public const UInt32 FILE_OPEN                       = (UInt32) 0x00000001;
-        public const UInt32 FILE_CREATE                     = (UInt32) 0x00000002;
-        public const UInt32 FILE_OPEN_IF                    = (UInt32) 0x00000003;
-        public const UInt32 FILE_OVERWRITE                  = (UInt32) 0x00000004;
-        public const UInt32 FILE_OVERWRITE_IF               = (UInt32) 0x00000005;
+        public const UInt32 FILE_SUPERSEDE = (UInt32)0x00000000;
+        public const UInt32 FILE_OPEN = (UInt32)0x00000001;
+        public const UInt32 FILE_CREATE = (UInt32)0x00000002;
+        public const UInt32 FILE_OPEN_IF = (UInt32)0x00000003;
+        public const UInt32 FILE_OVERWRITE = (UInt32)0x00000004;
+        public const UInt32 FILE_OVERWRITE_IF = (UInt32)0x00000005;
 
         private UInt32 _CreateDisposition;
 
@@ -285,8 +296,12 @@ namespace NativeSupportLibrary
         private struct _LARGE_INTEGER
         {
             [FieldOffset(0)] public Int64 QuadPart = 0;
-            [FieldOffset(0)] public UInt32 LowPart;
-            [FieldOffset(4)] public Int32 HighPart;
+            [FieldOffset(0)] public UInt32 LowPart = 0;
+            [FieldOffset(4)] public Int32 HighPart = 0;
+
+            public _LARGE_INTEGER()
+            {
+            }
         }
 
         private _LARGE_INTEGER large_integer;
@@ -420,28 +435,28 @@ namespace NativeSupportLibrary
 
     public class ACCESS_MASK
     {
-        public const UInt32 DELETE = (UInt32) 0x00010000;
-        public const UInt32 READ_CONTROL = (UInt32) 0x00020000;
-        public const UInt32 WRITE_DAC = (UInt32) 0x00040000;
-        public const UInt32 WRITE_OWNER = (UInt32) 0x00080000;
-        public const UInt32 SYNCHRONIZE = (UInt32) 0x00100000;
+        public const UInt32 DELETE = (UInt32)0x00010000;
+        public const UInt32 READ_CONTROL = (UInt32)0x00020000;
+        public const UInt32 WRITE_DAC = (UInt32)0x00040000;
+        public const UInt32 WRITE_OWNER = (UInt32)0x00080000;
+        public const UInt32 SYNCHRONIZE = (UInt32)0x00100000;
 
-        public const UInt32 STANDARD_RIGHTS_REQUIRED = (UInt32) 0x000F0000;
+        public const UInt32 STANDARD_RIGHTS_REQUIRED = (UInt32)0x000F0000;
         public const UInt32 STANDARD_RIGHTS_READ = READ_CONTROL;
         public const UInt32 STANDARD_RIGHTS_WRITE = READ_CONTROL;
         public const UInt32 STANDARD_RIGHTS_EXECUTE = READ_CONTROL;
-        public const UInt32 STANDARD_RIGHTS_ALL = (UInt32) 0x001F0000;
+        public const UInt32 STANDARD_RIGHTS_ALL = (UInt32)0x001F0000;
 
-        public const UInt32 SPECIFIC_RIGHTS_ALL = (UInt32) 0x0000FFFF;
+        public const UInt32 SPECIFIC_RIGHTS_ALL = (UInt32)0x0000FFFF;
 
-        public const UInt32 ACCESS_SYSTEM_SECURITY = (UInt32) 0x01000000;
+        public const UInt32 ACCESS_SYSTEM_SECURITY = (UInt32)0x01000000;
 
-        public const UInt32 MAXIMUM_ALLOWED = (UInt32) 0x02000000;
+        public const UInt32 MAXIMUM_ALLOWED = (UInt32)0x02000000;
 
-        public const UInt32 GENERIC_READ = (UInt32) 0x80000000;
-        public const UInt32 GENERIC_WRITE = (UInt32) 0x40000000;
-        public const UInt32 GENERIC_EXECUTE = (UInt32) 0x20000000;
-        public const UInt32 GENERIC_ALL = (UInt32) 0x10000000;
+        public const UInt32 GENERIC_READ = (UInt32)0x80000000;
+        public const UInt32 GENERIC_WRITE = (UInt32)0x40000000;
+        public const UInt32 GENERIC_EXECUTE = (UInt32)0x20000000;
+        public const UInt32 GENERIC_ALL = (UInt32)0x10000000;
 
         protected UInt32 _AccessMask = 0;
 
@@ -470,24 +485,24 @@ namespace NativeSupportLibrary
     public class FILE_ACCESS_MASK : ACCESS_MASK
     {
         // Files
-        public const UInt32 FILE_READ_DATA = (UInt32) 0x0001;
-        public const UInt32 FILE_WRITE_DATA = (UInt32) 0x0002;
-        public const UInt32 FILE_APPEND_DATA = (UInt32) 0x0004;
-        public const UInt32 FILE_EXECUTE = (UInt32) 0x0020;
+        public const UInt32 FILE_READ_DATA = (UInt32)0x0001;
+        public const UInt32 FILE_WRITE_DATA = (UInt32)0x0002;
+        public const UInt32 FILE_APPEND_DATA = (UInt32)0x0004;
+        public const UInt32 FILE_EXECUTE = (UInt32)0x0020;
 
         // Directories
-        public const UInt32 FILE_LIST_DIRECTORY = (UInt32) 0x0001;
-        public const UInt32 FILE_ADD_FILE = (UInt32) 0x0002;
-        public const UInt32 FILE_ADD_SUBDIRECTORY = (UInt32) 0x0004;
-        public const UInt32 FILE_CREATE_PIPE_INSTANCE = (UInt32) 0x0004;
-        public const UInt32 FILE_TRAVERSE = (UInt32) 0x0020;
-        public const UInt32 FILE_DELETE_CHILD = (UInt32) 0x0040;
+        public const UInt32 FILE_LIST_DIRECTORY = (UInt32)0x0001;
+        public const UInt32 FILE_ADD_FILE = (UInt32)0x0002;
+        public const UInt32 FILE_ADD_SUBDIRECTORY = (UInt32)0x0004;
+        public const UInt32 FILE_CREATE_PIPE_INSTANCE = (UInt32)0x0004;
+        public const UInt32 FILE_TRAVERSE = (UInt32)0x0020;
+        public const UInt32 FILE_DELETE_CHILD = (UInt32)0x0040;
 
         // Both files & directories
-        public const UInt32 FILE_READ_EA = (UInt32) 0x0008;
-        public const UInt32 FILE_WRITE_EA = (UInt32) 0x0010;
-        public const UInt32 FILE_READ_ATTRIBUTES = (UInt32) 0x0080;
-        public const UInt32 FILE_WRITE_ATTRIBUTES = (UInt32) 0x0100;
+        public const UInt32 FILE_READ_EA = (UInt32)0x0008;
+        public const UInt32 FILE_WRITE_EA = (UInt32)0x0010;
+        public const UInt32 FILE_READ_ATTRIBUTES = (UInt32)0x0080;
+        public const UInt32 FILE_WRITE_ATTRIBUTES = (UInt32)0x0100;
 
         public const ulong FILE_ALL_ACCESS = STANDARD_RIGHTS_REQUIRED | FILE_READ_ATTRIBUTES | FILE_READ_EA | SYNCHRONIZE;
         public const ulong FILE_GENERIC_READ = STANDARD_RIGHTS_ALL | FILE_READ_DATA | FILE_READ_ATTRIBUTES | FILE_READ_EA | SYNCHRONIZE;
@@ -524,6 +539,10 @@ namespace NativeSupportLibrary
             public ushort Length = 0;
             public ushort MaximumLength = 0;
             public IntPtr Buffer = IntPtr.Zero;
+
+            public _UNICODE_STRING()
+            {
+            }
         }
 
         private _UNICODE_STRING unicode_string;
@@ -729,7 +748,7 @@ namespace NativeSupportLibrary
     public class SID
     {
         public const UInt16 SECURITY_MAX_SID_SIZE = 60;
-        
+
         [StructLayout(LayoutKind.Explicit, Pack = 0)]
         private unsafe struct _SID
         {
@@ -1045,9 +1064,13 @@ namespace NativeSupportLibrary
         [StructLayout(LayoutKind.Explicit, Pack = 1)]
         private unsafe struct _IO_STATUS_BLOCK
         {
-            [FieldOffset(0)] public Int32 Status;
+            [FieldOffset(0)] public Int32 Status = 0;
             [FieldOffset(0)] public UIntPtr Pointer = UIntPtr.Zero;
             [FieldOffset(8)] public UInt64 Information = 0;
+
+            public _IO_STATUS_BLOCK()
+            {
+            }
         }
 
         private _IO_STATUS_BLOCK nativeStatusBlock;
@@ -1175,4 +1198,379 @@ namespace NativeSupportLibrary
             return IntPtr.Zero;
         }
     }
+
+    public class FILE_BASIC_INFORMATION
+    {
+        [StructLayout(LayoutKind.Explicit, Pack = 1)]
+        private unsafe struct _FILE_BASIC_INFORMATION
+        {
+            [FieldOffset(0)] public Int64 CreationTime = 0;
+            [FieldOffset(8)] public Int64 LastAccessTime = 0;
+            [FieldOffset(16)] public Int64 LastWriteTime = 0;
+            [FieldOffset(24)] public Int64 ChangeTime = 0;
+            [FieldOffset(32)] public UInt32 FileAttributes = 0;
+
+            public _FILE_BASIC_INFORMATION()
+            {
+            }
+        }
+
+        private _FILE_BASIC_INFORMATION nativeBasicInformationBlock;
+        private IntPtr buffer = IntPtr.Zero;
+
+        public Int64 CreationTime
+        {
+            get
+            {
+                nativeBasicInformationBlock = Marshal.PtrToStructure<_FILE_BASIC_INFORMATION>(buffer);
+                return nativeBasicInformationBlock.CreationTime;
+            }
+
+            set
+            {
+                nativeBasicInformationBlock.CreationTime = value;
+                Marshal.StructureToPtr<_FILE_BASIC_INFORMATION>(nativeBasicInformationBlock, buffer, true);
+            }
+        }
+        public Int64 LastAccessTime
+        {
+            get
+            {
+                nativeBasicInformationBlock = Marshal.PtrToStructure<_FILE_BASIC_INFORMATION>(buffer);
+                return nativeBasicInformationBlock.LastAccessTime;
+            }
+
+            set
+            {
+                nativeBasicInformationBlock.LastAccessTime = value;
+                Marshal.StructureToPtr<_FILE_BASIC_INFORMATION>(nativeBasicInformationBlock, buffer, true);
+            }
+        }
+
+
+        public Int64 LastWriteTime
+        {
+            get
+            {
+                nativeBasicInformationBlock = Marshal.PtrToStructure<_FILE_BASIC_INFORMATION>(buffer);
+                return nativeBasicInformationBlock.LastWriteTime;
+            }
+
+            set
+            {
+                nativeBasicInformationBlock.LastWriteTime = value;
+                Marshal.StructureToPtr<_FILE_BASIC_INFORMATION>(nativeBasicInformationBlock, buffer, true);
+            }
+        }
+
+
+        public Int64 ChangeTime
+        {
+            get
+            {
+                nativeBasicInformationBlock = Marshal.PtrToStructure<_FILE_BASIC_INFORMATION>(buffer);
+                return nativeBasicInformationBlock.ChangeTime;
+            }
+
+            set
+            {
+                nativeBasicInformationBlock.ChangeTime = value;
+                Marshal.StructureToPtr<_FILE_BASIC_INFORMATION>(nativeBasicInformationBlock, buffer, true);
+            }
+        }
+
+        public UInt32 FileAttributes
+        {
+            get
+            {
+                nativeBasicInformationBlock = Marshal.PtrToStructure<_FILE_BASIC_INFORMATION>(buffer);
+                return nativeBasicInformationBlock.FileAttributes;
+            }
+
+            set
+            {
+                nativeBasicInformationBlock.FileAttributes = value;
+                Marshal.StructureToPtr<_FILE_BASIC_INFORMATION>(nativeBasicInformationBlock, buffer, true);
+            }
+        }
+
+        public FILE_BASIC_INFORMATION(Int64 CreationTime = 0, Int64 LastAccessTime = 0, Int64 LastWriteTime = 0, Int64 ChangeTime = 0, UInt32 FileAttributes = 0)
+        {
+            unsafe
+            {
+                this.buffer = Marshal.AllocHGlobal(sizeof(_FILE_BASIC_INFORMATION));
+            }
+            nativeBasicInformationBlock = new _FILE_BASIC_INFORMATION();
+            nativeBasicInformationBlock.CreationTime = CreationTime;
+            nativeBasicInformationBlock.LastAccessTime = LastAccessTime;
+            nativeBasicInformationBlock.LastWriteTime = LastWriteTime;
+            nativeBasicInformationBlock.ChangeTime = ChangeTime;
+
+            Marshal.StructureToPtr(nativeBasicInformationBlock, buffer, true);
+        }
+
+        private FILE_BASIC_INFORMATION(IntPtr Buffer)
+        {
+            unsafe
+            {
+                buffer = Marshal.AllocHGlobal(sizeof(_FILE_BASIC_INFORMATION));
+            }
+            nativeBasicInformationBlock = new _FILE_BASIC_INFORMATION();
+            Marshal.PtrToStructure<_FILE_BASIC_INFORMATION>(Buffer, nativeBasicInformationBlock);
+            Marshal.StructureToPtr(nativeBasicInformationBlock, buffer, true);
+        }
+
+        public FILE_BASIC_INFORMATION()
+        {
+            buffer = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(_FILE_BASIC_INFORMATION)));
+            nativeBasicInformationBlock = new _FILE_BASIC_INFORMATION();
+            Marshal.StructureToPtr(nativeBasicInformationBlock, buffer, true);
+        }
+
+        ~FILE_BASIC_INFORMATION()
+        {
+            if (IntPtr.Zero != buffer)
+            {
+                Marshal.FreeHGlobal(buffer);
+                buffer = IntPtr.Zero;
+            }
+        }
+
+        public static implicit operator IntPtr(FILE_BASIC_INFORMATION fileBasicInformation)
+        {
+            return fileBasicInformation.buffer;
+        }
+
+        public static implicit operator FILE_BASIC_INFORMATION(IntPtr buffer)
+        {
+            return new FILE_BASIC_INFORMATION(buffer);
+        }
+
+
+    }
+
+    public class FILE_STANDARD_INFORMATION
+    {
+        [StructLayout(LayoutKind.Explicit, Pack = 1)]
+        private unsafe struct _FILE_STANDARD_INFORMATION
+        {
+            [FieldOffset(0)] public Int64 AllocationSize = 0;
+            [FieldOffset(8)] public Int64 EndOfFile = 0;
+            [FieldOffset(16)] public UInt32 NumberOfLinks = 0;
+            [FieldOffset(24)] public bool DeletePending = false;
+            [FieldOffset(25)] public bool Directory = false;
+
+            public _FILE_STANDARD_INFORMATION()
+            {
+            }
+        }
+
+        private _FILE_STANDARD_INFORMATION nativeStandardInformation;
+        private IntPtr buffer = IntPtr.Zero;
+
+        public Int64 AllocationSize
+        {
+            get
+            {
+                nativeStandardInformation = Marshal.PtrToStructure<_FILE_STANDARD_INFORMATION>(buffer);
+                return nativeStandardInformation.AllocationSize;
+            }
+
+            set
+            {
+                nativeStandardInformation.AllocationSize = value;
+                Marshal.StructureToPtr<_FILE_STANDARD_INFORMATION>(nativeStandardInformation, buffer, true);
+            }
+        }
+        public Int64 EndOfFile
+        {
+            get
+            {
+                nativeStandardInformation = Marshal.PtrToStructure<_FILE_STANDARD_INFORMATION>(buffer);
+                return nativeStandardInformation.EndOfFile;
+            }
+
+            set
+            {
+                nativeStandardInformation.EndOfFile = value;
+                Marshal.StructureToPtr<_FILE_STANDARD_INFORMATION>(nativeStandardInformation, buffer, true);
+            }
+        }
+
+        public UInt32 NumberOfLinks
+        {
+            get
+            {
+                nativeStandardInformation = Marshal.PtrToStructure<_FILE_STANDARD_INFORMATION>(buffer);
+                return nativeStandardInformation.NumberOfLinks;
+            }
+
+            set
+            {
+                nativeStandardInformation.NumberOfLinks = value;
+                Marshal.StructureToPtr<_FILE_STANDARD_INFORMATION>(nativeStandardInformation, buffer, true);
+            }
+        }
+
+        public bool DeletePending
+        {
+            get
+            {
+                nativeStandardInformation = Marshal.PtrToStructure<_FILE_STANDARD_INFORMATION>(buffer);
+                return nativeStandardInformation.DeletePending;
+            }
+
+            set
+            {
+                nativeStandardInformation.DeletePending = value;
+                Marshal.StructureToPtr<_FILE_STANDARD_INFORMATION>(nativeStandardInformation, buffer, true);
+            }
+        }
+
+
+        public bool Directory
+        {
+            get
+            {
+                nativeStandardInformation = Marshal.PtrToStructure<_FILE_STANDARD_INFORMATION>(buffer);
+                return nativeStandardInformation.Directory;
+            }
+
+            set
+            {
+                nativeStandardInformation.Directory = value;
+                Marshal.StructureToPtr<_FILE_STANDARD_INFORMATION>(nativeStandardInformation, buffer, true);
+            }
+        }
+
+    }
+
+    public class FILE_STANDARD_INFORMATION_EX
+    {
+        [StructLayout(LayoutKind.Explicit, Pack = 1)]
+        private unsafe struct _FILE_STANDARD_INFORMATION_EX
+        {
+            [FieldOffset(0)] public Int64 AllocationSize = 0;
+            [FieldOffset(8)] public Int64 EndOfFile = 0;
+            [FieldOffset(16)] public UInt32 NumberOfLinks = 0;
+            [FieldOffset(24)] public bool DeletePending = false;
+            [FieldOffset(25)] public bool Directory = false;
+            [FieldOffset(26)] public bool AlternateStream = false;
+            [FieldOffset(27)] public bool MetadataAttribute = false;
+
+            public _FILE_STANDARD_INFORMATION_EX()
+            {
+            }
+        }
+
+        private _FILE_STANDARD_INFORMATION_EX nativeStandardInformation;
+        private IntPtr buffer = IntPtr.Zero;
+
+        public Int64 AllocationSize
+        {
+            get
+            {
+                nativeStandardInformation = Marshal.PtrToStructure<_FILE_STANDARD_INFORMATION_EX>(buffer);
+                return nativeStandardInformation.AllocationSize;
+            }
+
+            set
+            {
+                nativeStandardInformation.AllocationSize = value;
+                Marshal.StructureToPtr<_FILE_STANDARD_INFORMATION_EX>(nativeStandardInformation, buffer, true);
+            }
+        }
+        public Int64 EndOfFile
+        {
+            get
+            {
+                nativeStandardInformation = Marshal.PtrToStructure<_FILE_STANDARD_INFORMATION_EX>(buffer);
+                return nativeStandardInformation.EndOfFile;
+            }
+
+            set
+            {
+                nativeStandardInformation.EndOfFile = value;
+                Marshal.StructureToPtr<_FILE_STANDARD_INFORMATION_EX>(nativeStandardInformation, buffer, true);
+            }
+        }
+
+        public UInt32 NumberOfLinks
+        {
+            get
+            {
+                nativeStandardInformation = Marshal.PtrToStructure<_FILE_STANDARD_INFORMATION_EX>(buffer);
+                return nativeStandardInformation.NumberOfLinks;
+            }
+
+            set
+            {
+                nativeStandardInformation.NumberOfLinks = value;
+                Marshal.StructureToPtr<_FILE_STANDARD_INFORMATION_EX>(nativeStandardInformation, buffer, true);
+            }
+        }
+
+        public bool DeletePending
+        {
+            get
+            {
+                nativeStandardInformation = Marshal.PtrToStructure<_FILE_STANDARD_INFORMATION_EX>(buffer);
+                return nativeStandardInformation.DeletePending;
+            }
+
+            set
+            {
+                nativeStandardInformation.DeletePending = value;
+                Marshal.StructureToPtr<_FILE_STANDARD_INFORMATION_EX>(nativeStandardInformation, buffer, true);
+            }
+        }
+
+
+        public bool Directory
+        {
+            get
+            {
+                nativeStandardInformation = Marshal.PtrToStructure<_FILE_STANDARD_INFORMATION_EX>(buffer);
+                return nativeStandardInformation.Directory;
+            }
+
+            set
+            {
+                nativeStandardInformation.Directory = value;
+                Marshal.StructureToPtr<_FILE_STANDARD_INFORMATION_EX>(nativeStandardInformation, buffer, true);
+            }
+        }
+
+        public bool AlternateStream
+        {
+            get
+            {
+                nativeStandardInformation = Marshal.PtrToStructure<_FILE_STANDARD_INFORMATION_EX>(buffer);
+                return nativeStandardInformation.AlternateStream;
+            }
+
+            set
+            {
+                nativeStandardInformation.AlternateStream = value;
+                Marshal.StructureToPtr<_FILE_STANDARD_INFORMATION_EX>(nativeStandardInformation, buffer, true);
+            }
+        }
+
+        public bool MetadataAttribute
+        {
+            get
+            {
+                nativeStandardInformation = Marshal.PtrToStructure<_FILE_STANDARD_INFORMATION_EX>(buffer);
+                return nativeStandardInformation.MetadataAttribute;
+            }
+
+            set
+            {
+                nativeStandardInformation.MetadataAttribute = value;
+                Marshal.StructureToPtr<_FILE_STANDARD_INFORMATION_EX>(nativeStandardInformation, buffer, true);
+            }
+        }
+
+    }
+
 }

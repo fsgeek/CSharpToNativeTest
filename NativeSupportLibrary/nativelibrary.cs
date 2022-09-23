@@ -74,5 +74,19 @@ namespace NativeSupportLibrary
             UInt32 Length,
             UInt32 FsInformationClass);
 
+        [DllImport("NativeLibrary.dll", ExactSpelling = true, SetLastError = true)]
+        public static extern int NtQueryDirectoryFile(
+            IntPtr FileHandle,
+            IntPtr Event,
+            IntPtr ApcRoutine,
+            IntPtr ApcContext,
+            IntPtr IoStatusBlock,
+            IntPtr FileInformation,
+            UInt32 Length,
+            UInt32 FileInformationClass,
+            UInt32 ReturnSingleEntry,
+            IntPtr FileName,
+            UInt32 RestartScan);
+
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Indaleko
 {
+
+    // https://github.com/coronabytes/dotnet-arangodb
     public class Record
     {
 
@@ -33,6 +35,9 @@ namespace Indaleko
             this.Data = Data;
         }
 
+#if false
+        // Not using Mongo any longer so no need for BSON - leaving until I've confirmed any dependencies are fixed.
+
         public BsonDocument GenerateBsonDocument()
         {
             var document = new BsonDocument();
@@ -51,6 +56,8 @@ namespace Indaleko
 
             return document;
         }
+#endif // false
 
     }
+
 }

@@ -96,10 +96,11 @@ namespace Indaleko
 
         public void WriteRecord(Record RecordToAdd)
         {
-            var document = RecordToAdd.GenerateBsonDocument();
+            // var document = RecordToAdd.GenerateBsonDocument();
 
-            activityLogCollection.InsertOne(document);
+            // activityLogCollection.InsertOne(document);
 
+            Console.WriteLine("WriteRecord not implemented currently");
         }
 
     }

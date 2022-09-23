@@ -11,9 +11,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.DirectoryServices;
 using Core.Arango;
+using System.IO;
+using System.Management;
 
-
-namespace USBDeviceCheck
+namespace DeviceChangeMonitor
 {
     // Note: this is copied from ArangoDBTest - really should be extracted and made into a
     // library.
@@ -220,7 +221,15 @@ namespace USBDeviceCheck
             Console.WriteLine($"Machine = {Environment.MachineName}");
             Console.WriteLine($"UserDomainName = {Environment.UserDomainName}");
             Console.WriteLine($"GetComputerSid = {GetComputerSid()}");
-            Console.WriteLine($"   ProcessorId = {HardwareInfo.GetProcessorId()}");
+            // Console.WriteLine($"   ProcessorId = {HardwareInfo.GetProcessorId()}");
+
+            foreach (DriveInfo d in DriveInfo.GetDrives())
+            {
+                Console.WriteLine($"Drive {d.Name}");
+            }
+
+            var dskQuery = new SelectQuery("Win32_LogicalDisk", "DriveType=3");
+            var mgmtScope = new ManagementScope(@"\\.\root\cimv2");
 
             return;
 

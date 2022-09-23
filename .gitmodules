@@ -1,3 +1,6 @@
 [submodule "doc/acmart"]
 	path = doc/acmart
 	url = git@github.com:borisveytsman/acmart.git
+[submodule "gdrive-hook"]
+	path = gdrive-hook
+	url = git@github.com:fsgeek/gdrive-hook.git
