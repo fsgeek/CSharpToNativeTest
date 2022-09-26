@@ -33,6 +33,9 @@
     <ClCompile Include="NtQueryDirectoryFile.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ntqueryfullattributesfile.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="native-internal.h">

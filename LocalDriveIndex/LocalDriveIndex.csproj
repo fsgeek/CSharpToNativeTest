@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\IndalekoRecord\Indaleko.csproj" />
-    <ProjectReference Include="..\NativeSupportLibrary\NativeSupportLibrary.csproj" />
+    <ProjectReference Include="..\NativeCalls\NativeCalls.csproj" />
   </ItemGroup>
 
 </Project>

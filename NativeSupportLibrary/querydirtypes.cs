@@ -7,8 +7,9 @@ using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.VisualBasic;
-using static NativeSupportLibrary.FILE_ID_BOTH_DIR_INFORMATION;
-using static NativeSupportLibrary.FILE_ID_EXTD_BOTH_DIR_INFORMATION;
+using System.Diagnostics;
+using System.Reflection.Metadata;
+
 
 namespace NativeSupportLibrary
 {
@@ -96,7 +97,7 @@ namespace NativeSupportLibrary
 
                 // Note that names are not necessarily NULL terminated from the kernel, so we explicitly state
                 // a maximum length since the kernel does always set the length for us.
-                FileName = Marshal.PtrToStringUni(IntPtr.Add(Buffer, FileNameOffset), (int)dirInfo.FileNameLength);
+                FileName = Marshal.PtrToStringUni(IntPtr.Add(Buffer, FileNameOffset), (int)(dirInfo.FileNameLength / 2));
 
                 NextEntryOffset = (int)dirInfo.NextEntryOffset;
             }
@@ -185,7 +186,7 @@ namespace NativeSupportLibrary
 
                 // Note that names are not necessarily NULL terminated from the kernel, so we explicitly state
                 // a maximum length since the kernel does always set the length for us.
-                FileName = Marshal.PtrToStringUni(IntPtr.Add(Buffer, FileNameOffset), (int)dirInfo.FileNameLength);
+                FileName = Marshal.PtrToStringUni(IntPtr.Add(Buffer, FileNameOffset), (int)(dirInfo.FileNameLength / 2));
 
                 NextEntryOffset = (int)dirInfo.NextEntryOffset;
             }
@@ -217,6 +218,12 @@ namespace NativeSupportLibrary
                 count++;
 
                 current = IntPtr.Add(current, (int)nextOffset);
+
+                if (0 == nextOffset)
+                {
+                    // Last entry is marked as zero
+                    break;
+                }
             }
 
             return count;
@@ -279,7 +286,7 @@ namespace NativeSupportLibrary
 
                 // Note that names are not necessarily NULL terminated from the kernel, so we explicitly state
                 // a maximum length since the kernel does always set the length for us.
-                FileName = Marshal.PtrToStringUni(IntPtr.Add(Buffer, FileNameOffset), (int)dirInfo.FileNameLength);
+                FileName = Marshal.PtrToStringUni(IntPtr.Add(Buffer, FileNameOffset), (int)(dirInfo.FileNameLength / 2));
 
                 NextEntryOffset = (int)dirInfo.NextEntryOffset;
             }
@@ -311,6 +318,13 @@ namespace NativeSupportLibrary
                 count++;
 
                 current = IntPtr.Add(current, (int)nextOffset);
+
+                if (0 == nextOffset)
+                {
+                    // Last entry is marked as zero
+                    break;
+                }
+
             }
 
             return count;
@@ -375,15 +389,16 @@ namespace NativeSupportLibrary
 
                 // Note that names are not necessarily NULL terminated from the kernel, so we explicitly state
                 // a maximum length since the kernel does always set the length for us.
-                FileName = Marshal.PtrToStringUni(IntPtr.Add(Buffer, FileNameOffset), (int)dirInfo.FileNameLength);
+                FileName = Marshal.PtrToStringUni(IntPtr.Add(Buffer, FileNameOffset), (int)(dirInfo.FileNameLength / 2));
 
                 if (dirInfo.ShortNameLength > 0)
                 {
-                    ShortName = Marshal.PtrToStringUni(IntPtr.Add(Buffer, ShortNameOffset), (int)dirInfo.ShortNameLength);
+                    ShortName = Marshal.PtrToStringUni(IntPtr.Add(Buffer, ShortNameOffset), (int)dirInfo.ShortNameLength / 2);
                 }
 
                 NextEntryOffset = (int)dirInfo.NextEntryOffset;
             }
+
         }
 
         // The choice of initial length is fairly arbitrary and could be optimized if it is an issue
@@ -412,6 +427,13 @@ namespace NativeSupportLibrary
                 count++;
 
                 current = IntPtr.Add(current, (int)nextOffset);
+
+                if (0 == nextOffset)
+                {
+                    // Last entry is marked as zero
+                    break;
+                }
+
             }
 
             return count;
@@ -477,11 +499,11 @@ namespace NativeSupportLibrary
 
                 // Note that names are not necessarily NULL terminated from the kernel, so we explicitly state
                 // a maximum length since the kernel does always set the length for us.
-                FileName = Marshal.PtrToStringUni(IntPtr.Add(Buffer, FileNameOffset), (int)dirInfo.FileNameLength);
+                FileName = Marshal.PtrToStringUni(IntPtr.Add(Buffer, FileNameOffset), (int)(dirInfo.FileNameLength / 2));
 
                 if (dirInfo.ShortNameLength > 0)
                 {
-                    ShortName = Marshal.PtrToStringUni(IntPtr.Add(Buffer, ShortNameOffset), (int)dirInfo.ShortNameLength);
+                    ShortName = Marshal.PtrToStringUni(IntPtr.Add(Buffer, ShortNameOffset), (int)dirInfo.ShortNameLength / 2);
                 }
 
                 NextEntryOffset = (int)dirInfo.NextEntryOffset;
@@ -514,6 +536,13 @@ namespace NativeSupportLibrary
                 count++;
 
                 current = IntPtr.Add(current, (int)nextOffset);
+
+                if (0 == nextOffset)
+                {
+                    // Last entry is marked as zero
+                    break;
+                }
+
             }
 
             return count;
@@ -555,7 +584,7 @@ namespace NativeSupportLibrary
 
                 FileIndex = dirInfo.FileIndex;
                 FileNameLength = dirInfo.FileNameLength;
-                FileName = Marshal.PtrToStringUni(IntPtr.Add(Buffer, FileNameOffset), (int)dirInfo.FileNameLength);
+                FileName = Marshal.PtrToStringUni(IntPtr.Add(Buffer, FileNameOffset), (int)(dirInfo.FileNameLength / 2));
                 NextEntryOffset = (int) dirInfo.NextEntryOffset;
             }
         }
@@ -586,6 +615,12 @@ namespace NativeSupportLibrary
                 count++;
 
                 current = IntPtr.Add(current, (int)nextOffset);
+
+                if (0 == nextOffset)
+                {
+                    // Last entry is marked as zero
+                    break;
+                }
             }
 
             return count;
@@ -679,13 +714,13 @@ namespace NativeSupportLibrary
 
                 // Note that names are not necessarily NULL terminated from the kernel, so we explicitly state
                 // a maximum length since the kernel does always set the length for us.
-                FileName = Marshal.PtrToStringUni(IntPtr.Add(Buffer, FileNameOffset), (int)dirInfo.FileNameLength);
+                FileName = Marshal.PtrToStringUni(IntPtr.Add(Buffer, FileNameOffset), (int)(dirInfo.FileNameLength / 2));
                 NextEntryOffset = (int)dirInfo.NextEntryOffset;
             }
         }
 
         // The choice of initial length is fairly arbitrary and could be optimized if it is an issue
-        public List<FILE_ID_BOTH_DIR_INFO> Entries = new List<FILE_ID_BOTH_DIR_INFO>(1024);
+        public List<FILE_ID_GLOBAL_TX_DIR_INFO> Entries = new List<FILE_ID_GLOBAL_TX_DIR_INFO>(1024);
 
         public FILE_ID_GLOBAL_TX_DIR_INFORMATION()
         {
@@ -706,10 +741,16 @@ namespace NativeSupportLibrary
             while (current.ToInt64() < (Buffer.ToInt64() + (Int64)BufferLength))
             {
                 int nextOffset = 0;
-                Entries.Add(new FILE_ID_BOTH_DIR_INFO(current, ref nextOffset));
+                Entries.Add(new FILE_ID_GLOBAL_TX_DIR_INFO(current, ref nextOffset));
                 count++;
 
                 current = IntPtr.Add(current, (int)nextOffset);
+
+                if (0 == nextOffset)
+                {
+                    // Last entry is marked as zero
+                    break;
+                }
             }
 
             return count;
@@ -792,7 +833,7 @@ namespace NativeSupportLibrary
 
                 // Note that names are not necessarily NULL terminated from the kernel, so we explicitly state
                 // a maximum length since the kernel does always set the length for us.
-                FileName = Marshal.PtrToStringUni(IntPtr.Add(Buffer, FileNameOffset), (int)dirInfo.FileNameLength);
+                FileName = Marshal.PtrToStringUni(IntPtr.Add(Buffer, FileNameOffset), (int)(dirInfo.FileNameLength / 2));
 
                 NextEntryOffset = (int)dirInfo.NextEntryOffset;
             }
@@ -800,7 +841,7 @@ namespace NativeSupportLibrary
         }
 
         // The choice of initial length is fairly arbitrary and could be optimized if it is an issue
-        public List<FILE_ID_BOTH_DIR_INFO> Entries = new List<FILE_ID_BOTH_DIR_INFO>(1024);
+        public List<FILE_ID_EXTD_DIR_INFO> Entries = new List<FILE_ID_EXTD_DIR_INFO>(1024);
 
         public FILE_ID_EXTD_DIR_INFORMATION()
         {
@@ -821,10 +862,16 @@ namespace NativeSupportLibrary
             while (current.ToInt64() < (Buffer.ToInt64() + (Int64)BufferLength))
             {
                 int nextOffset = 0;
-                Entries.Add(new FILE_ID_BOTH_DIR_INFO(current, ref nextOffset));
+                Entries.Add(new FILE_ID_EXTD_DIR_INFO(current, ref nextOffset));
                 count++;
 
                 current = IntPtr.Add(current, (int)nextOffset);
+
+                if (0 == nextOffset)
+                {
+                    // Last entry is marked as zero
+                    break;
+                }
             }
 
             return count;
@@ -989,11 +1036,11 @@ namespace NativeSupportLibrary
 
                 // Note that names are not necessarily NULL terminated from the kernel, so we explicitly state
                 // a maximum length since the kernel does always set the length for us.
-                FileName = Marshal.PtrToStringUni(IntPtr.Add(Buffer, FileNameOffset), (int)dirInfo.FileNameLength);
+                FileName = Marshal.PtrToStringUni(IntPtr.Add(Buffer, FileNameOffset), (int)(dirInfo.FileNameLength / 2));
 
                 if (dirInfo.ShortNameLength > 0)
                 {
-                    ShortName = Marshal.PtrToStringUni(IntPtr.Add(Buffer, ShortNameOffset), (int)dirInfo.ShortNameLength);
+                    ShortName = Marshal.PtrToStringUni(IntPtr.Add(Buffer, ShortNameOffset), (int)dirInfo.ShortNameLength / 2);
                 }
 
                 NextEntryOffset = (int)dirInfo.NextEntryOffset;
@@ -1027,6 +1074,12 @@ namespace NativeSupportLibrary
                 count++;
 
                 current = IntPtr.Add(current, (int)nextOffset);
+
+                if (0 == nextOffset)
+                {
+                    // Last entry is marked as zero
+                    break;
+                }
             }
 
             return count;
@@ -1109,6 +1162,12 @@ namespace NativeSupportLibrary
                 count++;
 
                 current = IntPtr.Add(current, (int)nextOffset);
+
+                if (0 == nextOffset)
+                {
+                    // Last entry is marked as zero
+                    break;
+                }
             }
 
             return count;

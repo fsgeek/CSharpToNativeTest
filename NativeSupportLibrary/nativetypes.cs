@@ -9,105 +9,11 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.VisualBasic;
 using static NativeSupportLibrary.FILE_ID_BOTH_DIR_INFORMATION;
 using static NativeSupportLibrary.FILE_ID_EXTD_BOTH_DIR_INFORMATION;
+using Serilog.Debugging;
 
 namespace NativeSupportLibrary
 {
     #region enum
-    // {Query/SetInformationFile} types (structures correspond to these types usually)
-    public enum FILE_INFORMATION_CLASS
-    {
-        FileDirectoryInformation = 1,     // 1
-        FileFullDirectoryInformation = 2,     // 2
-        FileBothDirectoryInformation = 3,     // 3
-        FileBasicInformation = 4,         // 4
-        FileStandardInformation = 5,      // 5
-        FileInternalInformation = 6,      // 6
-        FileEaInformation = 7,        // 7
-        FileAccessInformation = 8,        // 8
-        FileNameInformation = 9,          // 9
-        FileRenameInformation = 10,        // 10
-        FileLinkInformation = 11,          // 11
-        FileNamesInformation = 12,         // 12
-        FileDispositionInformation = 13,       // 13
-        FilePositionInformation = 14,      // 14
-        FileFullEaInformation = 15,        // 15
-        FileModeInformation = 16,     // 16
-        FileAlignmentInformation = 17,     // 17
-        FileAllInformation = 18,           // 18
-        FileAllocationInformation = 19,    // 19
-        FileEndOfFileInformation = 20,     // 20
-        FileAlternateNameInformation = 21,     // 21
-        FileStreamInformation = 22,        // 22
-        FilePipeInformation = 23,          // 23
-        FilePipeLocalInformation = 24,     // 24
-        FilePipeRemoteInformation = 25,    // 25
-        FileMailslotQueryInformation = 26,     // 26
-        FileMailslotSetInformation = 27,       // 27
-        FileCompressionInformation = 28,       // 28
-        FileObjectIdInformation = 29,      // 29
-        FileCompletionInformation = 30,    // 30
-        FileMoveClusterInformation = 31,       // 31
-        FileQuotaInformation = 32,         // 32
-        FileReparsePointInformation = 33,      // 33
-        FileNetworkOpenInformation = 34,       // 34
-        FileAttributeTagInformation = 35,      // 35
-        FileTrackingInformation = 36,      // 36
-        FileIdBothDirectoryInformation = 37,   // 37
-        FileIdFullDirectoryInformation = 38,   // 38
-        FileValidDataLengthInformation = 39,   // 39
-        FileShortNameInformation = 40,     // 40
-        FileIoCompletionNotificationInformation = 41,        // 41
-        FileIoStatusBlockRangeInformation = 42,              // 42
-        FileIoPriorityHintInformation = 43,                  // 43
-        FileSfioReserveInformation = 44,                     // 44
-        FileSfioVolumeInformation = 45,                      // 45
-        FileHardLinkInformation = 46,    // 46
-        FileProcessIdsUsingFileInformation = 47,             // 47
-        FileNormalizedNameInformation = 48,                  // 48
-        FileNetworkPhysicalNameInformation = 49,             // 49
-        FileIdGlobalTxDirectoryInformation = 50,             // 50
-        FileIsRemoteDeviceInformation = 51,                  // 51
-        FileUnusedInformation = 52,                          // 52
-        FileNumaNodeInformation = 53,                        // 53
-        FileStandardLinkInformation = 54,                    // 54
-        FileRemoteProtocolInformation = 55,                  // 55
-
-        //
-        //  These are special versions of these operations (defined earlier)
-        //  which can be used by kernel mode drivers only to bypass security
-        //  access checks for Rename and HardLink operations.  These operations
-        //  are only recognized by the IOManager, a file system should never
-        //  receive these.
-        //
-
-        FileRenameInformationBypassAccessCheck = 56,         // 56
-        FileLinkInformationBypassAccessCheck = 57,           // 57
-
-        //
-        // End of special information classes reserved for IOManager.
-        //
-
-        FileVolumeNameInformation = 58,                      // 58
-        FileIdInformation = 59,                              // 59
-        FileIdExtdDirectoryInformation = 60,                 // 60
-        FileReplaceCompletionInformation = 61,               // 61
-        FileHardLinkFullIdInformation = 62,                  // 62
-        FileIdExtdBothDirectoryInformation = 63,             // 63
-        FileDispositionInformationEx = 64,                   // 64
-        FileRenameInformationEx = 65,                        // 65
-        FileRenameInformationExBypassAccessCheck = 66,       // 66
-        FileDesiredStorageClassInformation = 67,             // 67
-        FileStatInformation = 68,                            // 68
-        FileMemoryPartitionInformation = 69,                 // 69
-        FileStatLxInformation = 70,                          // 70
-        FileCaseSensitiveInformation = 71,                   // 71
-        FileLinkInformationEx = 72,                          // 72
-        FileLinkInformationExBypassAccessCheck = 73,         // 73
-        FileStorageReserveIdInformation = 74,                // 74
-        FileCaseSensitiveInformationForceAccessCheck = 75,   // 75
-        FileKnownFolderInformation = 76,                     // 76
-    }
-
     public enum DIRECTORY_NOTIFY_INFORMATION_CLASS
     {
         DirectoryNotifyInformation = 1,
@@ -160,6 +66,245 @@ namespace NativeSupportLibrary
         public FILE_ATTRIBUTES(UInt32 value = 0)
         {
             _FileAttribute = value;
+        }
+
+        public static string ToString(FILE_ATTRIBUTES attributes)
+        {
+            string attrs = "";
+            bool initial = true;
+
+            if (0 != (attributes & READONLY))
+            {
+                if (!initial)
+                {
+                    attrs += "|";
+                }
+                initial = false;
+                attrs += "READONLY";
+            }
+
+            if (0 != (attributes & HIDDEN))
+            {
+                if (!initial)
+                {
+                    attrs += "|";
+                }
+                initial = false;
+                attrs += "HIDDEN";
+            }
+
+            if (0 != (attributes & SYSTEM))
+            {
+                if (!initial)
+                {
+                    attrs += "|";
+                }
+                initial = false;
+                attrs += "SYSTEM";
+            }
+
+            if (0 != (attributes & DIRECTORY))
+            {
+                if (!initial)
+                {
+                    attrs += "|";
+                }
+                initial = false;
+                attrs += "DIRECTORY";
+            }
+
+            if (0 != (attributes & ARCHIVE))
+            {
+                if (!initial)
+                {
+                    attrs += "|";
+                }
+                initial = false;
+                attrs += "ARCHIVE";
+            }
+
+            if (0 != (attributes & DEVICE))
+            {
+                if (!initial)
+                {
+                    attrs += "|";
+                }
+                initial = false;
+                attrs += "DEVICE";
+            }
+
+            if (0 != (attributes & NORMAL))
+            {
+                if (!initial)
+                {
+                    attrs += "|";
+                }
+                initial = false;
+                attrs += "NORMAL";
+            }
+
+            if (0 != (attributes & TEMPORARY))
+            {
+                if (!initial)
+                {
+                    attrs += "|";
+                }
+                initial = false;
+                attrs += "TEMPORARY";
+            }
+
+            if (0 != (attributes & SPARSE_FILE))
+            {
+                if (!initial)
+                {
+                    attrs += "|";
+                }
+                initial = false;
+                attrs += "SPARSE_FILE";
+            }
+
+            if (0 != (attributes & REPARSE_POINT))
+            {
+                if (!initial)
+                {
+                    attrs += "|";
+                }
+                initial = false;
+                attrs += "REPARSE_POINT";
+            }
+
+            if (0 != (attributes & COMPRESSED))
+            {
+                if (!initial)
+                {
+                    attrs += "|";
+                }
+                initial = false;
+                attrs += "COMPRESSED";
+            }
+
+            if (0 != (attributes & OFFLINE))
+            {
+                if (!initial)
+                {
+                    attrs += "|";
+                }
+                initial = false;
+                attrs += "OFFLINE";
+            }
+
+            if (0 != (attributes & NOT_CONTENT_INDEXED))
+            {
+                if (!initial)
+                {
+                    attrs += "|";
+                }
+                initial = false;
+                attrs += "NOT_CONTENT_INDEXED";
+            }
+
+            if (0 != (attributes & ENCRYPTED))
+            {
+                if (!initial)
+                {
+                    attrs += "|";
+                }
+                initial = false;
+                attrs += "ENCRYPTED";
+            }
+
+            if (0 != (attributes & INTEGRITY_STREAM))
+            {
+                if (!initial)
+                {
+                    attrs += "|";
+                }
+                initial = false;
+                attrs += "INTEGRITY_STREAM";
+            }
+
+            if (0 != (attributes & VIRTUAL))
+            {
+                if (!initial)
+                {
+                    attrs += "|";
+                }
+                initial = false;
+                attrs += "VIRTUAL";
+            }
+
+            if (0 != (attributes & NO_SCRUB_DATA))
+            {
+                if (!initial)
+                {
+                    attrs += "|";
+                }
+                initial = false;
+                attrs += "NO_SCRUB_DATA";
+            }
+
+            if (0 != (attributes & EA))
+            {
+                if (!initial)
+                {
+                    attrs += "|";
+                }
+                initial = false;
+                attrs += "EA";
+            }
+
+            if (0 != (attributes & PINNED))
+            {
+                if (!initial)
+                {
+                    attrs += "|";
+                }
+                initial = false;
+                attrs += "PINNED";
+            }
+
+            if (0 != (attributes & UNPINNED))
+            {
+                if (!initial)
+                {
+                    attrs += "|";
+                }
+                initial = false;
+                attrs += "UNPINNED";
+            }
+
+            if (0 != (attributes & RECALL_ON_OPEN))
+            {
+                if (!initial)
+                {
+                    attrs += "|";
+                }
+                initial = false;
+                attrs += "RECALL_ON_OPEN";
+            }
+
+            if (0 != (attributes & RECALL_ON_DATA_ACCESS))
+            {
+                if (!initial)
+                {
+                    attrs += "|";
+                }
+                initial = false;
+                attrs += "RECALL_ON_DATA_ACCESS";
+            }
+
+            if (0 != (attributes & STRICTLY_SEQUENTIAL))
+            {
+                if (!initial)
+                {
+                    attrs += "|";
+                }
+                initial = false;
+                attrs += "STRICTLY_SEQUENTIAL";
+            }
+
+            return attrs;
+
         }
 
     }
@@ -431,55 +576,6 @@ namespace NativeSupportLibrary
         {
             return value.buffer;
         }
-    }
-
-    public class ACCESS_MASK
-    {
-        public const UInt32 DELETE = (UInt32)0x00010000;
-        public const UInt32 READ_CONTROL = (UInt32)0x00020000;
-        public const UInt32 WRITE_DAC = (UInt32)0x00040000;
-        public const UInt32 WRITE_OWNER = (UInt32)0x00080000;
-        public const UInt32 SYNCHRONIZE = (UInt32)0x00100000;
-
-        public const UInt32 STANDARD_RIGHTS_REQUIRED = (UInt32)0x000F0000;
-        public const UInt32 STANDARD_RIGHTS_READ = READ_CONTROL;
-        public const UInt32 STANDARD_RIGHTS_WRITE = READ_CONTROL;
-        public const UInt32 STANDARD_RIGHTS_EXECUTE = READ_CONTROL;
-        public const UInt32 STANDARD_RIGHTS_ALL = (UInt32)0x001F0000;
-
-        public const UInt32 SPECIFIC_RIGHTS_ALL = (UInt32)0x0000FFFF;
-
-        public const UInt32 ACCESS_SYSTEM_SECURITY = (UInt32)0x01000000;
-
-        public const UInt32 MAXIMUM_ALLOWED = (UInt32)0x02000000;
-
-        public const UInt32 GENERIC_READ = (UInt32)0x80000000;
-        public const UInt32 GENERIC_WRITE = (UInt32)0x40000000;
-        public const UInt32 GENERIC_EXECUTE = (UInt32)0x20000000;
-        public const UInt32 GENERIC_ALL = (UInt32)0x10000000;
-
-        protected UInt32 _AccessMask = 0;
-
-        public static implicit operator UInt32(ACCESS_MASK mask)
-        {
-            return mask._AccessMask;
-        }
-
-        public static implicit operator ACCESS_MASK(UInt32 mask)
-        {
-            return new ACCESS_MASK(mask);
-        }
-
-        public ACCESS_MASK(UInt32 Mask)
-        {
-            _AccessMask = Mask;
-        }
-
-        public ACCESS_MASK()
-        {
-            _AccessMask = 0;
-        }
-
     }
 
     public class FILE_ACCESS_MASK : ACCESS_MASK
@@ -1197,380 +1293,6 @@ namespace NativeSupportLibrary
         {
             return IntPtr.Zero;
         }
-    }
-
-    public class FILE_BASIC_INFORMATION
-    {
-        [StructLayout(LayoutKind.Explicit, Pack = 1)]
-        private unsafe struct _FILE_BASIC_INFORMATION
-        {
-            [FieldOffset(0)] public Int64 CreationTime = 0;
-            [FieldOffset(8)] public Int64 LastAccessTime = 0;
-            [FieldOffset(16)] public Int64 LastWriteTime = 0;
-            [FieldOffset(24)] public Int64 ChangeTime = 0;
-            [FieldOffset(32)] public UInt32 FileAttributes = 0;
-
-            public _FILE_BASIC_INFORMATION()
-            {
-            }
-        }
-
-        private _FILE_BASIC_INFORMATION nativeBasicInformationBlock;
-        private IntPtr buffer = IntPtr.Zero;
-
-        public Int64 CreationTime
-        {
-            get
-            {
-                nativeBasicInformationBlock = Marshal.PtrToStructure<_FILE_BASIC_INFORMATION>(buffer);
-                return nativeBasicInformationBlock.CreationTime;
-            }
-
-            set
-            {
-                nativeBasicInformationBlock.CreationTime = value;
-                Marshal.StructureToPtr<_FILE_BASIC_INFORMATION>(nativeBasicInformationBlock, buffer, true);
-            }
-        }
-        public Int64 LastAccessTime
-        {
-            get
-            {
-                nativeBasicInformationBlock = Marshal.PtrToStructure<_FILE_BASIC_INFORMATION>(buffer);
-                return nativeBasicInformationBlock.LastAccessTime;
-            }
-
-            set
-            {
-                nativeBasicInformationBlock.LastAccessTime = value;
-                Marshal.StructureToPtr<_FILE_BASIC_INFORMATION>(nativeBasicInformationBlock, buffer, true);
-            }
-        }
-
-
-        public Int64 LastWriteTime
-        {
-            get
-            {
-                nativeBasicInformationBlock = Marshal.PtrToStructure<_FILE_BASIC_INFORMATION>(buffer);
-                return nativeBasicInformationBlock.LastWriteTime;
-            }
-
-            set
-            {
-                nativeBasicInformationBlock.LastWriteTime = value;
-                Marshal.StructureToPtr<_FILE_BASIC_INFORMATION>(nativeBasicInformationBlock, buffer, true);
-            }
-        }
-
-
-        public Int64 ChangeTime
-        {
-            get
-            {
-                nativeBasicInformationBlock = Marshal.PtrToStructure<_FILE_BASIC_INFORMATION>(buffer);
-                return nativeBasicInformationBlock.ChangeTime;
-            }
-
-            set
-            {
-                nativeBasicInformationBlock.ChangeTime = value;
-                Marshal.StructureToPtr<_FILE_BASIC_INFORMATION>(nativeBasicInformationBlock, buffer, true);
-            }
-        }
-
-        public UInt32 FileAttributes
-        {
-            get
-            {
-                nativeBasicInformationBlock = Marshal.PtrToStructure<_FILE_BASIC_INFORMATION>(buffer);
-                return nativeBasicInformationBlock.FileAttributes;
-            }
-
-            set
-            {
-                nativeBasicInformationBlock.FileAttributes = value;
-                Marshal.StructureToPtr<_FILE_BASIC_INFORMATION>(nativeBasicInformationBlock, buffer, true);
-            }
-        }
-
-        public FILE_BASIC_INFORMATION(Int64 CreationTime = 0, Int64 LastAccessTime = 0, Int64 LastWriteTime = 0, Int64 ChangeTime = 0, UInt32 FileAttributes = 0)
-        {
-            unsafe
-            {
-                this.buffer = Marshal.AllocHGlobal(sizeof(_FILE_BASIC_INFORMATION));
-            }
-            nativeBasicInformationBlock = new _FILE_BASIC_INFORMATION();
-            nativeBasicInformationBlock.CreationTime = CreationTime;
-            nativeBasicInformationBlock.LastAccessTime = LastAccessTime;
-            nativeBasicInformationBlock.LastWriteTime = LastWriteTime;
-            nativeBasicInformationBlock.ChangeTime = ChangeTime;
-
-            Marshal.StructureToPtr(nativeBasicInformationBlock, buffer, true);
-        }
-
-        private FILE_BASIC_INFORMATION(IntPtr Buffer)
-        {
-            unsafe
-            {
-                buffer = Marshal.AllocHGlobal(sizeof(_FILE_BASIC_INFORMATION));
-            }
-            nativeBasicInformationBlock = new _FILE_BASIC_INFORMATION();
-            Marshal.PtrToStructure<_FILE_BASIC_INFORMATION>(Buffer, nativeBasicInformationBlock);
-            Marshal.StructureToPtr(nativeBasicInformationBlock, buffer, true);
-        }
-
-        public FILE_BASIC_INFORMATION()
-        {
-            buffer = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(_FILE_BASIC_INFORMATION)));
-            nativeBasicInformationBlock = new _FILE_BASIC_INFORMATION();
-            Marshal.StructureToPtr(nativeBasicInformationBlock, buffer, true);
-        }
-
-        ~FILE_BASIC_INFORMATION()
-        {
-            if (IntPtr.Zero != buffer)
-            {
-                Marshal.FreeHGlobal(buffer);
-                buffer = IntPtr.Zero;
-            }
-        }
-
-        public static implicit operator IntPtr(FILE_BASIC_INFORMATION fileBasicInformation)
-        {
-            return fileBasicInformation.buffer;
-        }
-
-        public static implicit operator FILE_BASIC_INFORMATION(IntPtr buffer)
-        {
-            return new FILE_BASIC_INFORMATION(buffer);
-        }
-
-
-    }
-
-    public class FILE_STANDARD_INFORMATION
-    {
-        [StructLayout(LayoutKind.Explicit, Pack = 1)]
-        private unsafe struct _FILE_STANDARD_INFORMATION
-        {
-            [FieldOffset(0)] public Int64 AllocationSize = 0;
-            [FieldOffset(8)] public Int64 EndOfFile = 0;
-            [FieldOffset(16)] public UInt32 NumberOfLinks = 0;
-            [FieldOffset(24)] public bool DeletePending = false;
-            [FieldOffset(25)] public bool Directory = false;
-
-            public _FILE_STANDARD_INFORMATION()
-            {
-            }
-        }
-
-        private _FILE_STANDARD_INFORMATION nativeStandardInformation;
-        private IntPtr buffer = IntPtr.Zero;
-
-        public Int64 AllocationSize
-        {
-            get
-            {
-                nativeStandardInformation = Marshal.PtrToStructure<_FILE_STANDARD_INFORMATION>(buffer);
-                return nativeStandardInformation.AllocationSize;
-            }
-
-            set
-            {
-                nativeStandardInformation.AllocationSize = value;
-                Marshal.StructureToPtr<_FILE_STANDARD_INFORMATION>(nativeStandardInformation, buffer, true);
-            }
-        }
-        public Int64 EndOfFile
-        {
-            get
-            {
-                nativeStandardInformation = Marshal.PtrToStructure<_FILE_STANDARD_INFORMATION>(buffer);
-                return nativeStandardInformation.EndOfFile;
-            }
-
-            set
-            {
-                nativeStandardInformation.EndOfFile = value;
-                Marshal.StructureToPtr<_FILE_STANDARD_INFORMATION>(nativeStandardInformation, buffer, true);
-            }
-        }
-
-        public UInt32 NumberOfLinks
-        {
-            get
-            {
-                nativeStandardInformation = Marshal.PtrToStructure<_FILE_STANDARD_INFORMATION>(buffer);
-                return nativeStandardInformation.NumberOfLinks;
-            }
-
-            set
-            {
-                nativeStandardInformation.NumberOfLinks = value;
-                Marshal.StructureToPtr<_FILE_STANDARD_INFORMATION>(nativeStandardInformation, buffer, true);
-            }
-        }
-
-        public bool DeletePending
-        {
-            get
-            {
-                nativeStandardInformation = Marshal.PtrToStructure<_FILE_STANDARD_INFORMATION>(buffer);
-                return nativeStandardInformation.DeletePending;
-            }
-
-            set
-            {
-                nativeStandardInformation.DeletePending = value;
-                Marshal.StructureToPtr<_FILE_STANDARD_INFORMATION>(nativeStandardInformation, buffer, true);
-            }
-        }
-
-
-        public bool Directory
-        {
-            get
-            {
-                nativeStandardInformation = Marshal.PtrToStructure<_FILE_STANDARD_INFORMATION>(buffer);
-                return nativeStandardInformation.Directory;
-            }
-
-            set
-            {
-                nativeStandardInformation.Directory = value;
-                Marshal.StructureToPtr<_FILE_STANDARD_INFORMATION>(nativeStandardInformation, buffer, true);
-            }
-        }
-
-    }
-
-    public class FILE_STANDARD_INFORMATION_EX
-    {
-        [StructLayout(LayoutKind.Explicit, Pack = 1)]
-        private unsafe struct _FILE_STANDARD_INFORMATION_EX
-        {
-            [FieldOffset(0)] public Int64 AllocationSize = 0;
-            [FieldOffset(8)] public Int64 EndOfFile = 0;
-            [FieldOffset(16)] public UInt32 NumberOfLinks = 0;
-            [FieldOffset(24)] public bool DeletePending = false;
-            [FieldOffset(25)] public bool Directory = false;
-            [FieldOffset(26)] public bool AlternateStream = false;
-            [FieldOffset(27)] public bool MetadataAttribute = false;
-
-            public _FILE_STANDARD_INFORMATION_EX()
-            {
-            }
-        }
-
-        private _FILE_STANDARD_INFORMATION_EX nativeStandardInformation;
-        private IntPtr buffer = IntPtr.Zero;
-
-        public Int64 AllocationSize
-        {
-            get
-            {
-                nativeStandardInformation = Marshal.PtrToStructure<_FILE_STANDARD_INFORMATION_EX>(buffer);
-                return nativeStandardInformation.AllocationSize;
-            }
-
-            set
-            {
-                nativeStandardInformation.AllocationSize = value;
-                Marshal.StructureToPtr<_FILE_STANDARD_INFORMATION_EX>(nativeStandardInformation, buffer, true);
-            }
-        }
-        public Int64 EndOfFile
-        {
-            get
-            {
-                nativeStandardInformation = Marshal.PtrToStructure<_FILE_STANDARD_INFORMATION_EX>(buffer);
-                return nativeStandardInformation.EndOfFile;
-            }
-
-            set
-            {
-                nativeStandardInformation.EndOfFile = value;
-                Marshal.StructureToPtr<_FILE_STANDARD_INFORMATION_EX>(nativeStandardInformation, buffer, true);
-            }
-        }
-
-        public UInt32 NumberOfLinks
-        {
-            get
-            {
-                nativeStandardInformation = Marshal.PtrToStructure<_FILE_STANDARD_INFORMATION_EX>(buffer);
-                return nativeStandardInformation.NumberOfLinks;
-            }
-
-            set
-            {
-                nativeStandardInformation.NumberOfLinks = value;
-                Marshal.StructureToPtr<_FILE_STANDARD_INFORMATION_EX>(nativeStandardInformation, buffer, true);
-            }
-        }
-
-        public bool DeletePending
-        {
-            get
-            {
-                nativeStandardInformation = Marshal.PtrToStructure<_FILE_STANDARD_INFORMATION_EX>(buffer);
-                return nativeStandardInformation.DeletePending;
-            }
-
-            set
-            {
-                nativeStandardInformation.DeletePending = value;
-                Marshal.StructureToPtr<_FILE_STANDARD_INFORMATION_EX>(nativeStandardInformation, buffer, true);
-            }
-        }
-
-
-        public bool Directory
-        {
-            get
-            {
-                nativeStandardInformation = Marshal.PtrToStructure<_FILE_STANDARD_INFORMATION_EX>(buffer);
-                return nativeStandardInformation.Directory;
-            }
-
-            set
-            {
-                nativeStandardInformation.Directory = value;
-                Marshal.StructureToPtr<_FILE_STANDARD_INFORMATION_EX>(nativeStandardInformation, buffer, true);
-            }
-        }
-
-        public bool AlternateStream
-        {
-            get
-            {
-                nativeStandardInformation = Marshal.PtrToStructure<_FILE_STANDARD_INFORMATION_EX>(buffer);
-                return nativeStandardInformation.AlternateStream;
-            }
-
-            set
-            {
-                nativeStandardInformation.AlternateStream = value;
-                Marshal.StructureToPtr<_FILE_STANDARD_INFORMATION_EX>(nativeStandardInformation, buffer, true);
-            }
-        }
-
-        public bool MetadataAttribute
-        {
-            get
-            {
-                nativeStandardInformation = Marshal.PtrToStructure<_FILE_STANDARD_INFORMATION_EX>(buffer);
-                return nativeStandardInformation.MetadataAttribute;
-            }
-
-            set
-            {
-                nativeStandardInformation.MetadataAttribute = value;
-                Marshal.StructureToPtr<_FILE_STANDARD_INFORMATION_EX>(nativeStandardInformation, buffer, true);
-            }
-        }
-
     }
 
 }

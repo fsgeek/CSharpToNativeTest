@@ -42,6 +42,17 @@ VOID
     _In_ ULONG Reserved
     );
 
+typedef struct _FILE_NETWORK_OPEN_INFORMATION {
+    LARGE_INTEGER CreationTime;
+    LARGE_INTEGER LastAccessTime;
+    LARGE_INTEGER LastWriteTime;
+    LARGE_INTEGER ChangeTime;
+    LARGE_INTEGER AllocationSize;
+    LARGE_INTEGER EndOfFile;
+    ULONG FileAttributes;
+} FILE_NETWORK_OPEN_INFORMATION, * PFILE_NETWORK_OPEN_INFORMATION;
+
+
 inline static void* GetNativeRoutine(_In_ PCSTR RoutineName)
 {
     static HMODULE ntdll = NULL;

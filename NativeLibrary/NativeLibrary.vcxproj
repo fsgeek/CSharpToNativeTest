@@ -23,6 +23,7 @@
     <ClCompile Include="NtDeviceIoControlFile.c" />
     <ClCompile Include="NtFsControlFile.c" />
     <ClCompile Include="NtQueryDirectoryFile.c" />
+    <ClCompile Include="ntqueryfullattributesfile.c" />
     <ClCompile Include="NtQueryVolumeInformationFile.c" />
     <ClCompile Include="testlib.c" />
   </ItemGroup>
