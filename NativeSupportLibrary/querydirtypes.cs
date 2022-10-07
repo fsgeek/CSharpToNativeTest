@@ -551,6 +551,7 @@ namespace NativeSupportLibrary
     }
 
 
+#if false
     public class FILE_NAMES_INFORMATION
     {
         /*
@@ -628,6 +629,7 @@ namespace NativeSupportLibrary
 
 
     }
+#endif // false
 
     public class FILE_ID_GLOBAL_TX_DIR_INFORMATION
     {
@@ -951,138 +953,6 @@ namespace NativeSupportLibrary
         public static implicit operator FILE_ID_128(UInt64 SmallFid)
         {
             return new FILE_ID_128(SmallFid);
-        }
-
-    }
-
-    public class FILE_ID_EXTD_BOTH_DIR_INFORMATION
-    {
-        /*
-         * typedef struct _FILE_ID_EXTD_BOTH_DIR_INFORMATION {
-                ULONG NextEntryOffset;
-                ULONG FileIndex;
-                LARGE_INTEGER CreationTime;
-                LARGE_INTEGER LastAccessTime;
-                LARGE_INTEGER LastWriteTime;
-                LARGE_INTEGER ChangeTime;
-                LARGE_INTEGER EndOfFile;
-                LARGE_INTEGER AllocationSize;
-                ULONG FileAttributes;
-                ULONG FileNameLength;
-                ULONG EaSize;
-                ULONG ReparsePointTag;
-                FILE_ID_128 FileId;
-                CCHAR ShortNameLength;
-                WCHAR ShortName[12];
-                _Field_size_bytes_(FileNameLength) WCHAR FileName[1];
-            } FILE_ID_EXTD_BOTH_DIR_INFORMATION, *PFILE_ID_EXTD_BOTH_DIR_INFORMATION;
-         */
-
-        public struct FILE_ID_EXTD_BOTH_DIR_INFO
-        {
-            const UInt16 ShortNameOffset = 90;
-            const UInt16 FileNameOffset = 114;
-
-            [StructLayout(LayoutKind.Explicit, Pack = 1)]
-            private unsafe struct _FILE_ID_EXTD_BOTH_DIR_INFORMATION
-            {
-                [FieldOffset(0)] public UInt32 NextEntryOffset;
-                [FieldOffset(4)] public UInt32 FileIndex;
-                [FieldOffset(8)] public Int64 CreationTime;
-                [FieldOffset(16)] public Int64 LastAccessTime;
-                [FieldOffset(24)] public Int64 LastWriteTime;
-                [FieldOffset(32)] public Int64 ChangeTime;
-                [FieldOffset(40)] public Int64 EndOfFile;
-                [FieldOffset(48)] public Int64 AllocationSize;
-                [FieldOffset(56)] public UInt32 FileAttributes;
-                [FieldOffset(60)] public UInt32 FileNameLength;
-                [FieldOffset(64)] public UInt32 EaSize;
-                [FieldOffset(68)] public UInt32 ReparsePointTag;
-                [FieldOffset(72)] public _FILE_ID_128 FileId;
-                [FieldOffset(88)] public UInt16 ShortNameLength;
-                [FieldOffset(ShortNameOffset)] public fixed char ShortName[12];
-
-            }
-
-            public readonly UInt32 FileIndex;
-            public readonly Int64 CreationTime;
-            public readonly Int64 LastAccessTime;
-            public readonly Int64 LastWriteTime;
-            public readonly Int64 ChangeTime;
-            public readonly Int64 EndOfFile;
-            public readonly Int64 AllocationSize;
-            public readonly UInt32 FileAttributes;
-            public readonly UInt32 EaSize;
-            public readonly UInt32 ReparsePointTag;
-            public readonly FILE_ID_128 FileId;
-            public readonly string FileName;
-            public readonly string? ShortName = null;
-
-            public FILE_ID_EXTD_BOTH_DIR_INFO(IntPtr Buffer, ref int NextEntryOffset)
-            {
-                _FILE_ID_EXTD_BOTH_DIR_INFORMATION dirInfo = Marshal.PtrToStructure<_FILE_ID_EXTD_BOTH_DIR_INFORMATION>(Buffer);
-
-                FileIndex = dirInfo.FileIndex;
-                CreationTime = dirInfo.CreationTime;
-                LastAccessTime = dirInfo.LastAccessTime;
-                LastWriteTime = dirInfo.LastWriteTime;
-                ChangeTime = dirInfo.ChangeTime;
-                EndOfFile = dirInfo.EndOfFile;
-                AllocationSize = dirInfo.AllocationSize;
-                FileAttributes = dirInfo.FileAttributes;
-                ReparsePointTag = dirInfo.ReparsePointTag;
-                EaSize = dirInfo.EaSize;
-                FileId = new FILE_ID_128(dirInfo.FileId);
-
-                // Note that names are not necessarily NULL terminated from the kernel, so we explicitly state
-                // a maximum length since the kernel does always set the length for us.
-                FileName = Marshal.PtrToStringUni(IntPtr.Add(Buffer, FileNameOffset), (int)(dirInfo.FileNameLength / 2));
-
-                if (dirInfo.ShortNameLength > 0)
-                {
-                    ShortName = Marshal.PtrToStringUni(IntPtr.Add(Buffer, ShortNameOffset), (int)dirInfo.ShortNameLength / 2);
-                }
-
-                NextEntryOffset = (int)dirInfo.NextEntryOffset;
-            }
-
-        }
-
-        // The choice of initial length is fairly arbitrary and could be optimized if it is an issue
-        public List<FILE_ID_EXTD_BOTH_DIR_INFO> Entries = new List<FILE_ID_EXTD_BOTH_DIR_INFO>(1024);
-
-        public FILE_ID_EXTD_BOTH_DIR_INFORMATION()
-        {
-        }
-
-        // This routine is used to feed in a buffer of entries that are then added to the list
-        unsafe public uint AddEntries(IntPtr Buffer, UInt32 BufferLength)
-        {
-            uint count = 0;
-
-            if (IntPtr.Zero == Buffer)
-            {
-                return count;
-            }
-
-            IntPtr current = Buffer;
-
-            while (current.ToInt64() < (Buffer.ToInt64() + (Int64)BufferLength))
-            {
-                int nextOffset = 0;
-                Entries.Add(new FILE_ID_EXTD_BOTH_DIR_INFO(current, ref nextOffset));
-                count++;
-
-                current = IntPtr.Add(current, (int)nextOffset);
-
-                if (0 == nextOffset)
-                {
-                    // Last entry is marked as zero
-                    break;
-                }
-            }
-
-            return count;
         }
 
     }

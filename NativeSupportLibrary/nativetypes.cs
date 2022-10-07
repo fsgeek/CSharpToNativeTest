@@ -8,7 +8,6 @@ using Microsoft.Win32.SafeHandles;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.VisualBasic;
 using static NativeSupportLibrary.FILE_ID_BOTH_DIR_INFORMATION;
-using static NativeSupportLibrary.FILE_ID_EXTD_BOTH_DIR_INFORMATION;
 using Serilog.Debugging;
 
 namespace NativeSupportLibrary
@@ -22,6 +21,104 @@ namespace NativeSupportLibrary
     }
 
     #endregion
+
+    #region enum
+    // {Query/SetInformationFile} types (structures correspond to these types usually)
+    public enum FILE_INFORMATION_CLASS
+    {
+        FileDirectoryInformation = 1,     // 1
+        FileFullDirectoryInformation = 2,     // 2
+        FileBothDirectoryInformation = 3,     // 3
+        FileBasicInformation = 4,         // 4
+        FileStandardInformation = 5,      // 5
+        FileInternalInformation = 6,      // 6
+        FileEaInformation = 7,        // 7
+        FileAccessInformation = 8,        // 8
+        FileNameInformation = 9,          // 9
+        FileRenameInformation = 10,        // 10
+        FileLinkInformation = 11,          // 11
+        FileNamesInformation = 12,         // 12
+        FileDispositionInformation = 13,       // 13
+        FilePositionInformation = 14,      // 14
+        FileFullEaInformation = 15,        // 15
+        FileModeInformation = 16,     // 16
+        FileAlignmentInformation = 17,     // 17
+        FileAllInformation = 18,           // 18
+        FileAllocationInformation = 19,    // 19
+        FileEndOfFileInformation = 20,     // 20
+        FileAlternateNameInformation = 21,     // 21
+        FileStreamInformation = 22,        // 22
+        FilePipeInformation = 23,          // 23
+        FilePipeLocalInformation = 24,     // 24
+        FilePipeRemoteInformation = 25,    // 25
+        FileMailslotQueryInformation = 26,     // 26
+        FileMailslotSetInformation = 27,       // 27
+        FileCompressionInformation = 28,       // 28
+        FileObjectIdInformation = 29,      // 29
+        FileCompletionInformation = 30,    // 30
+        FileMoveClusterInformation = 31,       // 31
+        FileQuotaInformation = 32,         // 32
+        FileReparsePointInformation = 33,      // 33
+        FileNetworkOpenInformation = 34,       // 34
+        FileAttributeTagInformation = 35,      // 35
+        FileTrackingInformation = 36,      // 36
+        FileIdBothDirectoryInformation = 37,   // 37
+        FileIdFullDirectoryInformation = 38,   // 38
+        FileValidDataLengthInformation = 39,   // 39
+        FileShortNameInformation = 40,     // 40
+        FileIoCompletionNotificationInformation = 41,        // 41
+        FileIoStatusBlockRangeInformation = 42,              // 42
+        FileIoPriorityHintInformation = 43,                  // 43
+        FileSfioReserveInformation = 44,                     // 44
+        FileSfioVolumeInformation = 45,                      // 45
+        FileHardLinkInformation = 46,    // 46
+        FileProcessIdsUsingFileInformation = 47,             // 47
+        FileNormalizedNameInformation = 48,                  // 48
+        FileNetworkPhysicalNameInformation = 49,             // 49
+        FileIdGlobalTxDirectoryInformation = 50,             // 50
+        FileIsRemoteDeviceInformation = 51,                  // 51
+        FileUnusedInformation = 52,                          // 52
+        FileNumaNodeInformation = 53,                        // 53
+        FileStandardLinkInformation = 54,                    // 54
+        FileRemoteProtocolInformation = 55,                  // 55
+
+        //FILE_NAME
+        //  These are special versions of these operations (defined earlier)
+        //  which can be used by kernel mode drivers only to bypass security
+        //  access checks for Rename and HardLink operations.  These operations
+        //  are only recognized by the IOManager, a file system should never
+        //  receive these.
+        //
+
+        FileRenameInformationBypassAccessCheck = 56,         // 56
+        FileLinkInformationBypassAccessCheck = 57,           // 57
+
+        //
+        // End of special information classes reserved for IOManager.
+        //
+
+        FileVolumeNameInformation = 58,                      // 58
+        FileIdInformation = 59,                              // 59
+        FileIdExtdDirectoryInformation = 60,                 // 60
+        FileReplaceCompletionInformation = 61,               // 61
+        FileHardLinkFullIdInformation = 62,                  // 62
+        FileIdExtdBothDirectoryInformation = 63,             // 63
+        FileDispositionInformationEx = 64,                   // 64
+        FileRenameInformationEx = 65,                        // 65
+        FileRenameInformationExBypassAccessCheck = 66,       // 66
+        FileDesiredStorageClassInformation = 67,             // 67
+        FileStatInformation = 68,                            // 68
+        FileMemoryPartitionInformation = 69,                 // 69
+        FileStatLxInformation = 70,                          // 70
+        FileCaseSensitiveInformation = 71,                   // 71
+        FileLinkInformationEx = 72,                          // 72
+        FileLinkInformationExBypassAccessCheck = 73,         // 73
+        FileStorageReserveIdInformation = 74,                // 74
+        FileCaseSensitiveInformationForceAccessCheck = 75,   // 75
+        FileKnownFolderInformation = 76,                     // 76
+    }
+    #endregion
+
 
 
     public class FILE_ATTRIBUTES
@@ -1293,6 +1390,24 @@ namespace NativeSupportLibrary
         {
             return IntPtr.Zero;
         }
+    }
+
+    public enum FS_INFORMATION_CLASS
+    {
+        FileFsVolumeInformation = 1,
+        FileFsLabelInformation,         // 2
+        FileFsSizeInformation,          // 3
+        FileFsDeviceInformation,        // 4
+        FileFsAttributeInformation,     // 5
+        FileFsControlInformation,       // 6
+        FileFsFullSizeInformation,      // 7
+        FileFsObjectIdInformation,      // 8
+        FileFsDriverPathInformation,    // 9
+        FileFsVolumeFlagsInformation,   // 10
+        FileFsSectorSizeInformation,    // 11
+        FileFsDataCopyInformation,      // 12
+        FileFsMetadataSizeInformation,  // 13
+        FileFsFullSizeInformationEx,    // 14
     }
 
 }

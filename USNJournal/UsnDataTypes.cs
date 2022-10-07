@@ -1177,6 +1177,8 @@ namespace USNJournal
                     throw new IOException($"NtCreateFile failed, status {status} ({status:X}) = {NtStatusToString.StatusToString(status)}");
                 }
 
+#if false
+// moved this around
                 // Check file system characteristics
                 FILE_FS_ATTRIBUTE_INFORMATION fsAttrInfo = FILE_FS_ATTRIBUTE_INFORMATION.GetFsAttributeInformation(driveHandle);
 
@@ -1185,6 +1187,7 @@ namespace USNJournal
                 {
                     usnCapableDrives.Add(drive);
                 }
+#endif // false
             }
 
             return usnCapableDrives;
@@ -1307,13 +1310,13 @@ namespace USNJournal
 
         } DELETE_USN_JOURNAL_DATA, *PDELETE_USN_JOURNAL_DATA;
 
-        #define USN_DELETE_FLAG_DELETE              (0x00000001)
-        #define USN_DELETE_FLAG_NOTIFY              (0x00000002)
+#define USN_DELETE_FLAG_DELETE              (0x00000001)
+#define USN_DELETE_FLAG_NOTIFY              (0x00000002)
 
-        #define USN_DELETE_VALID_FLAGS              (0x00000003)
+#define USN_DELETE_VALID_FLAGS              (0x00000003)
 
-        #endif
-        */
+#endif
+                */
     }
 
     public class USN_JOURNAL

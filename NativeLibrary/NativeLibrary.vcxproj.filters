@@ -36,6 +36,12 @@
     <ClCompile Include="ntqueryfullattributesfile.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="NtQueryInformationFile.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NtQueryEaFile.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="native-internal.h">

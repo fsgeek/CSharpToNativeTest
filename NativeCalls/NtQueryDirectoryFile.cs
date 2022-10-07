@@ -61,7 +61,7 @@ namespace NativeCalls
             APC apc,
             ref IO_STATUS_BLOCK IoStatusBlock,
             ref IntPtr FileInformation,
-            ref UInt32 FileInformationLength,
+            UInt32 FileInformationLength,
             FILE_INFORMATION_CLASS FileInformationClass,
             bool ReturnSingleEntry,
             UNICODE_STRING? FileName,

@@ -65,8 +65,8 @@ namespace NativeSupportLibrary
             );
 
         [DllImport("NativeLibrary.dll", ExactSpelling = true, SetLastError = true)]
-        public static extern int NtQuyerInformationFile(
-            ref IntPtr Handle,
+        public static extern int NtQueryInformationFile(
+            IntPtr Handle,
             IntPtr IoStatusBlock,
             IntPtr FileInformation,
             UInt32 Length,

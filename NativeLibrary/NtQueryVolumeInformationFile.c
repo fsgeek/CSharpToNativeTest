@@ -26,7 +26,8 @@ NtQueryVolumeInformationFile(
         native = (NtQueryVolumeInformationFile_t)GetNativeRoutine("NtQueryVolumeInformationFile");
         // printf("Mapped NtQueryVolumeInformationFile to 0x%p\n", native);
     }
-
+    
+    printf("\nFsInformationClass is: %d\n\n", (int)FsInformationClass);
     return native(FileHandle, IoStatusBlock, FsInformation, Length, FsInformationClass);
 }
 

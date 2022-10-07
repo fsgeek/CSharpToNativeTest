@@ -7,6 +7,7 @@ namespace NativeCalls
 {
     public partial class SystemCalls
     {
+#if false
         public enum FS_INFORMATION_CLASS
         {
             FileFsVolumeInformation = 1,
@@ -311,6 +312,25 @@ namespace NativeCalls
             buffer = IntPtr.Zero;
 
             return status;
+        }
+
+#endif
+
+        public static NtStatusCode NtQueryVolumeInformationFile(
+            SafeFileHandle Handle,
+            ref IO_STATUS_BLOCK IoStatusBlock,
+            IntPtr Buffer,
+            UInt32 BufferLength,
+            FS_INFORMATION_CLASS FileFsVolumeInformationClass
+        )
+        {
+            return (NtStatusCode)NativeSupportLibrary.NativeLibrary.NtQueryVolumeInformationFile(
+                Handle.DangerousGetHandle(),
+                IoStatusBlock,
+                Buffer,
+                BufferLength,
+                (UInt32)FileFsVolumeInformationClass
+                );
         }
 
     }

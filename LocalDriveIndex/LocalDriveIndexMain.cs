@@ -5,6 +5,10 @@ using NativeSupportLibrary;
 using NativeCalls;
 using System.Diagnostics;
 using System.Reflection.Metadata;
+using NativeTypes;
+using System.Security.Cryptography;
+using System.IO.MemoryMappedFiles;
+using System.Text;
 
 namespace LocalDriveIndex
 {
@@ -64,6 +68,114 @@ namespace LocalDriveIndex
 
         }
 
+        public class FILESYSTEM_METADATA
+        {
+
+        }
+
+        public class FILESYSTEM_VOLUME_METADATA
+        {
+            public FILESYSTEM_METADATA FileSystem;
+            // TODO: add all the nifty volume level information here.
+        }
+
+        public class FILE_METADATA
+        {
+            // Reference back to the containing silo
+            public FILESYSTEM_VOLUME_METADATA Volume; // reference to the volume
+
+            // What fields do I want to expose?
+            public UInt64 CreationTime;
+            public UInt64 LastAccessTime;
+            public UInt64 LastWriteTime;
+            public UInt64 ChangeTime;
+            public UInt32 FileAttributes;
+            public Int64 AllocationSize;
+            public Int64 EndOfFile;
+            public UInt32 NumberOfLinks;
+            public bool DeletePending;
+            public bool Directory;
+            public bool AlternateDataStream;
+            public bool MetadataAttributes; // what is this?
+            public bool IsRemote;
+            public UInt16 NodeNumber; // is this supported by any file system? FILE_NUMA_NODE_INFORMATION
+            // FILE_MEMORY_PARTITION_INFORMATION
+            public Dictionary<string, byte[]> ExtendedAttributes;
+            public Int64 FileId; // FILE_STAT_INFORMATION - is this one really provided?
+            public UInt32 ReparseTag;
+            // ACCESS_MASK EffectiveAccess - this doesn't look like a static property, it looks dynmaic
+            public UInt32 LxFlags;
+            public UInt32 LxUid;
+            public UInt32 LxGid;
+            public UInt32 LxMode;
+            public UInt32 LxDeviceIdMajor;
+            public UInt32 LxDeviceIdMinor;
+            public UInt32 FileCaseSensitivityFlags;
+            public UInt32 KnownFolderType; // FILE_KNOWN_FOLDER_TYPE
+
+            // FILE_COMPRESSION_INFORMATION
+            public bool Compressed;
+            public Int64 CompressedFileSize;
+            public UInt16 CompressionFormat;
+            public byte CompressionUnitShift;
+            public byte ChunkShift;
+            public byte ClusterShift;
+
+            public List<FILE_STREAM_INFORMATION> Streams;
+            // public FILE_TRACKING_INFORMATION Tracking; - FILE_TRACKING_INFORMATION
+
+            // FileReparsePointInformation
+            // public FILE_REPARSE_POINT_INFORMATION ReparsePoint; 
+
+            // FileHardLinkInformation
+
+            // FileHardLinkFullIdInformation
+            // FileNetworkPhysicalNameInformation
+
+        }
+
+        /// <summary>
+        /// This function is probably mis-named: it can work on an individual file stream, but
+        /// most of the time this is indistinguishable from file.
+        /// 
+        /// Given an open handle (with FILE_READ_DATA access) this will map the file, compute the
+        /// checksum of the file, and return it.
+        /// </summary>
+        /// <param name="fileHandle"></param>
+        static byte[] GetFileChecksum(SafeFileHandle fileHandle)
+        {
+            SHA512 hash = new SHA512Managed();
+            FileStream fileStream = new FileStream(fileHandle, FileAccess.Read);
+            MemoryMappedFile mappedFile = MemoryMappedFile.CreateFromFile(fileStream, null, 0, MemoryMappedFileAccess.Read, HandleInheritability.None, true);
+            return hash.ComputeHash(mappedFile.CreateViewStream(0,0, MemoryMappedFileAccess.Read));
+        }
+
+        static byte[] GetFileChecksum(string FullPathNameToFile)
+        {
+            SafeFileHandle handle = new SafeFileHandle(IntPtr.Zero, true);
+            FILE_ACCESS_MASK fileAccessMask = new FILE_ACCESS_MASK(FILE_ACCESS_MASK.GENERIC_READ | FILE_ACCESS_MASK.SYNCHRONIZE);
+            IO_STATUS_BLOCK statusBlock = new IO_STATUS_BLOCK();
+            FILE_ATTRIBUTES fileAttr = 0;
+            SHARE_ACCESS shareAccess = SHARE_ACCESS.FILE_SHARE_READ | SHARE_ACCESS.FILE_SHARE_DELETE;
+            CREATE_DISPOSITION disposition = CREATE_DISPOSITION.FILE_OPEN;
+            CREATE_OPTIONS options = CREATE_OPTIONS.FILE_SYNCHRONOUS_IO_NONALERT | CREATE_OPTIONS.FILE_NON_DIRECTORY_FILE;
+            EXTENDED_ATTRIBUTE ea = new EXTENDED_ATTRIBUTE();
+            UNICODE_STRING unicodeFileName = new UNICODE_STRING(FullPathNameToFile);
+            OBJECT_ATTRIBUTES objattr = new OBJECT_ATTRIBUTES(handle, unicodeFileName, OBJECT_ATTRIBUTES.OBJ_CASE_INSENSITIVE | OBJECT_ATTRIBUTES.OBJ_DONT_REPARSE);
+            NtStatusCode status = SystemCalls.NtCreateFile(ref handle, fileAccessMask, objattr, ref statusBlock, (LARGE_INTEGER)0, 0, shareAccess, disposition, options, ea);
+
+            if (!NtStatus.NT_SUCCESS(status))
+            {
+                return new byte[0];
+            }
+
+            byte[] hash = GetFileChecksum(handle);
+
+            handle.Dispose();
+            return hash;
+
+        }
+
         static async Task Main(string[] args)
         {
 
@@ -79,36 +191,17 @@ namespace LocalDriveIndex
             Log.Fatal("Fatal enabled");
             Log.Information("Test Starting");
 
+            string rootDir = "\\??\\C:\\";
 
-            UNICODE_STRING c_drive = new UNICODE_STRING("\\??\\C:\\");
-            SafeFileHandle handle = new SafeFileHandle(IntPtr.Zero, true);
-            OBJECT_ATTRIBUTES objattr = new OBJECT_ATTRIBUTES(handle, c_drive, OBJECT_ATTRIBUTES.OBJ_CASE_INSENSITIVE);
-            ACCESS_MASK mask = (UInt32)(ACCESS_MASK.GENERIC_READ | ACCESS_MASK.SYNCHRONIZE);
-            IO_STATUS_BLOCK statusBlock = new IO_STATUS_BLOCK();
-            FILE_ATTRIBUTES fileAttr = 0;
-            SHARE_ACCESS shareAccess = SHARE_ACCESS.FILE_SHARE_READ | SHARE_ACCESS.FILE_SHARE_WRITE;
-            CREATE_DISPOSITION disposition = CREATE_DISPOSITION.FILE_OPEN;
-            CREATE_OPTIONS options = CREATE_OPTIONS.FILE_DIRECTORY_FILE | CREATE_OPTIONS.FILE_SYNCHRONOUS_IO_NONALERT;
-            EXTENDED_ATTRIBUTE ea = new EXTENDED_ATTRIBUTE();
-            NtStatusCode status = SystemCalls.NtCreateFile(ref handle, mask, objattr, ref statusBlock, (LARGE_INTEGER)0, fileAttr, shareAccess, disposition, options, ea);
+            FILE_FS_VOLUME_INFORMATION fsVolInfo = new FILE_FS_VOLUME_INFORMATION(rootDir);
 
+            Console.WriteLine($"FsVolumeInformation for {rootDir}:");
+            Console.WriteLine($"\tVolume Creation Time: {DateTime.FromFileTime(fsVolInfo.VolumeCreationTime)}");
+            Console.WriteLine($"\tVolume Serial Number: {fsVolInfo.VolumeSerialNumber}");
+            Console.WriteLine($"\t Volume Label Length: {fsVolInfo.VolumeLabelLength}");
+            Console.WriteLine($"\t        Volume Label: {fsVolInfo.VolumeLabel}");
 
-            Debug.Assert(NtStatusCode.STATUS_SUCCESS == status);
-
-            IntPtr buffer = IntPtr.Zero;
-            UInt32 bufferLength = 0;
-
-            status = SystemCalls.NtQueryDirectoryFile(handle, new EVENT(), new APC(), ref statusBlock, ref buffer, ref bufferLength, FILE_INFORMATION_CLASS.FileIdExtdBothDirectoryInformation, false, null, false);
-
-            Debug.Assert(NtStatusCode.STATUS_SUCCESS == status, $"NtQueryDirectoryFile failed: {NtStatusToString.StatusToString(status)} ({status:X})");
-
-            Console.WriteLine($"Received {statusBlock.Information} bytes back");
-
-            // Now let's try to parse the data
-
-            FILE_ID_EXTD_BOTH_DIR_INFORMATION dirInfo = new FILE_ID_EXTD_BOTH_DIR_INFORMATION();
-            dirInfo.AddEntries(buffer, (UInt32) statusBlock.Information);
-            
+            FILE_ID_EXTD_BOTH_DIR_INFORMATION dirInfo = new FILE_ID_EXTD_BOTH_DIR_INFORMATION(rootDir);
 
             Console.WriteLine($"Directory Listing has {dirInfo.Entries.Count} entries");
 
@@ -138,67 +231,29 @@ namespace LocalDriveIndex
             //
             // Now let's try it with just names
             //
-            status = SystemCalls.NtQueryDirectoryFile(handle, new EVENT(), new APC(), ref statusBlock, ref buffer, ref bufferLength, FILE_INFORMATION_CLASS.FileNamesInformation, true, null, true);
+            FILE_NAMES_INFORMATION fileInfo = new FILE_NAMES_INFORMATION(rootDir);
 
-            Debug.Assert(NtStatusCode.STATUS_SUCCESS == status, $"NtQueryDirectoryFile failed: {NtStatusToString.StatusToString(status)} ({status:X})");
-
-            Console.WriteLine($"Received {statusBlock.Information} bytes back (query names info)");
-
-            FILE_NAMES_INFORMATION fileInfo = new FILE_NAMES_INFORMATION();
-
-            bool done = false;
-
-            while (!done)
-            {
-                fileInfo.AddEntries(buffer, bufferLength);
-
-                status = SystemCalls.NtQueryDirectoryFile(handle, new EVENT(), new APC(), ref statusBlock, ref buffer, ref bufferLength, FILE_INFORMATION_CLASS.FileNamesInformation, true, null, false);
-
-                if (NtStatusCode.STATUS_SUCCESS != status)
-                {
-                    done = true;
-                }
-            }
-
-            Console.WriteLine($"Directory Listing (query names) has {dirInfo.Entries.Count} entries");
+            Console.WriteLine($"Directory Listing (query names) has {fileInfo.Entries.Count} entries");
 
             foreach (var entry in fileInfo.Entries)
             {
-                Console.WriteLine($"{entry.FileName}");
-                UNICODE_STRING unicodeFileName = new UNICODE_STRING(entry.FileName);
-                OBJECT_ATTRIBUTES fileOA = new OBJECT_ATTRIBUTES(handle, unicodeFileName, OBJECT_ATTRIBUTES.OBJ_CASE_INSENSITIVE | OBJECT_ATTRIBUTES.OBJ_DONT_REPARSE);
-                SafeFileHandle fileHandle = new SafeFileHandle(IntPtr.Zero, true);
-                FILE_ACCESS_MASK fileAccessMask = new FILE_ACCESS_MASK(FILE_ACCESS_MASK.SYNCHRONIZE);
-                
-                status = SystemCalls.NtCreateFile(ref fileHandle, fileAccessMask, fileOA, ref statusBlock, null, 0, SHARE_ACCESS.FILE_SHARE_READ | SHARE_ACCESS.FILE_SHARE_WRITE | SHARE_ACCESS.FILE_SHARE_DELETE, CREATE_DISPOSITION.FILE_OPEN, CREATE_OPTIONS.FILE_SYNCHRONOUS_IO_NONALERT, new EXTENDED_ATTRIBUTE());
 
-                if (NtStatusCode.STATUS_SUCCESS == status)
+                FILE_NETWORK_OPEN_INFORMATION fileNetworkOpenInfo;
+                FILE_INTERNAL_INFORMATION fileInternalInfo;
+                FILE_STREAM_INFORMATION fileStreams;
+                string fullPathName = rootDir + "\\" + entry.FileName;
+
+                try
                 {
-                    Console.WriteLine($"Successfully opened {entry.FileName}");
+                    fileNetworkOpenInfo = new FILE_NETWORK_OPEN_INFORMATION(fullPathName);
                 }
-                else
+                catch (Exception ex)
                 {
-                    Console.WriteLine($"Failed to open {entry.FileName} due to error {status.ToString()} ({status})");
-                }
-
-                status = SystemCalls.NtClose(ref fileHandle);
-            }
-
-
-            foreach (var entry in fileInfo.Entries)
-            {
-                FILE_NETWORK_OPEN_INFORMATION fileNetworkOpenInfo = new FILE_NETWORK_OPEN_INFORMATION();
-                UNICODE_STRING unicodeFileName = new UNICODE_STRING(entry.FileName);
-                OBJECT_ATTRIBUTES fileOA = new OBJECT_ATTRIBUTES(handle, unicodeFileName, OBJECT_ATTRIBUTES.OBJ_CASE_INSENSITIVE | OBJECT_ATTRIBUTES.OBJ_DONT_REPARSE);
-
-                Console.WriteLine($"{entry.FileName}");
-
-                status = SystemCalls.NtQueryFullAttributesFile(fileOA, ref fileNetworkOpenInfo);
-                if (NtStatusCode.STATUS_SUCCESS != status)
-                {
-                    Console.WriteLine($"\tUnable to open {entry.FileName} status is {status.ToString()} ({status:X})");
+                    Console.WriteLine($"Unable to open {fullPathName} Exception {ex}");
                     continue;
                 }
+
+                Console.WriteLine($"{entry.FileName}");
 
                 Console.WriteLine($"\tCreationTime: {DateTime.FromFileTime(fileNetworkOpenInfo.CreationTime)}");
                 Console.WriteLine($"\tLastAccessTime: {DateTime.FromFileTime(fileNetworkOpenInfo.LastAccessTime)}");
@@ -207,12 +262,49 @@ namespace LocalDriveIndex
                 Console.WriteLine($"\tEndOfFile: {fileNetworkOpenInfo.EndOfFile}");
                 Console.WriteLine($"\tAllocationSize: {fileNetworkOpenInfo.AllocationSize}");
                 Console.WriteLine($"\tAttributes: {FILE_ATTRIBUTES.ToString(fileNetworkOpenInfo.FileAttributes)}");
+
+                if (0 == (fileNetworkOpenInfo.FileAttributes & FILE_ATTRIBUTES.DIRECTORY) && (fileNetworkOpenInfo.EndOfFile > 0))
+                {
+
+                    StringBuilder sb = new StringBuilder();
+                    var hash = GetFileChecksum(fullPathName);
+                    foreach (byte b in GetFileChecksum(fullPathName))
+                    {
+                        sb.Append(b.ToString("X2"));
+                    }
+                    Console.WriteLine($"\tHash (Length is {hash.Length}): {sb}");
+                }
+
+                try
+                {
+                    fileInternalInfo = new FILE_INTERNAL_INFORMATION(fullPathName);
+                    Console.WriteLine($"\tInternalInformation: {fileInternalInfo.IndexNumber}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"\tInternalInformation failed. {ex}");
+                }
+
+                try
+                {
+                    fileStreams = new FILE_STREAM_INFORMATION(fullPathName);
+                    if (fileStreams.Entries.Count > 0)
+                    {
+                        Console.WriteLine($"\tStreams ({fileStreams.Entries.Count}):");
+
+                        foreach (var stream in fileStreams.Entries)
+                        {
+                            Console.WriteLine($"\t\t{stream.StreamName} : {stream.StreamSize}");
+                        }
+                    }
+                    Console.WriteLine($"Need to dump streams list here: {fileStreams.Entries.Count}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"\tInternalInformation failed. {ex}");
+                }
+
             }
-
-
-
-
-            SystemCalls.NtClose(ref handle);
 
             // Prior work has been focused on static data sets.  To make this a useful system service we need to support dynamic data collection, which
             // gives rise to the systems problem that are at the heart of my research.

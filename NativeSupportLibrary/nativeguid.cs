@@ -3,7 +3,6 @@ using Microsoft.Win32.SafeHandles;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.VisualBasic;
 using static NativeSupportLibrary.FILE_ID_BOTH_DIR_INFORMATION;
-using static NativeSupportLibrary.FILE_ID_EXTD_BOTH_DIR_INFORMATION;
 using System.Runtime;
 using System;
 
