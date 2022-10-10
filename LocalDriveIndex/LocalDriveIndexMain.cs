@@ -201,6 +201,65 @@ namespace LocalDriveIndex
             Console.WriteLine($"\t Volume Label Length: {fsVolInfo.VolumeLabelLength}");
             Console.WriteLine($"\t        Volume Label: {fsVolInfo.VolumeLabel}");
 
+            FILE_FS_ATTRIBUTE_INFORMATION fsAttributeInfo = new FILE_FS_ATTRIBUTE_INFORMATION(rootDir);
+
+            Console.WriteLine($"FsAttributeInformation for {rootDir}:");
+            Console.WriteLine($"\t    FileSystemAttributes: {fsAttributeInfo.FileSystemAttributes.FileSystemAttributeFlags:X}: {fsAttributeInfo.FileSystemAttributes}");
+            Console.WriteLine($"\t MaximumComponent Length: {fsAttributeInfo.MaximumComponentLength}");
+            Console.WriteLine($"\t          FileSystemName: {fsAttributeInfo.FileSystemName}");
+
+            FILE_FS_FULL_SIZE_INFORMATION_EX fsFullSizeInfoEx = new FILE_FS_FULL_SIZE_INFORMATION_EX(rootDir);
+            Console.WriteLine($"FsFullSizeInformationEx for {rootDir}:");
+            Console.WriteLine($"\t          ActualTotalAllocationUnits: {fsFullSizeInfoEx.ActualTotalAllocationUnits}");
+            Console.WriteLine($"\t      ActualAvailableAllocationUnits: {fsFullSizeInfoEx.ActualAvailableAllocationUnits}");
+            Console.WriteLine($"\tActualPoolUnavailableAllocationUnits: {fsFullSizeInfoEx.ActualPoolUnavailableAllocationUnits}");
+            Console.WriteLine($"\t          CallerTotalAllocationUnits: {fsFullSizeInfoEx.CallerTotalAllocationUnits}");
+            Console.WriteLine($"\t      CallerAvailableAllocationUnits: {fsFullSizeInfoEx.CallerAvailableAllocationUnits}");
+            Console.WriteLine($"\tCallerPoolUnavailableAllocationUnits: {fsFullSizeInfoEx.CallerPoolUnavailableAllocationUnits}");
+            Console.WriteLine($"\t                 UsedAllocationUnits: {fsFullSizeInfoEx.UsedAllocationUnits}");
+            Console.WriteLine($"\t        TotalReservedAllocationUnits: {fsFullSizeInfoEx.TotalReservedAllocationUnits}");
+            Console.WriteLine($"\t VolumeStorageReserveAllocationUnits: {fsFullSizeInfoEx.VolumeStorageReserveAllocationUnits}");
+            Console.WriteLine($"\t   AvailableCommittedAllocationUnits: {fsFullSizeInfoEx.AvailableCommittedAllocationUnits}");
+            Console.WriteLine($"\t        PoolAvailableAllocationUnits: {fsFullSizeInfoEx.PoolAvailableAllocationUnits}");
+            Console.WriteLine($"\t            SectorsPerAllocationUnit: {fsFullSizeInfoEx.SectorsPerAllocationUnit}");
+            Console.WriteLine($"\t                      BytesPerSector: {fsFullSizeInfoEx.BytesPerSector}");
+
+            try
+            {
+                FILE_FS_METADATA_SIZE_INFORMATION fsMetadataSizeInfo = new FILE_FS_METADATA_SIZE_INFORMATION(rootDir);
+                Console.WriteLine($"FsFullSizeInformationEx for {rootDir}:");
+                Console.WriteLine($"\t        TotalMetadataAllocationUnits: {fsMetadataSizeInfo.TotalMetadataAllocationUnits}");
+                Console.WriteLine($"\t            SectorsPerAllocationUnit: {fsMetadataSizeInfo.SectorsPerAllocationUnit}");
+                Console.WriteLine($"\t                      BytesPerSector: {fsMetadataSizeInfo.BytesPerSector}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"FILE_FS_METADATA_SIZE not available. Exception {ex}");
+            }
+
+            FILE_FS_SECTOR_SIZE_INFORMATION fsSectorSizeInfo = new FILE_FS_SECTOR_SIZE_INFORMATION(rootDir);
+            Console.WriteLine($"FsSectorSizeInformation for {rootDir}:");
+            Console.WriteLine($"\t                                LogicalBytesPerSector: {fsSectorSizeInfo.LogicalBytesPerSector}");
+            Console.WriteLine($"\t                   PhysicalBytesPerSectorForAtomicity: {fsSectorSizeInfo.PhysicalBytesPerSectorForAtomicity}");
+            Console.WriteLine($"\t                 PhysicalBytesPerSectorForPerformance: {fsSectorSizeInfo.PhysicalBytesPerSectorForPerformance}");
+            Console.WriteLine($"\tFileSystemEffectivePhysicalBytesPerSectorForAtomicity: {fsSectorSizeInfo.FileSystemEffectivePhysicalBytesPerSectorForAtomicity}");
+            Console.WriteLine($"\t                                                Flags: {fsSectorSizeInfo.Flags}");
+            Console.WriteLine($"\t                             SectorsPerAllocationUnit: {fsSectorSizeInfo.SectorsPerAllocationUnit}");
+            Console.WriteLine($"\t                                       BytesPerSector: {fsSectorSizeInfo.BytesPerSector}");
+
+            FILE_FS_DEVICE_INFORMATION fsDeviceInfo = new FILE_FS_DEVICE_INFORMATION(rootDir);
+            Console.WriteLine($"FsDeviceInformation for {rootDir}:");
+            Console.WriteLine($"\t     DeviceType: {fsDeviceInfo.DeviceType:x}");
+            Console.WriteLine($"\tCharacteristics: {fsDeviceInfo.Characteristics:X}");
+
+            // This information seems to be correct.
+            FILE_FS_SIZE_INFORMATION fsSizeInfo = new FILE_FS_SIZE_INFORMATION(rootDir);
+            Console.WriteLine($"FsSizeInformation for {rootDir}:");
+            Console.WriteLine($"\t    TotalAllocationUnits: {fsSizeInfo.TotalAllocationUnits}");
+            Console.WriteLine($"\tAvailableAllocationUnits: {fsSizeInfo.AvailableAllocationUnits}");
+            Console.WriteLine($"\tSectorsPerAllocationUnit: {fsSizeInfo.SectorsPerAllocationUnit}");
+            Console.WriteLine($"\t          BytesPerSector: {fsSizeInfo.BytesPerSector}");
+
             FILE_ID_EXTD_BOTH_DIR_INFORMATION dirInfo = new FILE_ID_EXTD_BOTH_DIR_INFORMATION(rootDir);
 
             Console.WriteLine($"Directory Listing has {dirInfo.Entries.Count} entries");
