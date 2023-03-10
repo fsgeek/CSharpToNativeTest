@@ -191,7 +191,7 @@ namespace LocalDriveIndex
             Log.Fatal("Fatal enabled");
             Log.Information("Test Starting");
 
-            string rootDir = "\\??\\C:\\";
+            string rootDir = @"\??\C:\";
 
             FILE_FS_VOLUME_INFORMATION fsVolInfo = new FILE_FS_VOLUME_INFORMATION(rootDir);
 

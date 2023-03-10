@@ -282,7 +282,7 @@ namespace NativeSupportLibrary
                 AllocationSize = dirInfo.AllocationSize;
                 FileAttributes = dirInfo.FileAttributes;
                 EaSize = dirInfo.EaSize;
-                dirInfo.FileId = dirInfo.FileId;
+                // FileId = dirInfo.FileId;
 
                 // Note that names are not necessarily NULL terminated from the kernel, so we explicitly state
                 // a maximum length since the kernel does always set the length for us.

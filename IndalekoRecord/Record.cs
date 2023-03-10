@@ -1,5 +1,4 @@
-﻿using MongoDB.Bson;
-
+﻿
 namespace Indaleko
 {
 
@@ -34,29 +33,6 @@ namespace Indaleko
             Timestamp = now - unixEpoch;
             this.Data = Data;
         }
-
-#if false
-        // Not using Mongo any longer so no need for BSON - leaving until I've confirmed any dependencies are fixed.
-
-        public BsonDocument GenerateBsonDocument()
-        {
-            var document = new BsonDocument();
-
-            document.Add("SourceIdentifier", new BsonBinaryData(SourceIdentifier, GuidRepresentation.Standard));
-            document.Add("SourceVersion", new BsonInt32(SourceVersion));
-            document.Add("Timestamp", new BsonTimestamp((Int64)Timestamp));
-
-            Console.WriteLine($"Stored timestamp is... {document["Timestamp"].AsBsonTimestamp}");
-
-            var attrs = new BsonDocument(Attributes);
-
-            document.Add("Attributes", attrs);
-
-            document.Add("Data", new BsonBinaryData(Data));
-
-            return document;
-        }
-#endif // false
 
     }
 

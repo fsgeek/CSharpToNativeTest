@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dropbox.Api" Version="6.33.0" />
+    <PackageReference Include="Dropbox.Api" Version="6.36.0" />
     <PackageReference Include="Microsoft.AspNet.WebHooks.Receivers.Dropbox" Version="1.2.2" />
   </ItemGroup>
 

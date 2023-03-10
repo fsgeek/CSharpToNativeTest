@@ -54,7 +54,7 @@ namespace ArangoDBTest
     public class TestRecord
     {
         public Guid _key { get; init; }
-        public string URI { get; set; }
+        public string? URI { get; set; }
     }
 
     public class Machine : IndalekoRecord

@@ -401,6 +401,7 @@ namespace NativeTypes
         public FILE_NETWORK_OPEN_INFORMATION(string FullPathToFile)
         {
             SafeFileHandle RootHandle = new SafeFileHandle(IntPtr.Zero, true);
+            FileAttributes = FILE_ATTRIBUTES.NORMAL;
             NtStatusCode status = GetNetworkOpenInformation(RootHandle, FullPathToFile);
             if (!NtStatus.NT_SUCCESS(status))
             {
@@ -411,6 +412,7 @@ namespace NativeTypes
         public FILE_NETWORK_OPEN_INFORMATION(SafeFileHandle RootHandle, string PathToFile)
         {
             NtStatusCode status = GetNetworkOpenInformation(RootHandle, PathToFile);
+            FileAttributes = 0;
             if (!NtStatus.NT_SUCCESS(status))
             {
                 throw new IOException(PathToFile, (int)status);
